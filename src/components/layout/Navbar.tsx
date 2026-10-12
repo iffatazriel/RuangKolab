@@ -1,4 +1,4 @@
-﻿import Link from 'next/link'
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { LogoutButton } from './LogoutButton'
 import { NavbarShell } from '@/components/motion/LandingMotion'
@@ -78,7 +78,7 @@ export async function Navbar() {
               </Link>
               <Link
                 href="/profil"
-                className="hidden min-h-[40px] items-center text-sm font-medium text-slate-700 transition-colors hover:text-indigo-600 dark:text-slate-300 sm:inline-block"
+                className="hidden min-h-[40px] items-center text-sm font-medium text-slate-700 transition-colors hover:text-indigo-600 sm:inline-block"
               >
                 {userName || 'Profil'}
               </Link>

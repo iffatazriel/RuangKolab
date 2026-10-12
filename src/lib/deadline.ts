@@ -54,7 +54,7 @@ export function getDeadlineTone(target: string | Date): DeadlineInfo {
 
 /** Kelas warna teks per tingkat urgensi, kontras AA di terang dan gelap. */
 export const deadlineToneClass: Record<DeadlineTone, string> = {
-  kuat: 'text-rose-700 dark:text-rose-400',
-  lembut: 'text-amber-700 dark:text-amber-400',
-  netral: 'text-slate-600 dark:text-slate-400',
+  kuat: 'text-rose-700',
+  lembut: 'text-amber-700',
+  netral: 'text-slate-600',
 }

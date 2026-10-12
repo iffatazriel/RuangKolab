@@ -1,4 +1,4 @@
-﻿import { createClient } from '@/lib/supabase/server'
+import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { Suspense } from 'react'
 import { LombaFilter } from './LombaFilter'
@@ -87,9 +87,9 @@ export default async function LombaPage({ searchParams }: { searchParams: Promis
 
       {/* STATE ERROR: inline dengan coba lagi */}
       {error && (
-        <div role="alert" className="mt-6 rounded-2xl border border-rose-200 bg-rose-50 p-6 text-center dark:border-rose-900 dark:bg-rose-950/40">
-          <p className="font-semibold text-rose-800 dark:text-rose-300">Gagal memuat daftar lomba</p>
-          <p className="mt-1 text-sm text-rose-700 dark:text-rose-400">Periksa koneksimu lalu coba lagi.</p>
+        <div role="alert" className="mt-6 rounded-2xl border border-rose-200 bg-rose-50 p-6 text-center">
+          <p className="font-semibold text-rose-800">Gagal memuat daftar lomba</p>
+          <p className="mt-1 text-sm text-rose-700">Periksa koneksimu lalu coba lagi.</p>
           <Link href="/lomba" className="mt-4 inline-flex min-h-[44px] items-center rounded-lg bg-rose-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-rose-700 active:scale-[0.98]">
             Coba lagi
           </Link>
@@ -98,21 +98,21 @@ export default async function LombaPage({ searchParams }: { searchParams: Promis
 
       {/* STATE KOSONG */}
       {!error && list.length === 0 && (
-        <div className="mt-6 rounded-2xl border border-dashed border-slate-300 bg-[var(--card-bg)] px-6 py-12 text-center dark:border-slate-700">
-          <p className="font-semibold text-slate-800 dark:text-slate-200">
+        <div className="mt-6 rounded-2xl border border-dashed border-slate-300 bg-[var(--card-bg)] px-6 py-12 text-center">
+          <p className="font-semibold text-slate-800">
             {hasFilter ? 'Belum ada lomba yang cocok dengan filter ini.' : 'Belum ada lomba aktif.'}
           </p>
-          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+          <p className="mt-1 text-sm text-slate-500">
             {hasFilter ? 'Coba longgarkan kata kunci atau rentang waktunya.' : 'Ketahui lomba yang belum terdaftar? Usulkan agar temanmu ikut serta.'}
           </p>
           <div className="mt-5 flex flex-wrap justify-center gap-2">
             {hasFilter ? (
-              <Link href="/lomba" className="inline-flex min-h-[44px] items-center rounded-[10px] border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 active:scale-[0.98] dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800">
+              <Link href="/lomba" className="inline-flex min-h-[44px] items-center rounded-[10px] border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 active:scale-[0.98]">
                 Hapus filter
               </Link>
             ) : null}
             {!user ? null : hasFilter ? null : (
-              <Link href="/lomba/usul" className="inline-flex min-h-[44px] items-center rounded-[10px] border border-indigo-600 px-4 py-2.5 text-sm font-semibold text-indigo-600 transition hover:bg-indigo-50 active:scale-[0.98] dark:hover:bg-indigo-950">
+              <Link href="/lomba/usul" className="inline-flex min-h-[44px] items-center rounded-[10px] border border-indigo-600 px-4 py-2.5 text-sm font-semibold text-indigo-600 transition hover:bg-indigo-50 active:scale-[0.98]">
                 Usulkan Lomba
               </Link>
             )}
