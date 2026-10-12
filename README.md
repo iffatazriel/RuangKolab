@@ -1,105 +1,80 @@
 # RuangKolab
 
-Platform kolaborasi mahasiswa: temukan lomba kampus, rekrut rekan tim, dan mulai proyek kolaborasi. Pilot satu kampus di Purwokerto, antarmuka Bahasa Indonesia, tanpa monetisasi.
+Platform kolaborasi mahasiswa: temukan lomba, bentuk tim, wujudkan proyek.
+Dibangun dengan Next.js + TypeScript + Tailwind CSS + Supabase.
 
-Dibangun sesuai [PRD v1](<PRD_ Platform Lomba & Kolaborasi Mahasiswa.md>): fokus P0, tanpa chat real-time, tanpa rating, tanpa fitur berbayar.
+## Persiapan
 
-## Teknologi
+1. Clone repo lalu install dependensi:
 
-| Lapisan | Pilihan |
-|---|---|
-| Framework | Next.js 16 (App Router, Server Components) + TypeScript |
-| Database, Auth | Supabase (PostgreSQL) dengan Row-Level Security penuh |
-| Styling | Tailwind CSS v4 + komponen internal (`src/components/ui`) |
-| Motion | `motion` (token terpusat di `src/lib/motion.ts`) |
-| Ikon | `@phosphor-icons/react` |
-| Hosting target | Vercel |
+   ```bash
+   npm install
+   ```
 
-## Struktur
+2. Salin `.env.local.example` menjadi `.env.local`, lalu isi nilainya dari
+   dashboard Supabase (Project Settings → API):
 
-```
-app/                  # Rute Next.js App Router
-  lomba/ tim/ proyek/ #   katalog + detail + form
-  dashboard/          #   pusat aktivitas (sidebar, notifikasi)
-  moderasi/           #   panel admin/moderator
-  api/account/        #   hapus akun (service role, server-only)
-  auth/callback/      #   penukar kode OAuth/reset
-src/
-  components/         #   ui/, layout/, motion/
-  lib/                #   supabase client/server, errors, motion, types
-supabase/migrations/  #   001-007, urut sesuai nomor
-scripts/              #   migrate.mjs, seed.mjs
-```
+   | Variabel | Kegunaan |
+   | --- | --- |
+   | `NEXT_PUBLIC_SUPABASE_URL` | URL proyek Supabase |
+   | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Anon key (aman untuk klien) |
+   | `SUPABASE_SERVICE_ROLE_KEY` | Service role key — **rahasia, hanya untuk script server** |
 
-## Menjalankan Lokal
+3. Jalankan migrasi database **berurutan** (`001` → `007`) lewat
+   Supabase Dashboard → SQL Editor:
 
-```bash
-npm install
-cp .env.local.example .env.local   # isi nilainya
-npm run dev
-```
+   ```
+   supabase/migrations/001_initial_schema.sql
+   supabase/migrations/002_auth_trigger.sql
+   supabase/migrations/003_slot_counter_trigger.sql
+   supabase/migrations/004_rls_policies.sql
+   supabase/migrations/005_fixes_notifications_project_fields.sql
+   supabase/migrations/006_usulan_favorit_ratelimit.sql
+   supabase/migrations/007_notifikasi_link_dan_validasi.sql
+   ```
 
-Buka `http://localhost:3000`.
+4. (Opsional, untuk fase uji) Isi data contoh — 4 kampus + 30 lomba aktif:
 
-## Migrasi Database
+   ```bash
+   node scripts/seed.mjs          # lewati jika lomba sudah >= 30
+   node scripts/seed.mjs --force  # paksa tambah ulang
+   ```
 
-Migrasi dijalankan lewat **Supabase Dashboard → SQL Editor** (bukan script;
-DDL tidak bisa lewat REST). Salin isi file dari `supabase/migrations/`
-**urut sesuai nomor** (001 sampai 007) ke SQL Editor lalu Run satu per satu:
+5. Jalankan aplikasi:
 
-1. `001_initial_schema.sql` - tabel inti, enum, seed kampus + skills
-2. `002_auth_trigger.sql` - auto-buat profil saat signup
-3. `003_slot_counter_trigger.sql` - slot otomatis + cegah self-join
-4. `004_rls_policies.sql` - Row-Level Security
-5. `005_fixes_notifications_project_fields.sql` - perbaikan RLS, notifikasi, kolom proyek
-6. `006_usulan_favorit_ratelimit.sql` - usulan lomba, favorit, rate limit
-7. `007_notifikasi_link_dan_validasi.sql` - link notifikasi, validasi pengajuan
+   ```bash
+   npm run dev     # development di http://localhost:3000
+   npm run build   # verifikasi production build
+   npm run lint    # verifikasi eslint
+   ```
 
-Setelah itu, isi data contoh:
+## Login dengan Google (opsional)
 
-```bash
-node scripts/seed.mjs   # 4 kampus + 30 lomba contoh (idempoten)
-```
+Tombol login Google hanya berfungsi jika provider-nya diaktifkan:
 
-## Environment Variables
+1. Buka Supabase Dashboard → Authentication → Providers → Google → Enable.
+2. Isi Client ID dan Client Secret dari Google Cloud Console.
+3. Tambahkan URL callback `https://<domain-anda>/auth/callback`
+   (untuk lokal: `http://localhost:3000/auth/callback`).
 
-| Variabel | Dipakai di mana | Catatan |
-|---|---|---|
-| `NEXT_PUBLIC_SUPABASE_URL` | server + klien | Boleh publik |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | server + klien | Boleh publik, RLS yang menjaga data |
-| `SUPABASE_SERVICE_ROLE_KEY` | server saja | **Rahasia.** Hanya untuk `app/api/account` dan `scripts/` |
-
-## Data Contoh
-
-`scripts/seed.mjs` mengisi 30 lomba contoh dengan deadline relatif ke tanggal
-eksekusi, sehingga selalu aktif saat dijalankan. Nama penyelenggara dan tautan
-adalah contoh (domain `example.com`), bukan lomba sungguhan. Untuk pengujian
-tambahan: `node scripts/seed.mjs --force`.
-
-## Peran
-
-- `student`: default, lewat trigger signup
-- `moderator` / `admin`: ubah manual di SQL Editor
-  ```sql
-  update public.users set role = 'admin' where id = '<uuid>';
-  ```
-
-## Keamanan
-
-- Semua tabel memakai RLS; kontak WhatsApp terkunci sampai pengajuan diterima
-- Rate limit di level database: 5 postingan dan 10 pengajuan per 24 jam
-- Kunci service role tidak pernah dikirim ke klien
+Jika belum diaktifkan, aplikasi tetap berjalan normal dengan email + kata sandi.
 
 ## Deploy ke Vercel
 
-1. Import repo ke Vercel
-2. Isi ketiga environment variable di Project Settings
-3. Deploy; jalankan migrasi via SQL Editor dan seed sekali dari mesin lokal ke database produksi
+1. Import repo ke Vercel.
+2. Tambahkan ketiga environment variable di atas di Project Settings.
+3. Deploy. Migrasi database hanya perlu dijalankan sekali (lihat langkah 3).
 
-## Peta Fitur (PRD)
+## Struktur singkat
 
-- **Lomba**: katalog + filter (kategori, tingkat, deadline, biaya), detail, usulan lomba dengan persetujuan moderator, simpan ke minat
-- **Tim & Proyek**: buka rekrutmen, ajukan gabung, terima/tolak/batalkan, slot otomatis penuh, kontak WhatsApp terbuka setelah diterima
-- **Dashboard**: notifikasi in-app, pengajuan masuk, status lamaran, minat, usulan
-- **Moderasi**: antrean usulan lomba, laporan konten
-- **Akun**: email + kata sandi, reset sandi, hapus akun
+- `app/` — rute Next.js App Router (lomba, tim, proyek, dashboard, moderasi, auth)
+- `src/components/` — komponen UI, layout, motion
+- `src/lib/` — client Supabase, tipe, error, util
+- `supabase/migrations/` — skema database + RLS + trigger (sumber kebenaran skema)
+- `scripts/seed.mjs` — data contoh fase uji
+
+## Catatan
+
+- Peran `admin`/`moderator` diatur manual di tabel `users` lewat SQL Editor.
+- Batas laju: maksimal 5 postingan dan 10 pengajuan per pengguna per 24 jam
+  (ditegakkan trigger database, pesan ramah di form).
