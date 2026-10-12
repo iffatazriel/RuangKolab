@@ -168,8 +168,8 @@ export function SnapRow({ children, label }: { children: ReactNode; label: strin
 
 export function SnapCard({ children, className = '' }: { children: ReactNode; className?: string }) {
   return (
-    // Lebar mengikuti grid lomba: ~1 kolom penuh di HP, 360px di desktop
-    <div className={`w-[78%] max-w-[340px] shrink-0 snap-start pl-4 first:pl-0 sm:pl-5 sm:first:pl-0 lg:w-[360px] ${className}`}>
+    // Lebar kartu ringkas: ~70% layar HP, 300px desktop
+    <div className={`w-[70%] max-w-[300px] shrink-0 snap-start pl-4 first:pl-0 sm:pl-5 sm:first:pl-0 lg:w-[300px] ${className}`}>
       {children}
     </div>
   )
