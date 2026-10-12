@@ -54,6 +54,14 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Cegah scroll horizontal di HP tanpa merusak position: sticky.
+   `clip` (bukan `hidden`) tidak membuat scroll-container baru,
+   jadi elemen sticky tetap menempel. Didukung Safari 16+. */
+html,
+body {
+  overflow-x: clip;
+}
+
 /* Custom interactive input transition & focus ring (aksen brand) */
 .custom-input {
   transition: border-color 0.15s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.15s cubic-bezier(0.16, 1, 0.3, 1);

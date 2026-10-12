@@ -28,13 +28,25 @@ const ICONS = {
 export function HowStickyStack({ steps }: { steps: HowStep[] }) {
   const ref = useRef<HTMLDivElement>(null)
   const reduce = useReducedMotion()
-  const instanceId = useId().replace(/:/g, '')
+  const instanceId = useId().replace(/[^a-zA-Z0-9_-]/g, '')
   const cardClass = `how-card-${instanceId}`
   const innerClass = `how-card-inner-${instanceId}`
 
   useEffect(() => {
+    // Pinning hanya masuk akal di layar besar: di HP (<lg) tampilkan
+    // daftar biasa agar tidak ada area pin-spacer kosong yang membingungkan.
+    // matchMedia (bukan scroll listener) + cleanup saat breakpoint berubah.
     if (reduce || !ref.current || steps.length <= 1) return
-    const ctx = gsap.context(() => {
+    const mq = window.matchMedia('(min-width: 1024px)')
+    let ctx: gsap.Context | null = null
+    function setup() {
+      ctx?.revert()
+      ctx = null
+      if (!mq.matches || !ref.current) {
+        ScrollTrigger.refresh()
+        return
+      }
+      ctx = gsap.context(() => {
       const cardEls = gsap.utils.toArray<HTMLElement>(`.${cardClass}`)
       cardEls.forEach((card, i) => {
         if (i === cardEls.length - 1) return
@@ -64,7 +76,18 @@ export function HowStickyStack({ steps }: { steps: HowStep[] }) {
         })
       })
     }, ref)
-    return () => ctx.revert()
+    }
+    setup()
+    const onChange = () => setup()
+    if (typeof mq.addEventListener === 'function') {
+      mq.addEventListener('change', onChange)
+    }
+    return () => {
+      if (typeof mq.removeEventListener === 'function') {
+        mq.removeEventListener('change', onChange)
+      }
+      ctx?.revert()
+    }
   }, [reduce, steps.length, cardClass, innerClass])
 
   return (
