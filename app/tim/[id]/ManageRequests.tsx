@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -76,15 +76,15 @@ export function ManageRequests({ postId, requests, postStatus }: Props) {
 
       {pending.length > 0 && (
         <div>
-          <h3 className="text-sm font-semibold text-slate-700">Pengajuan Pending ({pending.length})</h3>
+          <h3 className="text-sm font-semibold text-stone-700 dark:text-stone-300">Pengajuan Pending ({pending.length})</h3>
           <div className="mt-3 flex flex-col gap-3">
             {pending.map((r) => (
-              <div key={r.id} className="rounded-lg border border-slate-200 bg-white p-4">
+              <div key={r.id} className="rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 p-4">
                 <div className="flex items-center justify-between gap-4">
                   <div>
-                    <p className="font-medium text-slate-900">{r.nama}</p>
-                    {r.jurusan && <p className="text-xs text-slate-500">{r.jurusan}</p>}
-                    {r.pesan && <p className="mt-1 text-sm text-slate-700">&ldquo;{r.pesan}&rdquo;</p>}
+                    <p className="font-medium text-stone-900 dark:text-stone-100">{r.nama}</p>
+                    {r.jurusan && <p className="text-xs text-stone-500 dark:text-stone-400">{r.jurusan}</p>}
+                    {r.pesan && <p className="mt-1 text-sm text-stone-700 dark:text-stone-300">&ldquo;{r.pesan}&rdquo;</p>}
                   </div>
                   <div className="flex shrink-0 gap-2">
                     <Button
@@ -113,17 +113,17 @@ export function ManageRequests({ postId, requests, postStatus }: Props) {
 
       {accepted.length > 0 && (
         <div>
-          <h3 className="text-sm font-semibold text-slate-700">Anggota Diterima ({accepted.length})</h3>
+          <h3 className="text-sm font-semibold text-stone-700 dark:text-stone-300">Anggota Diterima ({accepted.length})</h3>
           <div className="mt-3 flex flex-col gap-2">
             {accepted.map((r) => (
-              <div key={r.id} className="rounded-lg bg-green-50 p-3 text-sm">
-                <p className="font-medium text-slate-900">{r.nama}</p>
+              <div key={r.id} className="rounded-2xl bg-emerald-50 p-3 text-sm dark:bg-emerald-950">
+                <p className="font-medium text-stone-900 dark:text-stone-100">{r.nama}</p>
                 {r.whatsapp && (
                   <a
                     href={`https://wa.me/${r.whatsapp.replace(/^0/, '62')}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-green-700 underline"
+                    className="text-emerald-700 underline dark:text-emerald-400"
                   >
                     WhatsApp: {r.whatsapp}
                   </a>
@@ -135,7 +135,7 @@ export function ManageRequests({ postId, requests, postStatus }: Props) {
       )}
 
       {pending.length === 0 && accepted.length === 0 && (
-        <p className="text-sm text-slate-500">Belum ada pengajuan masuk.</p>
+        <p className="text-sm text-stone-500 dark:text-stone-400">Belum ada pengajuan masuk.</p>
       )}
     </div>
   )

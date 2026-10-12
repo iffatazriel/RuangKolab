@@ -102,16 +102,16 @@ export default async function TimDetailPage({ params }: { params: Promise<{ id: 
 
   return (
     <PageContainer width="wide">
-      <nav aria-label="Jejak navigasi" className="mb-4 text-sm text-slate-500">
-        <Link href="/tim" className="inline-flex min-h-[44px] items-center hover:text-indigo-600">Cari Tim</Link>
+      <nav aria-label="Jejak navigasi" className="mb-4 text-sm text-stone-500 dark:text-stone-400">
+        <Link href="/tim" className="inline-flex min-h-[44px] items-center hover:text-brand-600 dark:hover:text-brand-400">Cari Tim</Link>
         <span aria-hidden="true"> / </span>
-        <span className="text-slate-700">{post.judul}</span>
+        <span className="text-stone-700 dark:text-stone-300">{post.judul}</span>
       </nav>
 
       <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-12">
         {/* KONTEN UTAMA */}
         <div className="space-y-6 lg:col-span-8">
-          <article className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm sm:p-8">
+          <article className="rounded-2xl border border-stone-200 dark:border-stone-800/80 bg-white dark:bg-stone-900 p-6 shadow-sm sm:p-8">
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
@@ -120,7 +120,7 @@ export default async function TimDetailPage({ params }: { params: Promise<{ id: 
                     {post.status === 'open' ? 'Membuka rekrutmen' : post.status === 'full' ? 'Slot penuh' : 'Ditutup'}
                   </StatusPill>
                 </div>
-                <h1 className="mt-3 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">{post.judul}</h1>
+                <h1 className="mt-3 text-2xl font-bold tracking-tight text-stone-900 dark:text-stone-100 sm:text-3xl">{post.judul}</h1>
               </div>
               {user && !isOwner && <ReportButton targetType="post" targetId={post.id} />}
             </div>
@@ -128,27 +128,27 @@ export default async function TimDetailPage({ params }: { params: Promise<{ id: 
             {compTyped && (
               <Link
                 href={`/lomba/${compTyped.id}`}
-                className="group mt-5 flex min-h-[44px] items-center justify-between gap-3 rounded-xl border border-indigo-100 bg-indigo-50/60 px-4 py-3 transition hover:bg-indigo-50"
+                className="group mt-5 flex min-h-[44px] items-center justify-between gap-3 rounded-xl border border-brand-100 bg-brand-50 dark:bg-brand-950/60 px-4 py-3 transition hover:bg-brand-50 dark:hover:bg-brand-950 dark:hover:bg-brand-950"
               >
                 <div className="min-w-0">
-                  <p className="text-xs font-medium text-slate-500">Untuk lomba</p>
-                  <p className="truncate text-sm font-semibold text-indigo-800 group-hover:underline">{compTyped.judul}</p>
+                  <p className="text-xs font-medium text-stone-500 dark:text-stone-400">Untuk lomba</p>
+                  <p className="truncate text-sm font-semibold text-brand-800 group-hover:underline">{compTyped.judul}</p>
                 </div>
-                <ArrowRight size={18} className="shrink-0 text-indigo-700" />
+                <ArrowRight size={18} className="shrink-0 text-brand-700 dark:text-brand-300" />
               </Link>
             )}
 
             <div className="mt-6">
-              <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900">Peran dan kebutuhan</h2>
-              <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-slate-700">{post.deskripsi}</p>
+              <h2 className="text-sm font-bold uppercase tracking-wider text-stone-900 dark:text-stone-100">Peran dan kebutuhan</h2>
+              <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-stone-700 dark:text-stone-300">{post.deskripsi}</p>
             </div>
 
             {requiredSkills.length > 0 && (
               <div className="mt-6">
-                <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900">Keahlian yang dicari</h2>
+                <h2 className="text-sm font-bold uppercase tracking-wider text-stone-900 dark:text-stone-100">Keahlian yang dicari</h2>
                 <ul className="mt-2 flex flex-wrap gap-2">
                   {requiredSkills.map((s) => (
-                    <li key={s.id} className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700">
+                    <li key={s.id} className="rounded-full bg-stone-100 dark:bg-stone-800 px-3 py-1 text-xs font-medium text-stone-700 dark:text-stone-300">
                       {s.nama}
                     </li>
                   ))}
@@ -156,20 +156,20 @@ export default async function TimDetailPage({ params }: { params: Promise<{ id: 
               </div>
             )}
 
-            <dl className="mt-6 grid grid-cols-2 gap-4 border-t border-slate-100 pt-5 text-sm">
+            <dl className="mt-6 grid grid-cols-2 gap-4 border-t border-stone-100 dark:border-stone-800 pt-5 text-sm">
               <div>
-                <dt className="text-xs font-medium text-slate-500">Inisiator</dt>
-                <dd className="mt-1 font-semibold text-slate-900">
+                <dt className="text-xs font-medium text-stone-500 dark:text-stone-400">Inisiator</dt>
+                <dd className="mt-1 font-semibold text-stone-900 dark:text-stone-100">
                   {ownerTyped?.nama}
                   {ownerTyped?.jurusan && (
-                    <span className="block text-xs font-normal text-slate-500">
+                    <span className="block text-xs font-normal text-stone-500 dark:text-stone-400">
                       {ownerTyped.jurusan}{ownerTyped.angkatan ? `, angkatan ${ownerTyped.angkatan}` : ''}
                     </span>
                   )}
                 </dd>
               </div>
               <div>
-                <dt className="text-xs font-medium text-slate-500">Slot tersedia</dt>
+                <dt className="text-xs font-medium text-stone-500 dark:text-stone-400">Slot tersedia</dt>
                 <dd className="mt-1">
                   <SlotBar terisi={post.slot_terisi} total={post.slot_total} className="max-w-[240px]" />
                 </dd>
@@ -179,7 +179,7 @@ export default async function TimDetailPage({ params }: { params: Promise<{ id: 
 
           {isOwner && (
             <section aria-labelledby="kelola-pengajuan" className="space-y-4">
-              <h2 id="kelola-pengajuan" className="text-lg font-bold tracking-tight text-slate-900">Kelola pengajuan</h2>
+              <h2 id="kelola-pengajuan" className="text-lg font-bold tracking-tight text-stone-900 dark:text-stone-100">Kelola pengajuan</h2>
               <ManageRequests postId={post.id} requests={acceptedMembers} postStatus={post.status} />
             </section>
           )}
@@ -192,7 +192,7 @@ export default async function TimDetailPage({ params }: { params: Promise<{ id: 
           )}
 
           {!isOwner && user && post.status === 'open' && (
-            <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
+            <div className="rounded-2xl border border-stone-200 dark:border-stone-800/80 bg-white dark:bg-stone-900 p-5 shadow-sm">
               <AjukanGabungForm
                 postId={post.id}
                 existingStatus={userRequest?.status ?? null}
@@ -202,18 +202,18 @@ export default async function TimDetailPage({ params }: { params: Promise<{ id: 
           )}
 
           {!isOwner && user && post.status !== 'open' && (
-            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5 text-sm text-slate-700">
+            <div className="rounded-2xl border border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-900 p-5 text-sm text-stone-700 dark:text-stone-300">
               Postingan ini sudah tidak membuka pendaftaran.
             </div>
           )}
 
           {!user && post.status === 'open' && (
-            <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
-              <p className="text-sm font-semibold text-slate-900">Ingin bergabung?</p>
-              <p className="mt-1 text-sm text-slate-600">Masuk dulu untuk mengajukan gabung ke tim ini.</p>
+            <div className="rounded-2xl border border-stone-200 dark:border-stone-800/80 bg-white dark:bg-stone-900 p-5 shadow-sm">
+              <p className="text-sm font-semibold text-stone-900 dark:text-stone-100">Ingin bergabung?</p>
+              <p className="mt-1 text-sm text-stone-600 dark:text-stone-400">Masuk dulu untuk mengajukan gabung ke tim ini.</p>
               <Link
                 href={`/masuk?redirect=/tim/${post.id}`}
-                className="mt-4 inline-flex min-h-[48px] w-full items-center justify-center rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700 active:scale-[0.98]"
+                className="mt-4 inline-flex min-h-[48px] w-full items-center justify-center rounded-full bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-700 active:scale-[0.98]"
               >
                 Masuk untuk mengajukan
               </Link>
@@ -221,9 +221,9 @@ export default async function TimDetailPage({ params }: { params: Promise<{ id: 
           )}
 
           {isOwner && (
-            <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
-              <p className="text-sm font-semibold text-slate-900">Postingan milikmu</p>
-              <p className="mt-1 text-sm text-slate-600">Pengajuan masuk ada di bagian kelola pengajuan.</p>
+            <div className="rounded-2xl border border-stone-200 dark:border-stone-800/80 bg-white dark:bg-stone-900 p-5 shadow-sm">
+              <p className="text-sm font-semibold text-stone-900 dark:text-stone-100">Postingan milikmu</p>
+              <p className="mt-1 text-sm text-stone-600 dark:text-stone-400">Pengajuan masuk ada di bagian kelola pengajuan.</p>
               <div className="mt-4">
                 <DeletePostButton postId={post.id} redirectTo="/dashboard" />
               </div>

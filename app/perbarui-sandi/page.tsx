@@ -40,17 +40,17 @@ export default function PerbaruiSandiPage() {
 
   return (
     <div className="flex min-h-[70vh] items-center justify-center p-4 sm:p-6">
-      <div className="w-full max-w-md rounded-2xl border border-slate-100 bg-white p-6 shadow-sm sm:p-7">
-        <h1 className="text-2xl font-extrabold tracking-tight text-slate-900">
+      <div className="w-full max-w-md rounded-2xl border border-stone-100 dark:border-stone-800 bg-white dark:bg-stone-900 p-6 shadow-sm sm:p-7">
+        <h1 className="text-2xl font-extrabold tracking-tight text-stone-900 dark:text-stone-100">
           Atur Kata Sandi Baru
         </h1>
-        <p className="mt-1 text-xs text-slate-500">
+        <p className="mt-1 text-xs text-stone-500 dark:text-stone-400">
           Masukkan kata sandi baru untuk akunmu (minimal 8 karakter).
         </p>
 
         <form className="mt-4 space-y-3.5" onSubmit={submit}>
           <div>
-            <label htmlFor="password" className="mb-1 block text-xs font-medium text-slate-700">
+            <label htmlFor="password" className="mb-1 block text-xs font-medium text-stone-700 dark:text-stone-300">
               Kata Sandi Baru
             </label>
             <input
@@ -62,11 +62,11 @@ export default function PerbaruiSandiPage() {
               placeholder="Minimal 8 karakter"
               value={form.password}
               onChange={change}
-              className="custom-input w-full rounded-lg border border-slate-200 px-3 py-2 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none"
+              className="custom-input w-full rounded-[10px] border border-stone-200 dark:border-stone-800 px-3 py-2 text-xs text-stone-800 dark:text-stone-200 placeholder:text-stone-400 focus:outline-none"
             />
           </div>
           <div>
-            <label htmlFor="konfirmasi" className="mb-1 block text-xs font-medium text-slate-700">
+            <label htmlFor="konfirmasi" className="mb-1 block text-xs font-medium text-stone-700 dark:text-stone-300">
               Konfirmasi Kata Sandi
             </label>
             <input
@@ -78,25 +78,25 @@ export default function PerbaruiSandiPage() {
               placeholder="Ketik ulang kata sandi"
               value={form.konfirmasi}
               onChange={change}
-              className="custom-input w-full rounded-lg border border-slate-200 px-3 py-2 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none"
+              className="custom-input w-full rounded-[10px] border border-stone-200 dark:border-stone-800 px-3 py-2 text-xs text-stone-800 dark:text-stone-200 placeholder:text-stone-400 focus:outline-none"
             />
           </div>
           {error && (
-            <div role="alert" className="rounded-lg border border-rose-200 bg-rose-50 px-3.5 py-2.5 text-xs text-rose-700">
+            <div role="alert" className="rounded-[10px] border border-rose-200 dark:border-rose-800 bg-rose-50 dark:bg-rose-950 px-3.5 py-2.5 text-xs text-rose-700 dark:text-rose-400">
               {error}
             </div>
           )}
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-lg bg-indigo-600 px-4 py-2.5 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-indigo-300"
+            className="w-full rounded-full bg-brand-600 px-4 py-2.5 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-brand-700 disabled:cursor-not-allowed disabled:bg-brand-300 dark:disabled:bg-brand-800"
           >
             {loading ? 'Menyimpan...' : 'Simpan Kata Sandi'}
           </button>
         </form>
 
-        <p className="mt-4 text-center text-xs text-slate-500">
-          <Link href="/masuk" className="font-semibold text-indigo-600 hover:underline">
+        <p className="mt-4 text-center text-xs text-stone-500 dark:text-stone-400">
+          <Link href="/masuk" className="font-semibold text-brand-600 dark:text-brand-400 hover:underline">
             Kembali Masuk
           </Link>
         </p>

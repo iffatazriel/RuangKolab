@@ -4,13 +4,14 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { UsersThree, WarningCircle } from '@phosphor-icons/react/dist/ssr'
 
 const inputBase =
-  'w-full rounded-lg border px-3.5 py-2.5 text-sm outline-none transition placeholder:text-slate-400 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600'
+  'w-full rounded-[10px] border px-3.5 py-2.5 text-sm outline-none transition placeholder:text-stone-400 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-600'
 
 function FieldError({ message }: { message?: string }) {
   if (!message) return null
-  return <p role="alert" className="mt-1 text-xs font-medium tracking-tight text-rose-600">{message}</p>
+  return <p role="alert" className="mt-1 text-xs font-medium tracking-tight text-rose-600 dark:text-rose-400">{message}</p>
 }
 
 const previewItems = [
@@ -30,7 +31,7 @@ const previewItems = [
   },
   {
     status: 'Ditutup',
-    pill: 'bg-slate-400 text-white',
+    pill: 'bg-stone-400 text-white',
     title: 'Seminar Startup Mahasiswa',
     desc: 'Selesai: 30 Apr 2026',
     meta: 'Arsip',
@@ -122,38 +123,31 @@ export default function DaftarPage() {
         {/* BEGIN: RegistrationCard (Left Column) */}
         <section
           aria-labelledby="form-title"
-          className="rounded-2xl border border-slate-200/70 bg-white p-6 shadow-sm md:p-9 lg:col-span-7"
+          className="rounded-2xl border border-stone-200 dark:border-stone-800/70 bg-white dark:bg-stone-900 p-6 shadow-sm md:p-9 lg:col-span-7"
         >
           <div className="flex items-start justify-between pb-2">
             <div>
-              <h1 id="form-title" className="text-3xl font-extrabold tracking-tight text-slate-900">
+              <h1 id="form-title" className="text-3xl font-extrabold tracking-tight text-stone-900 dark:text-stone-100">
                 Buat Akun Baru
               </h1>
-              <p className="mt-1.5 text-sm font-medium text-slate-600">
+              <p className="mt-1.5 text-sm font-medium text-stone-600 dark:text-stone-400">
                 Sudah punya akun?{' '}
-                <Link href="/masuk" className="font-semibold text-indigo-600 hover:underline">
+                <Link href="/masuk" className="font-semibold text-brand-600 dark:text-brand-400 hover:underline">
                   Masuk
                 </Link>
               </p>
             </div>
             <div
               aria-hidden="true"
-              className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600"
+              className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-50 dark:bg-brand-950 text-brand-600 dark:text-brand-400"
             >
-              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                />
-              </svg>
+              <UsersThree size={20} weight="duotone" aria-hidden="true" />
             </div>
           </div>
 
           <form className="mt-6 space-y-4" onSubmit={submit} noValidate>
             <div>
-              <label htmlFor="nama" className="mb-1.5 block text-xs font-bold tracking-wide text-slate-700">
+              <label htmlFor="nama" className="mb-1.5 block text-xs font-bold tracking-wide text-stone-700 dark:text-stone-300">
                 Nama Lengkap
               </label>
               <input
@@ -165,11 +159,11 @@ export default function DaftarPage() {
                 value={form.nama}
                 onChange={change}
                 onBlur={blur}
-                className={`${inputBase} border-slate-300`}
+                className={`${inputBase} border-stone-300 dark:border-stone-700`}
               />
             </div>
             <div>
-              <label htmlFor="email" className="mb-1.5 block text-xs font-bold tracking-wide text-slate-700">
+              <label htmlFor="email" className="mb-1.5 block text-xs font-bold tracking-wide text-stone-700 dark:text-stone-300">
                 Email
               </label>
               <input
@@ -181,7 +175,7 @@ export default function DaftarPage() {
                 value={form.email}
                 onChange={change}
                 onBlur={blur}
-                className={`${inputBase} border-slate-300`}
+                className={`${inputBase} border-stone-300 dark:border-stone-700`}
               />
               <FieldError
                 message={
@@ -194,7 +188,7 @@ export default function DaftarPage() {
               />
             </div>
             <div>
-              <label htmlFor="password" className="mb-1.5 block text-xs font-bold tracking-wide text-slate-700">
+              <label htmlFor="password" className="mb-1.5 block text-xs font-bold tracking-wide text-stone-700 dark:text-stone-300">
                 Kata Sandi
               </label>
               <input
@@ -206,14 +200,14 @@ export default function DaftarPage() {
                 value={form.password}
                 onChange={change}
                 onBlur={blur}
-                className={`${inputBase} border-slate-300`}
+                className={`${inputBase} border-stone-300 dark:border-stone-700`}
               />
               <FieldError message={passwordShort ? 'Kata sandi minimal 8 karakter' : undefined} />
             </div>
             <div>
               <label
                 htmlFor="konfirmasi"
-                className="mb-1.5 block text-xs font-bold tracking-wide text-slate-700"
+                className="mb-1.5 block text-xs font-bold tracking-wide text-stone-700 dark:text-stone-300"
               >
                 Konfirmasi Kata Sandi
               </label>
@@ -226,7 +220,7 @@ export default function DaftarPage() {
                 value={form.konfirmasi}
                 onChange={change}
                 onBlur={blur}
-                className={`${inputBase} border-slate-300`}
+                className={`${inputBase} border-stone-300 dark:border-stone-700`}
               />
               <FieldError message={konfirmasiMismatch ? 'Konfirmasi tidak cocok' : undefined} />
             </div>
@@ -237,21 +231,17 @@ export default function DaftarPage() {
                 name="terms"
                 type="checkbox"
                 required
-                className="h-4 w-4 cursor-pointer rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                className="h-4 w-4 cursor-pointer rounded border-stone-300 dark:border-stone-700 text-brand-600 dark:text-brand-400 focus:ring-brand-500"
               />
-              <label htmlFor="terms" className="cursor-pointer text-xs font-normal text-slate-600 select-none">
-                Saya menyetujui <span className="font-medium text-slate-700">Syarat &amp; Ketentuan</span> dan{' '}
-                <span className="font-medium text-slate-700">Kebijakan Privasi</span>
+              <label htmlFor="terms" className="cursor-pointer text-xs font-normal text-stone-600 dark:text-stone-400 select-none">
+                Saya menyetujui <span className="font-medium text-stone-700 dark:text-stone-300">Syarat &amp; Ketentuan</span> dan{' '}
+                <span className="font-medium text-stone-700 dark:text-stone-300">Kebijakan Privasi</span>
               </label>
             </div>
 
             {submitError && (
-              <div role="alert" className="flex items-start gap-2 rounded-lg border border-rose-200 bg-rose-50 px-3.5 py-2.5 text-xs text-rose-700">
-                <svg role="alert" className="mt-0.5 h-4 w-4 shrink-0 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <circle cx="12" cy="12" r="10" strokeWidth="2" />
-                  <line strokeLinecap="round" strokeWidth="2" x1="12" x2="12" y1="8" y2="12" />
-                  <circle cx="12" cy="16" fill="currentColor" r="1" />
-                </svg>
+              <div role="alert" className="flex items-start gap-2 rounded-[10px] border border-rose-200 dark:border-rose-800 bg-rose-50 dark:bg-rose-950 px-3.5 py-2.5 text-xs text-rose-700 dark:text-rose-400">
+                <WarningCircle size={16} weight="bold" className="mt-0.5 shrink-0 text-rose-500" aria-hidden="true" />
                 <span>{submitError}</span>
               </div>
             )}
@@ -259,14 +249,14 @@ export default function DaftarPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 active:scale-[0.99] disabled:cursor-not-allowed disabled:bg-indigo-300"
+              className="w-full rounded-full bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-700 active:scale-[0.99] disabled:cursor-not-allowed disabled:bg-brand-300 dark:disabled:bg-brand-800"
             >
               {loading ? 'Mendaftarkan...' : 'Daftar'}
             </button>
 
             <div className="relative flex items-center justify-center pt-2 pb-1">
-              <div className="absolute w-full border-t border-slate-200" />
-              <span className="relative bg-white px-3 text-[11px] font-semibold tracking-wider text-slate-400 uppercase">
+              <div className="absolute w-full border-t border-stone-200 dark:border-stone-800" />
+              <span className="relative bg-white dark:bg-stone-900 px-3 text-[11px] font-semibold tracking-wider text-stone-400 uppercase">
                 atau daftar dengan
               </span>
             </div>
@@ -276,7 +266,7 @@ export default function DaftarPage() {
                 type="button"
                 onClick={daftarGoogle}
                 disabled={oauthLoading}
-                className="flex items-center justify-center gap-2 rounded-lg border border-slate-300 px-3 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-50 disabled:opacity-60"
+                className="flex items-center justify-center gap-2 rounded-full border border-stone-300 dark:border-stone-700 px-3 py-2 text-xs font-semibold text-stone-700 dark:text-stone-300 transition hover:bg-stone-50 dark:hover:bg-stone-900 disabled:opacity-60"
               >
                 <svg className="h-4 w-4" viewBox="0 0 24 24">
                   <path d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z" fill="#4285F4" />
@@ -288,13 +278,13 @@ export default function DaftarPage() {
               </button>
               <Link
                 href="/lomba"
-                className="flex items-center justify-center rounded-lg border border-slate-300 px-3 py-2 text-center text-xs font-semibold text-indigo-600 transition hover:bg-slate-50"
+                className="flex items-center justify-center rounded-full border border-stone-300 dark:border-stone-700 px-3 py-2 text-center text-xs font-semibold text-brand-600 dark:text-brand-400 transition hover:bg-stone-50 dark:hover:bg-stone-900"
               >
                 Daftar sebagai Mahasiswa
               </Link>
             </div>
 
-            <p className="pt-3 text-center text-[11px] leading-relaxed text-slate-500 sm:text-left">
+            <p className="pt-3 text-center text-[11px] leading-relaxed text-stone-500 dark:text-stone-400 sm:text-left">
               Dengan mendaftar, kamu setuju dengan kebijakan kami dan menyetujui bahwa RuangKolab
               dapat mengirim pemberitahuan terkait akun dan event.
             </p>
@@ -303,17 +293,17 @@ export default function DaftarPage() {
         {/* END: RegistrationCard */}
 
         {/* BEGIN: InfoPreviewCard (Right Column) */}
-        <aside className="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-sm md:p-6 lg:col-span-5">
-          <div className="mb-5 flex aspect-[16/9] items-center justify-center overflow-hidden rounded-xl border border-slate-100 bg-gradient-to-br from-slate-600 via-slate-700 to-slate-900 shadow-inner">
-            <span className="px-6 text-center text-sm font-bold text-white">
+        <aside className="rounded-2xl border border-stone-200 dark:border-stone-800/70 bg-white dark:bg-stone-900 p-5 shadow-sm md:p-6 lg:col-span-5">
+          <div className="mb-5 flex aspect-[16/9] items-center justify-center overflow-hidden rounded-xl border border-brand-100 bg-brand-50 px-6 text-center dark:border-brand-900 dark:bg-brand-950">
+            <p className="max-w-xs text-sm font-bold leading-relaxed text-brand-800 dark:text-brand-200">
               Suasana Kolaborasi Mahasiswa
-            </span>
+            </p>
           </div>
           <div className="mb-5 space-y-1">
-            <h2 className="text-base font-bold tracking-tight text-slate-900">
+            <h2 className="text-base font-bold tracking-tight text-stone-900 dark:text-stone-100">
               Temukan Tim &amp; Kompetisi
             </h2>
-            <p className="text-xs leading-relaxed text-slate-600">
+            <p className="text-xs leading-relaxed text-stone-600 dark:text-stone-400">
               Jelajahi kompetisi kampus, buka lowongan anggota, dan kelola milestone proyek tim kamu.
             </p>
           </div>
@@ -321,7 +311,7 @@ export default function DaftarPage() {
             {previewItems.map((item) => (
               <div
                 key={item.title}
-                className="flex items-center justify-between border-b border-slate-100 py-1.5 text-xs last:border-b-0"
+                className="flex items-center justify-between border-b border-stone-100 dark:border-stone-800 py-1.5 text-xs last:border-b-0"
               >
                 <div className="flex items-center gap-2.5">
                   <span
@@ -330,33 +320,33 @@ export default function DaftarPage() {
                     {item.status}
                   </span>
                   <div>
-                    <p className="leading-tight font-bold text-slate-900">{item.title}</p>
-                    <p className="text-[10px] text-slate-500">{item.desc}</p>
+                    <p className="leading-tight font-bold text-stone-900 dark:text-stone-100">{item.title}</p>
+                    <p className="text-[10px] text-stone-500 dark:text-stone-400">{item.desc}</p>
                   </div>
                 </div>
-                <span className="pl-2 text-[10px] font-medium whitespace-nowrap text-slate-500">
+                <span className="pl-2 text-[10px] font-medium whitespace-nowrap text-stone-500 dark:text-stone-400">
                   {item.meta}
                 </span>
               </div>
             ))}
-            <div className="flex items-center justify-between border-b border-slate-100 py-1.5 text-xs last:border-b-0">
+            <div className="flex items-center justify-between border-b border-stone-100 dark:border-stone-800 py-1.5 text-xs last:border-b-0">
               <div className="flex items-center gap-2.5">
-                <span className="text-[11px] font-bold whitespace-nowrap text-indigo-600">
+                <span className="text-[11px] font-bold whitespace-nowrap text-brand-600 dark:text-brand-400">
                   Kategori: Kompetisi
                 </span>
                 <div className="ml-1">
-                  <p className="leading-tight font-bold text-slate-900">Lomba Ide Bisnis</p>
-                  <p className="text-[10px] text-slate-500">Kategori: Kewirausahaan</p>
+                  <p className="leading-tight font-bold text-stone-900 dark:text-stone-100">Lomba Ide Bisnis</p>
+                  <p className="text-[10px] text-stone-500 dark:text-stone-400">Kategori: Kewirausahaan</p>
                 </div>
               </div>
-              <span className="pl-2 text-[10px] font-medium whitespace-nowrap text-slate-500">
+              <span className="pl-2 text-[10px] font-medium whitespace-nowrap text-stone-500 dark:text-stone-400">
                 12 items
               </span>
             </div>
           </div>
-          <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3 text-[11px] text-slate-400">
+          <div className="mt-4 flex items-center justify-between border-t border-stone-100 dark:border-stone-800 pt-3 text-[11px] text-stone-400">
             <span>Kompetisi terverifikasi BEM &amp; Prodi</span>
-            <Link href="/lomba" className="font-medium text-indigo-600 hover:underline">
+            <Link href="/lomba" className="font-medium text-brand-600 dark:text-brand-400 hover:underline">
               Lihat Semua â†’
             </Link>
           </div>

@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { createContext, useCallback, useContext, useMemo, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
@@ -32,7 +32,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
       {children}
       <div
         aria-live="polite"
-        className="pointer-events-none fixed left-1/2 top-4 z-[70] flex w-full max-w-sm -translate-x-1/2 flex-col gap-2 px-4"
+        className="pointer-events-none fixed left-1/2 top-4 z-[70] flex w-full max-w-sm -transtone-x-1/2 flex-col gap-2 px-4"
       >
         <AnimatePresence>
           {items.map((t) => (
@@ -46,14 +46,14 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
               role="status"
               className={`pointer-events-auto flex items-center gap-2.5 rounded-xl px-4 py-3 text-sm font-medium shadow-lg ring-1 ${
                 t.tone === 'success'
-                  ? 'bg-white text-slate-800 ring-emerald-200'
-                  : 'bg-white text-slate-800 ring-rose-200'
+                  ? 'bg-white dark:bg-stone-900 text-stone-800 dark:text-stone-200 ring-emerald-200 dark:ring-emerald-800'
+                  : 'bg-white dark:bg-stone-900 text-stone-800 dark:text-stone-200 ring-rose-200'
               }`}
             >
               {t.tone === 'success' ? (
-                <CheckCircle size={20} weight="fill" className="shrink-0 text-emerald-600" />
+                <CheckCircle size={20} weight="fill" className="shrink-0 text-emerald-600 dark:text-emerald-400" />
               ) : (
-                <WarningCircle size={20} weight="fill" className="shrink-0 text-rose-600" />
+                <WarningCircle size={20} weight="fill" className="shrink-0 text-rose-600 dark:text-rose-400" />
               )}
               {t.msg}
             </motion.div>

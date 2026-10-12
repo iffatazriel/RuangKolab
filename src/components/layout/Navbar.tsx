@@ -1,14 +1,17 @@
-import Link from 'next/link'
+﻿import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { LogoutButton } from './LogoutButton'
 import { NavbarShell } from '@/components/motion/LandingMotion'
 import { BadgePop } from '@/components/motion/AppMotion'
 import { NavLinks } from './NavLinks'
+import { MobileMenu } from './MobileMenu'
+import { Avatar } from '@/components/ui/Avatar'
+import { Bell } from '@phosphor-icons/react/dist/ssr'
 
 function Logo() {
   return (
     <Link href="/" className="group flex items-center space-x-2.5 font-bold tracking-tight">
-      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600 text-white shadow-sm transition-transform group-hover:scale-105">
+      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-600 text-white shadow-sm transition-transform group-hover:scale-105 dark:group-hover:bg-brand-500">
         <svg className="h-4.5 w-4.5 fill-current" viewBox="0 0 24 24" aria-hidden="true">
           <path
             d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"
@@ -20,7 +23,7 @@ function Logo() {
           />
         </svg>
       </div>
-      <span className="text-xl font-bold tracking-tight text-slate-900 transition-colors group-hover:text-indigo-600">
+      <span className="text-xl font-bold tracking-tight text-stone-900 transition-colors group-hover:text-brand-600 dark:group-hover:text-stone-100 dark:group-hover:text-brand-400">
         RuangKolab
       </span>
     </Link>
@@ -31,7 +34,6 @@ export async function Navbar() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  let userRole: string | null = null
   let userName: string | null = null
   let unreadCount = 0
   let isStaff = false
@@ -44,43 +46,45 @@ export async function Navbar() {
         .eq('user_id', user.id)
         .eq('dibaca', false),
     ])
-    userRole = profile?.role ?? null
     userName = profile?.nama ?? user.email ?? null
     unreadCount = count ?? 0
-    isStaff = userRole === 'admin' || userRole === 'moderator'
+    isStaff = profile?.role === 'admin' || profile?.role === 'moderator'
   }
 
   return (
     <NavbarShell
       left={
-        <div className="flex items-center gap-8">
+        <div className="flex items-center gap-3 md:gap-8">
+          <MobileMenu isLoggedIn={!!user} isStaff={isStaff} />
           <Logo />
           <NavLinks isAdmin={isStaff} />
         </div>
       }
       right={
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center gap-2 sm:gap-3">
           {user ? (
             <>
               <Link
                 href="/dashboard"
                 aria-label={`Notifikasi, ${unreadCount} belum dibaca`}
-                className="relative rounded-lg p-2 text-slate-600 transition-colors hover:bg-slate-50 hover:text-indigo-600"
+                className="relative inline-flex h-11 w-11 items-center justify-center rounded-full text-stone-600 transition-colors hover:bg-stone-100 hover:text-brand-600 dark:hover:text-stone-400 dark:hover:bg-stone-800 dark:hover:text-brand-400"
               >
-                <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M15 17h5l-1.4-1.4A2 2 0 0118 14.2V11a6 6 0 00-4-5.7V5a2 2 0 10-4 0v.3A6 6 0 006 11v3.2a2 2 0 01-.6 1.4L4 17h5m6 0a3 3 0 11-6 0m6 0H9" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
+                <Bell size={22} aria-hidden="true" />
                 {unreadCount > 0 && (
-                  <span className="absolute right-1 top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-bold text-white">
+                  <span className="absolute right-0.5 top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-bold text-white">
                     <BadgePop count={unreadCount} />
                   </span>
                 )}
               </Link>
               <Link
                 href="/profil"
-                className="hidden min-h-[40px] items-center text-sm font-medium text-slate-700 transition-colors hover:text-indigo-600 sm:inline-block"
+                aria-label={`Profil ${userName ?? ''}`}
+                className="inline-flex items-center gap-2 rounded-full p-1 pr-1 transition-colors hover:bg-stone-100 active:scale-[0.98] dark:hover:bg-stone-800"
               >
-                {userName || 'Profil'}
+                <Avatar nama={userName ?? '?'} size="sm" />
+                <span className="hidden max-w-28 truncate text-sm font-medium text-stone-700 lg:inline dark:text-stone-300">
+                  {userName || 'Profil'}
+                </span>
               </Link>
               <LogoutButton />
             </>
@@ -88,13 +92,13 @@ export async function Navbar() {
             <>
               <Link
                 href="/masuk"
-                className="text-sm font-medium text-slate-700 transition-colors hover:text-indigo-600"
+                className="inline-flex min-h-[40px] items-center rounded-full px-4 text-sm font-medium text-stone-700 transition-colors hover:text-brand-600 dark:hover:text-stone-300 dark:hover:text-brand-400"
               >
                 Masuk
               </Link>
               <Link
                 href="/daftar"
-                className="inline-flex items-center justify-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-indigo-700 active:scale-[0.98]"
+                className="inline-flex min-h-[40px] items-center justify-center rounded-full bg-brand-600 px-5 text-sm font-medium text-white shadow-sm transition hover:bg-brand-700 active:scale-[0.98]"
               >
                 Daftar
               </Link>

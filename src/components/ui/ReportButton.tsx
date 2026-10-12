@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
@@ -32,23 +32,23 @@ export function ReportButton({ targetType, targetId }: Props) {
     setOpen(false)
   }
 
-  if (done) return <span className="text-sm font-medium text-emerald-700">Laporan terkirim</span>
+  if (done) return <span className="text-sm font-medium text-emerald-700 dark:text-emerald-400">Laporan terkirim</span>
 
   return (
     <>
       <button
         onClick={() => setOpen(true)}
-        className="inline-flex min-h-[44px] items-center px-2 text-sm text-slate-500 transition-colors hover:text-rose-600"
+        className="inline-flex min-h-[44px] items-center px-2 text-sm text-stone-500 dark:text-stone-400 transition-colors hover:text-rose-600 dark:hover:text-rose-400"
         type="button"
       >
         Laporkan
       </button>
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-          <div className="w-full max-w-sm rounded-xl bg-white p-6 shadow-xl">
-            <h3 className="font-semibold text-slate-900">Laporkan</h3>
+          <div className="w-full max-w-sm rounded-xl bg-white dark:bg-stone-900 p-6 shadow-xl">
+            <h3 className="font-semibold text-stone-900 dark:text-stone-100">Laporkan</h3>
             <textarea
-              className="mt-3 w-full rounded-lg border border-slate-300 p-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-400"
+              className="mt-3 w-full rounded-[10px] border border-stone-300 dark:border-stone-700 p-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-400"
               rows={3}
               placeholder="Jelaskan alasanmu..."
               value={alasan}
@@ -57,14 +57,14 @@ export function ReportButton({ targetType, targetId }: Props) {
             <div className="mt-3 flex justify-end gap-2">
               <button
                 onClick={() => setOpen(false)}
-                className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-50"
+                className="rounded-full border border-stone-300 dark:border-stone-700 px-3 py-1.5 text-sm text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-900"
               >
                 Batal
               </button>
               <button
                 onClick={submit}
                 disabled={loading || !alasan.trim()}
-                className="rounded-lg bg-red-600 px-3 py-1.5 text-sm text-white hover:bg-red-700 disabled:opacity-50"
+                className="rounded-full bg-red-600 px-3 py-1.5 text-sm text-white hover:bg-red-700 disabled:opacity-50"
               >
                 Kirim Laporan
               </button>

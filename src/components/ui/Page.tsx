@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+﻿import type { ReactNode } from 'react'
 import Link from 'next/link'
 
 /** Kontainer halaman standar: lebar dan padding sama di semua halaman. */
@@ -20,8 +20,8 @@ export function PageHeader({
   return (
     <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">{title}</h1>
-        {description && <p className="mt-1 text-sm text-slate-500">{description}</p>}
+        <h1 className="text-2xl font-bold tracking-tight text-stone-900 dark:text-stone-100 sm:text-3xl">{title}</h1>
+        {description && <p className="mt-1 text-sm text-stone-500 dark:text-stone-400">{description}</p>}
       </div>
       {action}
     </div>
@@ -32,10 +32,10 @@ export function PageHeader({
 export function PrimaryLink({ href, children, variant = 'solid' }: { href: string; children: ReactNode; variant?: 'solid' | 'outline' }) {
   const cls =
     variant === 'solid'
-      ? 'bg-indigo-600 text-white shadow-sm hover:bg-indigo-700'
-      : 'border border-indigo-600 text-indigo-600 hover:bg-indigo-50'
+      ? 'bg-brand-600 text-white shadow-sm hover:bg-brand-700'
+      : 'border border-brand-600 text-brand-600 dark:text-brand-400 hover:bg-brand-50 dark:hover:bg-brand-950 dark:hover:bg-brand-950'
   return (
-    <Link href={href} className={`inline-flex items-center rounded-lg px-4 py-2 text-sm font-medium transition ${cls}`}>
+    <Link href={href} className={`inline-flex items-center rounded-full px-4 py-2 text-sm font-medium transition ${cls}`}>
       {children}
     </Link>
   )
@@ -44,27 +44,27 @@ export function PrimaryLink({ href, children, variant = 'solid' }: { href: strin
 /** Kartu standar dengan radius, border, dan bayangan yang sama. */
 export function Card({ children, className = '' }: { children: ReactNode; className?: string }) {
   return (
-    <div className={`rounded-2xl border border-slate-200/70 bg-white p-5 shadow-sm ${className}`}>{children}</div>
+    <div className={`rounded-2xl border border-stone-200 dark:border-stone-800/70 bg-white dark:bg-stone-900 p-5 shadow-sm ${className}`}>{children}</div>
   )
 }
 
 /** Tampilan kosong yang konsisten (daftar kosong, belum ada data). */
 export function EmptyState({ title, description, action }: { title: string; description?: string; action?: ReactNode }) {
   return (
-    <div className="mt-8 rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-10 text-center">
-      <p className="font-semibold text-slate-800">{title}</p>
-      {description && <p className="mt-1 text-sm text-slate-500">{description}</p>}
+    <div className="mt-8 rounded-2xl border border-dashed border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 px-6 py-10 text-center">
+      <p className="font-semibold text-stone-800 dark:text-stone-200">{title}</p>
+      {description && <p className="mt-1 text-sm text-stone-500 dark:text-stone-400">{description}</p>}
       {action && <div className="mt-4 flex justify-center">{action}</div>}
     </div>
   )
 }
 
 const TONE: Record<string, string> = {
-  green: 'bg-emerald-50 text-emerald-700 ring-emerald-200',
-  yellow: 'bg-amber-50 text-amber-800 ring-amber-200',
-  red: 'bg-rose-50 text-rose-700 ring-rose-200',
-  indigo: 'bg-indigo-50 text-indigo-700 ring-indigo-200',
-  gray: 'bg-slate-100 text-slate-600 ring-slate-200',
+  green: 'bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 ring-emerald-200 dark:ring-emerald-800',
+  yellow: 'bg-amber-50 dark:bg-amber-950 text-amber-800 dark:text-amber-300 ring-amber-200',
+  red: 'bg-rose-50 dark:bg-rose-950 text-rose-700 dark:text-rose-400 ring-rose-200',
+  indigo: 'bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-300 ring-brand-200',
+  gray: 'bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400 ring-stone-200 dark:ring-stone-700',
 }
 
 /** Pill status bergaya seragam. */

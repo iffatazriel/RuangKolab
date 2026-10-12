@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+﻿import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, ArrowSquareOut, UsersThree } from '@phosphor-icons/react/dist/ssr'
@@ -56,8 +56,8 @@ export default async function LombaDetailPage({ params }: { params: Promise<{ id
 
   return (
     <PageContainer width="wide">
-      <nav aria-label="Jejak navigasi" className="mb-5 text-sm text-slate-500">
-        <Link href="/lomba" className="inline-flex min-h-[44px] items-center gap-1.5 transition-colors hover:text-indigo-700">
+      <nav aria-label="Jejak navigasi" className="mb-5 text-sm text-stone-500 dark:text-stone-400">
+        <Link href="/lomba" className="inline-flex min-h-[44px] items-center gap-1.5 transition-colors hover:text-brand-700 dark:hover:text-brand-300">
           <ArrowLeft size={16} />
           Semua lomba
         </Link>
@@ -66,8 +66,8 @@ export default async function LombaDetailPage({ params }: { params: Promise<{ id
       <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-12">
         {/* KIRI: poster sticky, tanpa kotak statistik (fakta pindah ke kanan) */}
         <aside className="lg:col-span-5">
-          <div className="overflow-hidden rounded-2xl border border-slate-200 bg-[var(--card-bg)] lg:sticky lg:top-24">
-            <div className="relative aspect-[4/3] bg-slate-100">
+          <div className="overflow-hidden rounded-2xl border border-stone-200 dark:border-stone-800 bg-[var(--card-bg)] lg:sticky lg:top-24">
+            <div className="relative aspect-[4/3] bg-stone-100 dark:bg-stone-800">
               {poster ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
@@ -88,14 +88,14 @@ export default async function LombaDetailPage({ params }: { params: Promise<{ id
           <article>
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div className="min-w-0 flex-1">
-                <p className="text-[13px] font-medium text-slate-500">
-                  {comp.kategori ?? 'Umum'} · {comp.tingkat ?? 'Umum'}
+                <p className="text-[13px] font-medium text-stone-500 dark:text-stone-400">
+                  {comp.kategori ?? 'Umum'} Â· {comp.tingkat ?? 'Umum'}
                 </p>
-                <h1 className="mt-2 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+                <h1 className="mt-2 text-2xl font-bold tracking-tight text-stone-900 dark:text-stone-100 sm:text-3xl">
                   {comp.judul}
                 </h1>
                 {comp.penyelenggara && (
-                  <p className="mt-1.5 text-sm text-slate-700">
+                  <p className="mt-1.5 text-sm text-stone-700 dark:text-stone-300">
                     Diselenggarakan oleh {comp.penyelenggara}
                   </p>
                 )}
@@ -113,31 +113,31 @@ export default async function LombaDetailPage({ params }: { params: Promise<{ id
             )}
 
             {/* Fakta kunci: tiga baris teks, mono untuk angka */}
-            <dl className="mt-6 flex flex-col divide-y divide-slate-100 border-y border-slate-100 text-sm">
+            <dl className="mt-6 flex flex-col divide-y divide-stone-100 dark:divide-stone-800 border-y border-stone-100 dark:border-stone-800 text-sm">
               <div className="flex items-center justify-between gap-4 py-3">
-                <dt className="text-slate-500">Deadline</dt>
+                <dt className="text-stone-500 dark:text-stone-400">Deadline</dt>
                 <dd className="text-right">
-                  <span className={`font-mono font-semibold tabular-nums ${dl.tone === 'kuat' ? 'text-rose-700' : 'text-slate-900'}`}>
+                  <span className={`font-mono font-semibold tabular-nums ${dl.tone === 'kuat' ? 'text-rose-700 dark:text-rose-400' : 'text-stone-900 dark:text-stone-100'}`}>
                     {dl.pendek}
                   </span>
-                  <span className="block text-xs text-slate-500">{dl.panjang}</span>
+                  <span className="block text-xs text-stone-500 dark:text-stone-400">{dl.panjang}</span>
                 </dd>
               </div>
               <div className="flex items-center justify-between gap-4 py-3">
-                <dt className="text-slate-500">Biaya pendaftaran</dt>
-                <dd className={`font-mono font-semibold tabular-nums ${comp.biaya === 0 ? 'text-emerald-700' : 'text-slate-900'}`}>
+                <dt className="text-stone-500 dark:text-stone-400">Biaya pendaftaran</dt>
+                <dd className={`font-mono font-semibold tabular-nums ${comp.biaya === 0 ? 'text-emerald-700 dark:text-emerald-400' : 'text-stone-900 dark:text-stone-100'}`}>
                   {comp.biaya === 0 ? 'Gratis' : `Rp ${comp.biaya.toLocaleString('id-ID')}`}
                 </dd>
               </div>
               <div className="flex items-center justify-between gap-4 py-3">
-                <dt className="text-slate-500">Tingkat</dt>
-                <dd className="font-medium text-slate-900">{comp.tingkat ?? 'Umum'}</dd>
+                <dt className="text-stone-500 dark:text-stone-400">Tingkat</dt>
+                <dd className="font-medium text-stone-900 dark:text-stone-100">{comp.tingkat ?? 'Umum'}</dd>
               </div>
             </dl>
 
             {comp.deskripsi && (
               <div className="mt-6">
-                <p className="whitespace-pre-line text-sm leading-relaxed text-slate-700">
+                <p className="whitespace-pre-line text-sm leading-relaxed text-stone-700 dark:text-stone-300">
                   {comp.deskripsi}
                 </p>
               </div>
@@ -149,7 +149,7 @@ export default async function LombaDetailPage({ params }: { params: Promise<{ id
                 href={comp.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-[10px] bg-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 active:scale-[0.98]"
+                className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-[10px] bg-brand-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-700 active:scale-[0.98]"
               >
                 Buka Halaman Resmi
                 <ArrowSquareOut size={18} weight="bold" />
@@ -160,7 +160,7 @@ export default async function LombaDetailPage({ params }: { params: Promise<{ id
               {user && !isExpired && comp.publish_status === 'published' && (
                 <Link
                   href={`/tim/baru?lomba=${comp.id}`}
-                  className="inline-flex min-h-[48px] items-center justify-center rounded-[10px] border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 active:scale-[0.98]"
+                  className="inline-flex min-h-[48px] items-center justify-center rounded-[10px] border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 px-5 py-3 text-sm font-semibold text-stone-700 dark:text-stone-300 transition hover:bg-stone-50 dark:hover:bg-stone-900 active:scale-[0.98]"
                 >
                   Buka Rekrutmen Tim
                 </Link>
@@ -170,7 +170,7 @@ export default async function LombaDetailPage({ params }: { params: Promise<{ id
               <div className="mt-4 flex flex-wrap items-center gap-3">
                 <Link
                   href={`/lomba/${comp.id}/edit`}
-                  className="inline-flex min-h-[44px] items-center rounded-[10px] border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 active:scale-[0.98]"
+                  className="inline-flex min-h-[44px] items-center rounded-[10px] border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 px-4 py-2 text-sm font-semibold text-stone-700 dark:text-stone-300 transition hover:bg-stone-50 dark:hover:bg-stone-900 active:scale-[0.98]"
                 >
                   Edit lomba
                 </Link>
@@ -181,11 +181,11 @@ export default async function LombaDetailPage({ params }: { params: Promise<{ id
 
           {/* Tim terkait */}
           <section aria-labelledby="tim-terkait" className="mt-12">
-            <h2 id="tim-terkait" className="text-lg font-bold tracking-tight text-slate-900">
+            <h2 id="tim-terkait" className="text-lg font-bold tracking-tight text-stone-900 dark:text-stone-100">
               Tim yang mencari anggota
             </h2>
             {posts && posts.length > 0 ? (
-              <ul className="mt-4 flex flex-col divide-y divide-slate-100 border-y border-slate-100">
+              <ul className="mt-4 flex flex-col divide-y divide-stone-100 dark:divide-stone-800 border-y border-stone-100 dark:border-stone-800">
                 {posts.map((p) => {
                   const owner = Array.isArray(p.users) ? p.users[0] : p.users
                   return (
@@ -195,10 +195,10 @@ export default async function LombaDetailPage({ params }: { params: Promise<{ id
                         className="group flex flex-wrap items-center justify-between gap-4 py-4 transition-colors active:scale-[0.99]"
                       >
                         <div className="min-w-0 flex-1">
-                          <h3 className="line-clamp-1 text-[15px] font-semibold text-slate-900 transition-colors group-hover:text-indigo-700">
+                          <h3 className="line-clamp-1 text-[15px] font-semibold text-stone-900 dark:text-stone-100 transition-colors group-hover:text-brand-700 dark:group-hover:text-brand-300">
                             {p.judul}
                           </h3>
-                          <p className="mt-0.5 text-[13px] text-slate-500">
+                          <p className="mt-0.5 text-[13px] text-stone-500 dark:text-stone-400">
                             oleh {(owner as { nama?: string })?.nama ?? 'Anonim'}
                           </p>
                         </div>
@@ -211,12 +211,12 @@ export default async function LombaDetailPage({ params }: { params: Promise<{ id
                 })}
               </ul>
             ) : (
-              <div className="mt-4 flex items-center gap-3 rounded-2xl border border-dashed border-slate-300 px-5 py-6">
-                <UsersThree size={22} className="shrink-0 text-slate-400" aria-hidden="true" />
+              <div className="mt-4 flex items-center gap-3 rounded-2xl border border-dashed border-stone-300 dark:border-stone-700 px-5 py-6">
+                <UsersThree size={22} className="shrink-0 text-stone-400" aria-hidden="true" />
                 <div className="min-w-0">
-                  <p className="text-sm font-medium text-slate-700">Belum ada tim untuk lomba ini</p>
+                  <p className="text-sm font-medium text-stone-700 dark:text-stone-300">Belum ada tim untuk lomba ini</p>
                   {!isExpired && (
-                    <Link href={`/tim/baru?lomba=${comp.id}`} className="mt-0.5 inline-flex min-h-[44px] items-center text-sm font-semibold text-indigo-700 hover:underline">
+                    <Link href={`/tim/baru?lomba=${comp.id}`} className="mt-0.5 inline-flex min-h-[44px] items-center text-sm font-semibold text-brand-700 dark:text-brand-300 hover:underline">
                       Jadilah yang pertama membuka slot
                     </Link>
                   )}

@@ -86,7 +86,7 @@ export function LombaForm({ id, mode = 'admin', redirectTo = '/lomba', initial }
 
   return (
     <form onSubmit={submit} className="mt-6 flex flex-col gap-4">
-      {error && <div className="rounded-lg bg-red-50 p-3 text-sm text-red-800">{error}</div>}
+      {error && <div className="rounded-[10px] bg-red-50 p-3 text-sm text-red-800">{error}</div>}
       <Input id="judul" name="judul" label="Judul Lomba" required value={form.judul} onChange={change} />
       <Input id="penyelenggara" name="penyelenggara" label="Penyelenggara" value={form.penyelenggara} onChange={change} />
       <Select id="kategori" name="kategori" label="Kategori" value={form.kategori} onChange={change}>
@@ -107,7 +107,7 @@ export function LombaForm({ id, mode = 'admin', redirectTo = '/lomba', initial }
           <option value="draft">Draft</option>
         </Select>
       ) : (
-        <p className="rounded-lg bg-amber-50 p-3 text-xs text-amber-800">
+        <p className="rounded-[10px] bg-amber-50 dark:bg-amber-950 p-3 text-xs text-amber-800 dark:text-amber-300">
           Usulanmu akan ditinjau moderator sebelum tampil di daftar lomba. Kamu akan menerima notifikasi setelah diputuskan.
         </p>
       )}

@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import Link from 'next/link'
@@ -84,9 +84,9 @@ export function DashboardView({
     { key: 'semua' as const, label: 'Ringkasan', badge: null },
     { key: 'notifikasi' as const, label: 'Notifikasi', badge: unreadCount > 0 ? unreadCount : null, badgeColor: 'bg-rose-500' },
     { key: 'pengajuan_masuk' as const, label: 'Pengajuan Masuk', badge: incoming.length > 0 ? incoming.length : null, badgeColor: 'bg-amber-500' },
-    { key: 'postingan' as const, label: 'Postingan Saya', badge: myPosts.length > 0 ? myPosts.length : null, badgeColor: 'bg-slate-200 text-slate-700' },
-    { key: 'lamaran' as const, label: 'Status Lamaran Tim', badge: myRequests.length > 0 ? myRequests.length : null, badgeColor: 'bg-slate-200 text-slate-700' },
-    { key: 'minat' as const, label: 'Minat & Usulan Lomba', badge: favorites.length + myProposals.length > 0 ? favorites.length + myProposals.length : null, badgeColor: 'bg-slate-200 text-slate-700' },
+    { key: 'postingan' as const, label: 'Postingan Saya', badge: myPosts.length > 0 ? myPosts.length : null, badgeColor: 'bg-stone-200 text-stone-700 dark:text-stone-300' },
+    { key: 'lamaran' as const, label: 'Status Lamaran Tim', badge: myRequests.length > 0 ? myRequests.length : null, badgeColor: 'bg-stone-200 text-stone-700 dark:text-stone-300' },
+    { key: 'minat' as const, label: 'Minat & Usulan Lomba', badge: favorites.length + myProposals.length > 0 ? favorites.length + myProposals.length : null, badgeColor: 'bg-stone-200 text-stone-700 dark:text-stone-300' },
   ]
 
   return (
@@ -94,22 +94,22 @@ export function DashboardView({
       {/* SIDEBAR NAVIGATION */}
       <aside className="lg:col-span-3 lg:sticky lg:top-24 space-y-4">
         {/* User Mini Profile Card */}
-        <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
+        <div className="rounded-2xl border border-stone-200 dark:border-stone-800/80 bg-white dark:bg-stone-900 p-5 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-indigo-50 font-bold text-indigo-700">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-50 dark:bg-brand-950 font-bold text-brand-700 dark:text-brand-300">
               {user.nama.slice(0, 2).toUpperCase()}
             </div>
             <div className="min-w-0 flex-1">
-              <h2 className="truncate font-bold text-sm text-slate-900">{user.nama}</h2>
-              <p className="truncate text-xs text-slate-500">
+              <h2 className="truncate font-bold text-sm text-stone-900 dark:text-stone-100">{user.nama}</h2>
+              <p className="truncate text-xs text-stone-500 dark:text-stone-400">
                 {user.jurusan ? `${user.jurusan}${user.angkatan ? ` (${user.angkatan})` : ''}` : user.email}
               </p>
             </div>
           </div>
-          <div className="mt-4 border-t border-slate-100 pt-3">
+          <div className="mt-4 border-t border-stone-100 dark:border-stone-800 pt-3">
             <Link
               href="/profil"
-              className="block text-center text-xs font-semibold text-indigo-600 hover:text-indigo-700 transition-colors"
+              className="block text-center text-xs font-semibold text-brand-600 dark:text-brand-400 hover:text-brand-700 dark:hover:text-brand-300 transition-colors"
             >
               Kelola Profil
             </Link>
@@ -117,7 +117,7 @@ export function DashboardView({
         </div>
 
         {/* Sidebar Nav Links */}
-        <nav className="rounded-2xl border border-slate-200/80 bg-white p-2.5 shadow-sm flex flex-col space-y-1">
+        <nav className="rounded-2xl border border-stone-200 dark:border-stone-800/80 bg-white dark:bg-stone-900 p-2.5 shadow-sm flex flex-col space-y-1">
           {navItems.map((item) => {
             const isActive = activeTab === item.key
             return (
@@ -127,8 +127,8 @@ export function DashboardView({
                 onClick={() => setActiveTab(item.key)}
                 className={`flex w-full items-center justify-between rounded-xl px-3.5 py-2.5 text-xs font-semibold transition-[background-color,color,box-shadow] text-left ${
                   isActive
-                    ? 'bg-indigo-600 text-white shadow-sm'
-                    : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                    ? 'bg-brand-600 text-white shadow-sm'
+                    : 'text-stone-600 dark:text-stone-400 hover:bg-stone-50 dark:hover:bg-stone-900 hover:text-stone-900 dark:hover:text-stone-100'
                 }`}
               >
                 <span>{item.label}</span>
@@ -136,8 +136,8 @@ export function DashboardView({
                   <span
                     className={`flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-[10px] font-bold ${
                       isActive
-                        ? 'bg-white/20 text-white'
-                        : item.badgeColor ?? 'bg-slate-100 text-slate-700'
+                        ? 'bg-white dark:bg-stone-900/20 text-white'
+                        : item.badgeColor ?? 'bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300'
                     }`}
                   >
                     {item.badge}
@@ -149,8 +149,8 @@ export function DashboardView({
         </nav>
 
         {/* Quick Action Buttons */}
-        <div className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm space-y-2">
-          <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">Aksi Cepat</p>
+        <div className="rounded-2xl border border-stone-200 dark:border-stone-800/80 bg-white dark:bg-stone-900 p-4 shadow-sm space-y-2">
+          <p className="text-[11px] font-bold text-stone-500 dark:text-stone-400 uppercase tracking-wider mb-2">Aksi Cepat</p>
           <PrimaryLink href="/tim/baru">+ Buka Cari Tim</PrimaryLink>
           <div className="pt-1">
             <PrimaryLink href="/proyek/baru" variant="outline">+ Inisiasi Proyek</PrimaryLink>
@@ -164,7 +164,7 @@ export function DashboardView({
         {(activeTab === 'semua' || activeTab === 'notifikasi') && (
           <section>
             <div className="mb-3 flex items-center justify-between">
-              <h2 className="flex items-center gap-2 text-base font-bold text-slate-900">
+              <h2 className="flex items-center gap-2 text-base font-bold text-stone-900 dark:text-stone-100">
                 Notifikasi
                 {unreadCount > 0 && (
                   <span className="rounded-full bg-rose-500 px-2 py-0.5 text-[10px] font-bold text-white">
@@ -183,10 +183,10 @@ export function DashboardView({
         {(activeTab === 'semua' || activeTab === 'pengajuan_masuk') && (
           <section id="pengajuan">
             <div className="mb-3 flex items-center justify-between">
-              <h2 className="text-base font-bold text-slate-900">
-                Pengajuan Masuk {incoming.length > 0 && <span className="text-slate-400">({incoming.length})</span>}
+              <h2 className="text-base font-bold text-stone-900 dark:text-stone-100">
+                Pengajuan Masuk {incoming.length > 0 && <span className="text-stone-400">({incoming.length})</span>}
               </h2>
-              <p className="text-xs text-slate-500">Mahasiswa yang ingin bergabung dengan timmu</p>
+              <p className="text-xs text-stone-500 dark:text-stone-400">Mahasiswa yang ingin bergabung dengan timmu</p>
             </div>
             {incoming.length === 0 ? (
               <EmptyState
@@ -199,21 +199,21 @@ export function DashboardView({
                   const post = Array.isArray(r.team_posts) ? r.team_posts[0] : r.team_posts
                   const applicant = Array.isArray(r.users) ? r.users[0] : r.users
                   return (
-                    <Card key={r.id} className="flex flex-wrap items-center justify-between gap-4 border-amber-200 bg-amber-50/40">
+                    <Card key={r.id} className="flex flex-wrap items-center justify-between gap-4 border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/40">
                       <div className="min-w-0 flex-1">
-                        <p className="font-semibold text-slate-900">
+                        <p className="font-semibold text-stone-900 dark:text-stone-100">
                           {applicant?.nama ?? 'Anonim'}
-                          {applicant?.jurusan && <span className="font-normal text-slate-500"> ({applicant.jurusan})</span>}
+                          {applicant?.jurusan && <span className="font-normal text-stone-500 dark:text-stone-400"> ({applicant.jurusan})</span>}
                         </p>
                         {post && (
-                          <p className="mt-0.5 text-xs text-slate-600">
+                          <p className="mt-0.5 text-xs text-stone-600 dark:text-stone-400">
                             Melamar ke postingan:{' '}
-                            <Link href={postHref(post.tipe, post.id)} className="font-semibold text-indigo-600 hover:underline">
+                            <Link href={postHref(post.tipe, post.id)} className="font-semibold text-brand-600 dark:text-brand-400 hover:underline">
                               {post.judul}
                             </Link>
                           </p>
                         )}
-                        {r.pesan && <p className="mt-2 text-xs italic text-slate-700 bg-white/70 p-2.5 rounded-lg border border-amber-100">&ldquo;{r.pesan}&rdquo;</p>}
+                        {r.pesan && <p className="mt-2 text-xs italic text-stone-700 dark:text-stone-300 bg-white dark:bg-stone-900/70 p-2.5 rounded-[10px] border border-amber-100">&ldquo;{r.pesan}&rdquo;</p>}
                       </div>
                       <IncomingRequestButtons requestId={r.id} />
                     </Card>
@@ -228,8 +228,8 @@ export function DashboardView({
         {(activeTab === 'semua' || activeTab === 'postingan') && (
           <section>
             <div className="mb-3 flex items-center justify-between">
-              <h2 className="text-base font-bold text-slate-900">Postingan Saya</h2>
-              <span className="text-xs text-slate-500">{myPosts.length} postingan</span>
+              <h2 className="text-base font-bold text-stone-900 dark:text-stone-100">Postingan Saya</h2>
+              <span className="text-xs text-stone-500 dark:text-stone-400">{myPosts.length} postingan</span>
             </div>
             {myPosts.length === 0 ? (
               <EmptyState
@@ -243,7 +243,7 @@ export function DashboardView({
                   <Link
                     key={p.id}
                     href={postHref(p.tipe, p.id)}
-                    className="surface-card flex flex-col justify-between rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm"
+                    className="surface-card flex flex-col justify-between rounded-2xl border border-stone-200 dark:border-stone-800/80 bg-white dark:bg-stone-900 p-5 shadow-sm"
                   >
                     <div>
                       <div className="flex items-center justify-between">
@@ -254,9 +254,9 @@ export function DashboardView({
                           {p.status === 'open' ? 'Membuka' : p.status === 'full' ? 'Penuh' : 'Ditutup'}
                         </StatusPill>
                       </div>
-                      <h3 className="mt-3 line-clamp-2 text-sm font-bold text-slate-900 group-hover:text-indigo-600">{p.judul}</h3>
+                      <h3 className="mt-3 line-clamp-2 text-sm font-bold text-stone-900 dark:text-stone-100 group-hover:text-brand-600 dark:group-hover:text-brand-400">{p.judul}</h3>
                     </div>
-                    <p className="mt-4 border-t border-slate-100 pt-2 text-xs text-slate-500 font-medium">
+                    <p className="mt-4 border-t border-stone-100 dark:border-stone-800 pt-2 text-xs text-stone-500 dark:text-stone-400 font-medium">
                       Slot terisi: {p.slot_terisi} / {p.slot_total} orang
                     </p>
                   </Link>
@@ -270,8 +270,8 @@ export function DashboardView({
         {(activeTab === 'semua' || activeTab === 'lamaran') && (
           <section>
             <div className="mb-3 flex items-center justify-between">
-              <h2 className="text-base font-bold text-slate-900">Status Lamaran Bergabung</h2>
-              <span className="text-xs text-slate-500">{myRequests.length} diajukan</span>
+              <h2 className="text-base font-bold text-stone-900 dark:text-stone-100">Status Lamaran Bergabung</h2>
+              <span className="text-xs text-stone-500 dark:text-stone-400">{myRequests.length} diajukan</span>
             </div>
             {myRequests.length === 0 ? (
               <EmptyState
@@ -287,11 +287,11 @@ export function DashboardView({
                     <Card key={r.id} className="flex flex-wrap items-center justify-between gap-3 p-4">
                       <div className="min-w-0 flex-1">
                         {pTyped && (
-                          <Link href={postHref(pTyped.tipe, pTyped.id)} className="font-semibold text-sm text-slate-900 hover:text-indigo-600">
+                          <Link href={postHref(pTyped.tipe, pTyped.id)} className="font-semibold text-sm text-stone-900 dark:text-stone-100 hover:text-brand-600 dark:hover:text-brand-400">
                             {pTyped.judul}
                           </Link>
                         )}
-                        {r.pesan && <p className="mt-1 text-xs text-slate-500">&ldquo;{r.pesan}&rdquo;</p>}
+                        {r.pesan && <p className="mt-1 text-xs text-stone-500 dark:text-stone-400">&ldquo;{r.pesan}&rdquo;</p>}
                       </div>
                       <div className="flex shrink-0 items-center gap-2">
                         <StatusPill tone={requestTone(r.status)}>
@@ -312,8 +312,8 @@ export function DashboardView({
           <section className="space-y-6">
             <div>
               <div className="mb-3 flex items-center justify-between">
-                <h2 className="text-base font-bold text-slate-900">Minat Lomba Tersimpan</h2>
-                <span className="text-xs text-slate-500">{favorites.length} tersimpan</span>
+                <h2 className="text-base font-bold text-stone-900 dark:text-stone-100">Minat Lomba Tersimpan</h2>
+                <span className="text-xs text-stone-500 dark:text-stone-400">{favorites.length} tersimpan</span>
               </div>
               {favorites.length === 0 ? (
                 <EmptyState
@@ -326,12 +326,12 @@ export function DashboardView({
                     <Link
                       key={c.id}
                       href={`/lomba/${c.id}`}
-                      className="surface-card rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm"
+                      className="surface-card rounded-2xl border border-stone-200 dark:border-stone-800/80 bg-white dark:bg-stone-900 p-4 shadow-sm"
                     >
-                      <p className="line-clamp-2 text-sm font-bold text-slate-900">{c.judul}</p>
-                      <p className="mt-2 text-xs text-slate-500">
+                      <p className="line-clamp-2 text-sm font-bold text-stone-900 dark:text-stone-100">{c.judul}</p>
+                      <p className="mt-2 text-xs text-stone-500 dark:text-stone-400">
                         Batas: {new Date(c.deadline).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
-                        {' · '}
+                        {' Â· '}
                         {c.biaya === 0 ? 'Gratis' : `Rp ${c.biaya.toLocaleString('id-ID')}`}
                       </p>
                     </Link>
@@ -341,13 +341,13 @@ export function DashboardView({
             </div>
 
             {myProposals.length > 0 && (
-              <div className="pt-4 border-t border-slate-100">
-                <h3 className="text-sm font-bold text-slate-900 mb-3">Usulan Lomba Saya ({myProposals.length})</h3>
+              <div className="pt-4 border-t border-stone-100 dark:border-stone-800">
+                <h3 className="text-sm font-bold text-stone-900 dark:text-stone-100 mb-3">Usulan Lomba Saya ({myProposals.length})</h3>
                 <ul className="flex flex-col gap-2">
                   {myProposals.map((c) => (
                     <li key={c.id}>
                       <Card className="flex items-center justify-between p-3.5">
-                        <Link href={`/lomba/${c.id}`} className="font-semibold text-xs text-slate-900 hover:text-indigo-600">
+                        <Link href={`/lomba/${c.id}`} className="font-semibold text-xs text-stone-900 dark:text-stone-100 hover:text-brand-600 dark:hover:text-brand-400">
                           {c.judul}
                         </Link>
                         <StatusPill tone={c.publish_status === 'published' ? 'green' : c.publish_status === 'pending' ? 'yellow' : 'gray'}>

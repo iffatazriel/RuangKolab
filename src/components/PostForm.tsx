@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -109,15 +109,15 @@ export function PostForm({ tipe, competitions = [], allSkills, defaultCompetitio
     <form onSubmit={submit} className="flex flex-col gap-6" noValidate>
       {/* Error umum (server): inline, role alert */}
       {error && (
-        <div role="alert" className="rounded-lg border border-rose-200 bg-rose-50 px-3.5 py-2.5 text-sm font-medium text-rose-800">
+        <div role="alert" className="rounded-[10px] border border-rose-200 dark:border-rose-800 bg-rose-50 dark:bg-rose-950 px-3.5 py-2.5 text-sm font-medium text-rose-800 dark:text-rose-400">
           {error}
         </div>
       )}
 
       {isLomba && (
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="competition_id" className="text-sm font-semibold text-slate-800">
-            Lomba yang diikuti <span aria-hidden="true" className="text-rose-600">*</span>
+          <label htmlFor="competition_id" className="text-sm font-semibold text-stone-800 dark:text-stone-200">
+            Lomba yang diikuti <span aria-hidden="true" className="text-rose-600 dark:text-rose-400">*</span>
           </label>
           <select
             id="competition_id"
@@ -127,8 +127,8 @@ export function PostForm({ tipe, competitions = [], allSkills, defaultCompetitio
             required
             aria-invalid={!!fieldErrors.competition_id || undefined}
             aria-describedby={fieldErrors.competition_id ? 'competition_id-error' : 'competition_id-bantuan'}
-            className={`custom-input min-h-[48px] w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none ${
-              fieldErrors.competition_id ? 'border-rose-400' : 'border-slate-300'
+            className={`custom-input min-h-[48px] w-full rounded-[10px] border bg-white dark:bg-stone-900 px-3.5 py-2.5 text-sm text-stone-900 dark:text-stone-100 focus:outline-none ${
+              fieldErrors.competition_id ? 'border-rose-400' : 'border-stone-300 dark:border-stone-700'
             }`}
           >
             <option value="">Pilih lomba</option>
@@ -137,9 +137,9 @@ export function PostForm({ tipe, competitions = [], allSkills, defaultCompetitio
             ))}
           </select>
           {fieldErrors.competition_id ? (
-            <p id="competition_id-error" className="text-xs font-medium text-rose-700">{fieldErrors.competition_id}</p>
+            <p id="competition_id-error" className="text-xs font-medium text-rose-700 dark:text-rose-400">{fieldErrors.competition_id}</p>
           ) : (
-            <p id="competition_id-bantuan" className="text-xs text-slate-500">
+            <p id="competition_id-bantuan" className="text-xs text-stone-500 dark:text-stone-400">
               {competitions.length > 0
                 ? 'Hanya lomba yang masih membuka pendaftaran yang tampil di sini.'
                 : 'Belum ada lomba aktif. Coba lagi nanti atau usulkan lomba baru.'}
@@ -159,13 +159,13 @@ export function PostForm({ tipe, competitions = [], allSkills, defaultCompetitio
         aria-describedby="judul-bantuan"
         placeholder={isLomba ? 'Contoh: Butuh desainer UI untuk hackathon' : 'Contoh: Kolaborasi aplikasi donasi kampus'}
       />
-      <p id="judul-bantuan" className="-mt-4 text-xs text-slate-500">
+      <p id="judul-bantuan" className="-mt-4 text-xs text-stone-500 dark:text-stone-400">
         Maksimal 80 karakter, satu kalimat yang jelas.
       </p>
 
       <div className="flex flex-col gap-1.5">
-        <label htmlFor="deskripsi" className="text-sm font-semibold text-slate-800">
-          Deskripsi <span aria-hidden="true" className="text-rose-600">*</span>
+        <label htmlFor="deskripsi" className="text-sm font-semibold text-stone-800 dark:text-stone-200">
+          Deskripsi <span aria-hidden="true" className="text-rose-600 dark:text-rose-400">*</span>
         </label>
         <textarea
           id="deskripsi"
@@ -178,15 +178,15 @@ export function PostForm({ tipe, competitions = [], allSkills, defaultCompetitio
           aria-invalid={!!fieldErrors.deskripsi || undefined}
           aria-describedby="deskripsi-bantuan"
           placeholder="Peran yang dibutuhkan, syarat, rencana kerja, dan cara kamu membagi tugas."
-          className={`custom-input w-full rounded-lg border px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none ${
-            fieldErrors.deskripsi ? 'border-rose-400' : 'border-slate-300'
+          className={`custom-input w-full rounded-[10px] border px-3.5 py-2.5 text-sm text-stone-900 dark:text-stone-100 placeholder:text-stone-400 focus:outline-none ${
+            fieldErrors.deskripsi ? 'border-rose-400' : 'border-stone-300 dark:border-stone-700'
           }`}
         />
-        <p id="deskripsi-bantuan" className="text-xs text-slate-500">
+        <p id="deskripsi-bantuan" className="text-xs text-stone-500 dark:text-stone-400">
           {form.deskripsi.length}/{MAX_DESKRIPSI} karakter. Minimal 30 karakter.
         </p>
         {fieldErrors.deskripsi && (
-          <p className="text-xs font-medium text-rose-700">{fieldErrors.deskripsi}</p>
+          <p className="text-xs font-medium text-rose-700 dark:text-rose-400">{fieldErrors.deskripsi}</p>
         )}
       </div>
 
@@ -228,8 +228,8 @@ export function PostForm({ tipe, competitions = [], allSkills, defaultCompetitio
 
       {/* Skill chips: fieldset agar terbaca sebagai satu pertanyaan oleh pembaca layar */}
       <fieldset>
-        <legend className="text-sm font-semibold text-slate-800">Keahlian yang dicari</legend>
-        <p className="mt-1 text-xs text-slate-500">
+        <legend className="text-sm font-semibold text-stone-800 dark:text-stone-200">Keahlian yang dicari</legend>
+        <p className="mt-1 text-xs text-stone-500 dark:text-stone-400">
           Pilih beberapa. Calon anggota memakai ini untuk menemukan postinganmu lewat filter keahlian.
         </p>
         <div className="mt-3 flex flex-wrap gap-2">
@@ -243,8 +243,8 @@ export function PostForm({ tipe, competitions = [], allSkills, defaultCompetitio
                 aria-pressed={active}
                 className={`inline-flex min-h-[44px] items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium transition active:scale-[0.98] ${
                   active
-                    ? 'bg-indigo-600 text-white shadow-sm'
-                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                    ? 'bg-brand-600 text-white shadow-sm'
+                    : 'bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:bg-stone-200'
                 }`}
               >
                 {active && <Check size={14} weight="bold" />}
@@ -256,11 +256,11 @@ export function PostForm({ tipe, competitions = [], allSkills, defaultCompetitio
         </div>
       </fieldset>
 
-      <div className="border-t border-slate-100 pt-5">
+      <div className="border-t border-stone-100 dark:border-stone-800 pt-5">
         <Button type="submit" size="lg" loading={loading}>
           {isLomba ? 'Terbitkan pencarian tim' : 'Terbitkan proyek'}
         </Button>
-        <p className="mt-2 text-xs text-slate-500">
+        <p className="mt-2 text-xs text-stone-500 dark:text-stone-400">
           Postingan tampil publik. Kamu bisa menghapusnya kapan saja dari halaman detail.
         </p>
       </div>

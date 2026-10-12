@@ -38,7 +38,7 @@ export function DeleteCompetitionButton({ competitionId, judul }: { competitionI
       <Button variant="danger" size="sm" loading={loading} onClick={remove}>
         Hapus Lomba
       </Button>
-      {error && <p className="max-w-[280px] text-xs text-rose-600">{error}</p>}
+      {error && <p className="max-w-[280px] text-xs text-rose-600 dark:text-rose-400">{error}</p>}
     </div>
   )
 }

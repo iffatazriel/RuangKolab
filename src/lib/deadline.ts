@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Urgensi deadline, semantik dan terpisah dari warna aksen brand.
  * Dihitung pada zona Asia/Jakarta agar "besok" sesuai hari lokal pengguna.
  *
@@ -56,5 +56,5 @@ export function getDeadlineTone(target: string | Date): DeadlineInfo {
 export const deadlineToneClass: Record<DeadlineTone, string> = {
   kuat: 'text-rose-700',
   lembut: 'text-amber-700',
-  netral: 'text-slate-600',
+  netral: 'text-stone-600',
 }

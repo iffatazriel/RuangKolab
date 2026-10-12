@@ -1,4 +1,4 @@
-import { type ButtonHTMLAttributes, forwardRef } from 'react'
+﻿import { type ButtonHTMLAttributes, forwardRef } from 'react'
 
 type Variant = 'primary' | 'secondary' | 'danger' | 'ghost'
 type Size = 'sm' | 'md' | 'lg'
@@ -10,16 +10,16 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variantClass: Record<Variant, string> = {
-  primary: 'bg-indigo-600 text-white shadow-sm hover:bg-indigo-700 active:scale-[0.98] disabled:bg-indigo-300',
-  secondary: 'bg-white text-slate-700 border border-slate-300 hover:bg-slate-50 hover:border-slate-400 active:scale-[0.98]',
+  primary: 'bg-brand-600 text-white shadow-sm hover:bg-brand-700 active:scale-[0.98] disabled:bg-brand-300',
+  secondary: 'bg-white dark:bg-stone-900 text-stone-700 dark:text-stone-300 border border-stone-300 dark:border-stone-700 hover:bg-stone-50 dark:hover:bg-stone-900 hover:border-stone-400 active:scale-[0.98]',
   danger: 'bg-rose-600 text-white shadow-sm hover:bg-rose-700 active:scale-[0.98]',
-  ghost: 'text-slate-600 hover:bg-slate-100 hover:text-slate-900',
+  ghost: 'text-stone-600 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800 hover:text-stone-900 dark:hover:text-stone-100',
 }
-// Target sentuh minimal 40px (navbar) / 44px (konten); satu radius kontrol 10px
+// Target sentuh minimal 40px (navbar) / 44px (konten); tombol berbentuk pill
 const sizeClass: Record<Size, string> = {
-  sm: 'min-h-[40px] px-3.5 py-2 text-xs rounded-[10px]',
-  md: 'min-h-[44px] px-4 py-2 text-sm rounded-[10px]',
-  lg: 'min-h-[48px] px-5 py-2.5 text-sm font-semibold rounded-[10px]',
+  sm: 'min-h-[40px] px-3.5 py-2 text-xs rounded-full',
+  md: 'min-h-[44px] px-5 py-2 text-sm rounded-full',
+  lg: 'min-h-[48px] px-6 py-2.5 text-sm font-semibold rounded-full',
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -27,7 +27,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     <button
       ref={ref}
       disabled={disabled || loading}
-      className={`inline-flex items-center justify-center gap-2 font-medium transition-[background-color,border-color,color,transform,box-shadow] focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:cursor-not-allowed ${variantClass[variant]} ${sizeClass[size]} ${className}`}
+      className={`inline-flex items-center justify-center gap-2 font-medium transition-[background-color,border-color,color,transform,box-shadow] focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 disabled:cursor-not-allowed ${variantClass[variant]} ${sizeClass[size]} ${className}`}
       {...props}
     >
       {loading && (

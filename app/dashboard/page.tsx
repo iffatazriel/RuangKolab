@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+﻿import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { DashboardView } from './DashboardView'
 import { PageContainer } from '@/components/ui/Page'
@@ -90,8 +90,8 @@ export default async function DashboardPage() {
   return (
     <PageContainer width="wide">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">Dashboard Kolaborasi</h1>
-        <p className="mt-1 text-xs text-slate-500">
+        <h1 className="text-2xl font-bold tracking-tight text-stone-900 dark:text-stone-100 sm:text-3xl">Dashboard Kolaborasi</h1>
+        <p className="mt-1 text-xs text-stone-500 dark:text-stone-400">
           Pusat kendali aktivitas tim, lamaran, notifikasi, dan arsip kompetisi yang kamu ikuti.
         </p>
       </div>

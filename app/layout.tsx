@@ -1,12 +1,15 @@
 import type { Metadata } from 'next'
-import { Geist } from 'next/font/google'
+import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
 import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
-import { BottomNav } from '@/components/layout/BottomNav'
 import { ToastProvider } from '@/components/ui/Toast'
 
 const geist = Geist({ subsets: ['latin'], variable: '--font-geist' })
+const geistMono = Geist_Mono({ subsets: ['latin'], variable: '--font-geist-mono' })
+
+/** Skrip tema: pasang .dark/.light sebelum render agar tidak kedip. */
+const themeScript = `(function(){try{var t=localStorage.getItem('rk-theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark')}else{document.documentElement.classList.add('light')}}catch(e){}})();`
 
 export const metadata: Metadata = {
   title: 'RuangKolab: Temukan Lomba, Bentuk Tim, Wujudkan Proyek',
@@ -15,13 +18,15 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="id" className={geist.variable}>
-      <body className="flex min-h-[100dvh] flex-col bg-[#fcfcfd] font-sans text-slate-800 antialiased">
+    <html lang="id" className={`${geist.variable} ${geistMono.variable}`}>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
+      <body className="flex min-h-[100dvh] flex-col bg-stone-50 dark:bg-stone-900 font-sans text-stone-800 dark:text-stone-200 antialiased dark:bg-stone-950 dark:text-stone-200">
         <ToastProvider>
           <Navbar />
-          <main className="flex-1 pb-16 md:pb-0">{children}</main>
+          <main className="flex-1">{children}</main>
           <Footer />
-          <BottomNav />
         </ToastProvider>
       </body>
     </html>

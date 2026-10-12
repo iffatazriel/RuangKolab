@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+﻿import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { ResolveReportButton } from './ResolveReportButton'
@@ -46,8 +46,8 @@ export default async function ModerasiPage() {
 
       {/* Usulan Lomba */}
       <section>
-        <h2 className="text-lg font-bold text-slate-900">
-          Usulan Lomba <span className="text-slate-400">({proposals.length})</span>
+        <h2 className="text-lg font-bold text-stone-900 dark:text-stone-100">
+          Usulan Lomba <span className="text-stone-400">({proposals.length})</span>
         </h2>
         {proposals.length === 0 ? (
           <div className="mt-3">
@@ -57,19 +57,19 @@ export default async function ModerasiPage() {
           <div className="mt-3 flex flex-col gap-3">
             {proposals.map((c) => (
               <FadeIn key={c.id}>
-                <Card className="flex flex-wrap items-start justify-between gap-4 border-indigo-200 bg-indigo-50/40">
+                <Card className="flex flex-wrap items-start justify-between gap-4 border-brand-200 dark:border-brand-800 bg-brand-50 dark:bg-brand-950/40">
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
                       {c.kategori && <StatusPill tone="indigo">{c.kategori}</StatusPill>}
                       {c.tingkat && <StatusPill>{c.tingkat}</StatusPill>}
-                      <span className="text-xs text-slate-500">
+                      <span className="text-xs text-stone-500 dark:text-stone-400">
                         Deadline {new Date(c.deadline).toLocaleDateString('id-ID')}
                       </span>
                     </div>
-                    <p className="mt-2 font-semibold text-slate-900">{c.judul}</p>
-                    {c.penyelenggara && <p className="text-xs text-slate-500">{c.penyelenggara}</p>}
-                    <a href={c.url} target="_blank" rel="noopener noreferrer" className="mt-1 inline-flex min-h-[44px] items-center text-xs font-medium text-indigo-600 hover:underline">
-                      Cek tautan resmi ↗
+                    <p className="mt-2 font-semibold text-stone-900 dark:text-stone-100">{c.judul}</p>
+                    {c.penyelenggara && <p className="text-xs text-stone-500 dark:text-stone-400">{c.penyelenggara}</p>}
+                    <a href={c.url} target="_blank" rel="noopener noreferrer" className="mt-1 inline-flex min-h-[44px] items-center text-xs font-medium text-brand-600 dark:text-brand-400 hover:underline">
+                      Cek tautan resmi â†—
                     </a>
                   </div>
                   <ProposalButtons competitionId={c.id} />
@@ -82,8 +82,8 @@ export default async function ModerasiPage() {
 
       {/* Laporan Pending */}
       <section className="mt-10">
-        <h2 className="text-lg font-bold text-slate-900">
-          Laporan Menunggu <span className="text-slate-400">({pendingReports.length})</span>
+        <h2 className="text-lg font-bold text-stone-900 dark:text-stone-100">
+          Laporan Menunggu <span className="text-stone-400">({pendingReports.length})</span>
         </h2>
         {pendingReports.length === 0 ? (
           <div className="mt-3">
@@ -92,17 +92,17 @@ export default async function ModerasiPage() {
         ) : (
           <div className="mt-3 flex flex-col gap-3">
             {pendingReports.map((r) => (
-              <Card key={r.id} className="flex flex-wrap items-start justify-between gap-4 border-amber-200 bg-amber-50/40">
+              <Card key={r.id} className="flex flex-wrap items-start justify-between gap-4 border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/40">
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
                     <StatusPill tone="yellow">{r.target_type}</StatusPill>
-                    <span className="text-xs text-slate-500">{new Date(r.created_at).toLocaleString('id-ID')}</span>
+                    <span className="text-xs text-stone-500 dark:text-stone-400">{new Date(r.created_at).toLocaleString('id-ID')}</span>
                   </div>
-                  <p className="mt-2 text-sm text-slate-800">{r.alasan}</p>
-                  <p className="mt-1 text-xs text-slate-500">
+                  <p className="mt-2 text-sm text-stone-800 dark:text-stone-200">{r.alasan}</p>
+                  <p className="mt-1 text-xs text-stone-500 dark:text-stone-400">
                     Target:{' '}
-                    <Link href={reportHref(r.target_type, r.target_id)} className="font-medium text-indigo-600 hover:underline">
-                      {r.target_id.slice(0, 8)}…
+                    <Link href={reportHref(r.target_type, r.target_id)} className="font-medium text-brand-600 dark:text-brand-400 hover:underline">
+                      {r.target_id.slice(0, 8)}â€¦
                     </Link>
                   </p>
                 </div>
@@ -115,7 +115,7 @@ export default async function ModerasiPage() {
 
       {/* Riwayat */}
       <section className="mt-10">
-        <h2 className="text-lg font-bold text-slate-900">Riwayat Laporan</h2>
+        <h2 className="text-lg font-bold text-stone-900 dark:text-stone-100">Riwayat Laporan</h2>
         {resolvedReports.length === 0 ? (
           <div className="mt-3">
             <EmptyState title="Belum ada laporan selesai" />
@@ -124,7 +124,7 @@ export default async function ModerasiPage() {
           <div className="mt-3 flex flex-col gap-2">
             {resolvedReports.map((r) => (
               <Card key={r.id} className="flex items-center justify-between gap-3 p-3 text-sm">
-                <span className="line-clamp-1 text-slate-700">{r.alasan}</span>
+                <span className="line-clamp-1 text-stone-700 dark:text-stone-300">{r.alasan}</span>
                 <StatusPill tone={r.status === 'resolved' ? 'green' : 'gray'}>
                   {r.status === 'resolved' ? 'Selesai' : 'Ditinjau'}
                 </StatusPill>

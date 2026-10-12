@@ -1,4 +1,4 @@
-import { getDeadlineTone, deadlineToneClass } from '@/lib/deadline'
+﻿import { getDeadlineTone, deadlineToneClass } from '@/lib/deadline'
 import { UsersThree } from '@phosphor-icons/react/dist/ssr'
 
 export interface CompetitionCardData {
@@ -26,8 +26,8 @@ interface Props {
  */
 export function PosterFallback({ kategori }: { kategori: string | null }) {
   return (
-    <div className="absolute inset-0 flex items-center justify-center bg-slate-100" aria-hidden="true">
-      <span className="font-mono text-base font-bold uppercase tracking-widest text-indigo-300">
+    <div className="absolute inset-0 flex items-center justify-center bg-stone-100 dark:bg-stone-800" aria-hidden="true">
+      <span className="font-mono text-base font-bold uppercase tracking-widest text-brand-300">
         {(kategori ?? 'Umum').slice(0, 2)}
       </span>
     </div>
@@ -44,9 +44,9 @@ export function CompetitionCard({ comp, timMencari = 0, priority = false }: Prop
   const poster = comp.poster_url
 
   return (
-    <article className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-[var(--card-bg)] transition-[transform,border-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-slate-300 motion-safe:hover:-translate-y-[3px] focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2">
+    <article className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-stone-200 dark:border-stone-800 bg-[var(--card-bg)] transition-[transform,border-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-stone-300 dark:hover:border-stone-700 motion-safe:hover:-transtone-y-[3px] focus-within:ring-2 focus-within:ring-brand-500 focus-within:ring-offset-2">
       {/* Poster: rasio tetap, object-top karena judul poster umumnya di atas */}
-      <div className="relative aspect-[16/10] overflow-hidden bg-slate-100">
+      <div className="relative aspect-[16/10] overflow-hidden bg-stone-100 dark:bg-stone-800">
         {poster ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -73,7 +73,7 @@ export function CompetitionCard({ comp, timMencari = 0, priority = false }: Prop
       <div className="relative z-0 flex flex-1 flex-col gap-1.5 p-4">
         {/* Baris atas: kategori kiri, deadline kanan (semantik, bukan aksen) */}
         <div className="flex items-baseline justify-between gap-3">
-          <span className="text-xs font-medium text-slate-500">
+          <span className="text-xs font-medium text-stone-500 dark:text-stone-400">
             {comp.kategori ?? 'Umum'}
           </span>
           <span className={`shrink-0 font-mono text-xs font-semibold tabular-nums ${deadlineToneClass[dl.tone]}`}>
@@ -82,33 +82,33 @@ export function CompetitionCard({ comp, timMencari = 0, priority = false }: Prop
         </div>
 
         {/* Judul: elemen terbesar setelah poster */}
-        <h3 className="line-clamp-2 text-[15px] font-semibold leading-snug text-slate-900">
+        <h3 className="line-clamp-2 text-[15px] font-semibold leading-snug text-stone-900 dark:text-stone-100">
           {comp.judul}
         </h3>
 
         {/* Penyelenggara: 13px kontras AA */}
         {comp.penyelenggara && (
-          <p className="truncate text-xs leading-snug text-slate-700">
+          <p className="truncate text-xs leading-snug text-stone-700 dark:text-stone-300">
             {comp.penyelenggara}
           </p>
         )}
 
         {/* Sinyal tim: hanya jika ada yang membuka */}
         {timMencari > 0 && (
-          <p className="inline-flex items-center gap-1.5 text-xs font-medium text-indigo-700">
+          <p className="inline-flex items-center gap-1.5 text-xs font-medium text-brand-700 dark:text-brand-300">
             <UsersThree size={14} weight="fill" aria-hidden="true" />
             {timMencari} tim mencari anggota
           </p>
         )}
 
         {/* Footer sejajar antar kartu: tanggal lengkap mono, biaya */}
-        <div className="mt-auto flex items-center justify-between gap-3 border-t border-slate-100 pt-2.5 text-xs">
-          <span className="truncate font-mono tabular-nums text-slate-600">
+        <div className="mt-auto flex items-center justify-between gap-3 border-t border-stone-100 dark:border-stone-800 pt-2.5 text-xs">
+          <span className="truncate font-mono tabular-nums text-stone-600 dark:text-stone-400">
             {dl.panjang}
           </span>
           <span
             className={`shrink-0 font-mono font-semibold tabular-nums ${
-              comp.biaya === 0 ? 'text-emerald-700' : 'text-slate-900'
+              comp.biaya === 0 ? 'text-emerald-700 dark:text-emerald-400' : 'text-stone-900 dark:text-stone-100'
             }`}
           >
             {comp.biaya === 0 ? 'Gratis' : `Rp ${comp.biaya.toLocaleString('id-ID')}`}

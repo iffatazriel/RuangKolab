@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useState } from 'react'
@@ -28,7 +28,7 @@ function chipLabel(key: string, value: string): string {
 }
 
 const selectClass =
-  'custom-input min-h-[44px] rounded-[10px] border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 focus:outline-none'
+  'custom-input min-h-[44px] rounded-[10px] border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 px-3 py-2 text-sm text-stone-700 dark:text-stone-300 focus:outline-none'
 
 export function LombaFilter({ resultCount }: Props) {
   const router = useRouter()
@@ -62,10 +62,10 @@ export function LombaFilter({ resultCount }: Props) {
   return (
     <>
       {/* Bar sticky: top mengikuti tinggi navbar (var --nav-h), z di bawah navbar */}
-      <div className="sticky z-[45] -mx-4 border-b border-slate-100 bg-[var(--background)]/95 px-4 pb-3 pt-3 backdrop-blur-md sm:-mx-6 sm:px-6" style={{ top: 'var(--nav-h)' }}>
+      <div className="sticky z-[45] -mx-4 border-b border-stone-100 dark:border-stone-800 bg-[var(--background)]/95 px-4 pb-3 pt-3 backdrop-blur-md sm:-mx-6 sm:px-6" style={{ top: 'var(--nav-h)' }}>
         <div className="hidden flex-wrap items-center gap-2.5 md:flex">
           <div className="relative min-w-[220px] flex-1">
-            <MagnifyingGlass size={18} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+            <MagnifyingGlass size={18} className="pointer-events-none absolute left-3.5 top-1/2 -transtone-y-1/2 text-stone-400" />
             <input
               type="search"
               aria-label="Cari lomba"
@@ -75,7 +75,7 @@ export function LombaFilter({ resultCount }: Props) {
                 if (e.key === 'Enter') set('q', (e.target as HTMLInputElement).value)
               }}
               onBlur={(e) => set('q', e.target.value)}
-              className="custom-input min-h-[44px] w-full rounded-[10px] border border-slate-300 bg-white pl-10 pr-3.5 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none"
+              className="custom-input min-h-[44px] w-full rounded-[10px] border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 pl-10 pr-3.5 py-2 text-sm text-stone-900 dark:text-stone-100 placeholder:text-stone-400 focus:outline-none"
             />
           </div>
           <select aria-label="Filter kategori" value={searchParams.get('kategori') ?? ''} onChange={(e) => set('kategori', e.target.value)} className={selectClass}>
@@ -109,15 +109,15 @@ export function LombaFilter({ resultCount }: Props) {
 
         {/* Baris ringkasan: jumlah hasil + chip aktif */}
         <div className="mt-3 flex flex-wrap items-center gap-2">
-          <p className="text-[13px] font-medium tabular-nums text-slate-600" aria-live="polite">
-            <span className="font-mono font-bold text-slate-900">{resultCount}</span> lomba aktif
+          <p className="text-[13px] font-medium tabular-nums text-stone-600 dark:text-stone-400" aria-live="polite">
+            <span className="font-mono font-bold text-stone-900 dark:text-stone-100">{resultCount}</span> lomba aktif
           </p>
           {activeChips.map((c) => (
             <button
               key={c.key}
               type="button"
               onClick={() => removeChip(c.key)}
-              className="inline-flex min-h-[32px] items-center gap-1 rounded-full bg-indigo-50 pl-3 pr-2 text-xs font-semibold text-indigo-700 transition hover:bg-indigo-100 active:scale-[0.98]"
+              className="inline-flex min-h-[32px] items-center gap-1 rounded-full bg-brand-50 dark:bg-brand-950 pl-3 pr-2 text-xs font-semibold text-brand-700 dark:text-brand-300 transition hover:bg-brand-100 active:scale-[0.98]"
             >
               {chipLabel(c.key, c.value)}
               <X size={12} weight="bold" aria-hidden="true" />
@@ -125,7 +125,7 @@ export function LombaFilter({ resultCount }: Props) {
             </button>
           ))}
           {sortKey === 'terbaru' && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-3 text-xs font-medium text-slate-600">
+            <span className="inline-flex items-center gap-1 rounded-full bg-stone-100 dark:bg-stone-800 px-3 text-xs font-medium text-stone-600 dark:text-stone-400">
               <ArrowDown size={12} weight="bold" /> terbaru dulu
             </span>
           )}
@@ -135,14 +135,14 @@ export function LombaFilter({ resultCount }: Props) {
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="mt-3 inline-flex min-h-[44px] w-full items-center justify-between rounded-[10px] border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 active:scale-[0.98] md:hidden"
+          className="mt-3 inline-flex min-h-[44px] w-full items-center justify-between rounded-[10px] border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 px-3.5 py-2 text-sm font-medium text-stone-700 dark:text-stone-300 transition hover:bg-stone-50 dark:hover:bg-stone-900 active:scale-[0.98] md:hidden"
         >
           <span className="flex items-center gap-2">
             <SlidersHorizontal size={18} />
             Filter dan urutan
           </span>
           {activeCount > 0 && (
-            <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-indigo-600 px-1.5 text-[11px] font-bold text-white">
+            <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-600 px-1.5 text-[11px] font-bold text-white">
               {activeCount}
             </span>
           )}
@@ -156,7 +156,7 @@ export function LombaFilter({ resultCount }: Props) {
             <motion.button
               type="button"
               aria-label="Tutup filter"
-              className="fixed inset-0 z-[80] bg-slate-900/40 md:hidden"
+              className="fixed inset-0 z-[80] bg-stone-900/40 md:hidden"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -166,7 +166,7 @@ export function LombaFilter({ resultCount }: Props) {
               role="dialog"
               aria-modal="true"
               aria-label="Filter lomba"
-              className="fixed inset-x-0 bottom-0 z-[90] rounded-t-2xl bg-white p-5 pb-8 shadow-2xl md:hidden"
+              className="fixed inset-x-0 bottom-0 z-[90] rounded-t-2xl bg-white dark:bg-stone-900 p-5 pb-8 shadow-2xl md:hidden"
               initial={{ y: '100%' }}
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
@@ -176,21 +176,21 @@ export function LombaFilter({ resultCount }: Props) {
               dragElastic={{ top: 0, bottom: 0.6 }}
               onDragEnd={(_, info) => { if (info.offset.y > 90) setOpen(false) }}
             >
-              <div className="mx-auto mb-4 h-1.5 w-12 rounded-full bg-slate-200" aria-hidden="true" />
+              <div className="mx-auto mb-4 h-1.5 w-12 rounded-full bg-stone-200" aria-hidden="true" />
               <div className="mb-4 flex items-center justify-between">
-                <h2 className="text-base font-bold text-slate-900">Filter dan urutan</h2>
+                <h2 className="text-base font-bold text-stone-900 dark:text-stone-100">Filter dan urutan</h2>
                 <button
                   type="button"
                   onClick={() => setOpen(false)}
                   aria-label="Tutup"
-                  className="flex h-11 w-11 items-center justify-center rounded-[10px] text-slate-500 transition hover:bg-slate-100 active:scale-[0.98]"
+                  className="flex h-11 w-11 items-center justify-center rounded-[10px] text-stone-500 dark:text-stone-400 transition hover:bg-stone-100 dark:hover:bg-stone-800 active:scale-[0.98]"
                 >
                   <X size={20} weight="bold" />
                 </button>
               </div>
               <div className="flex flex-col gap-3" onClick={() => setOpen(false)}>
                 <div className="relative">
-                  <MagnifyingGlass size={18} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                  <MagnifyingGlass size={18} className="pointer-events-none absolute left-3.5 top-1/2 -transtone-y-1/2 text-stone-400" />
                   <input
                     type="search"
                     aria-label="Cari lomba"
@@ -200,7 +200,7 @@ export function LombaFilter({ resultCount }: Props) {
                       if (e.key === 'Enter') set('q', (e.target as HTMLInputElement).value)
                     }}
                     onBlur={(e) => set('q', e.target.value)}
-                    className="custom-input min-h-[44px] w-full rounded-[10px] border border-slate-300 bg-white pl-10 pr-3.5 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none"
+                    className="custom-input min-h-[44px] w-full rounded-[10px] border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 pl-10 pr-3.5 py-2 text-sm text-stone-900 dark:text-stone-100 placeholder:text-stone-400 focus:outline-none"
                   />
                 </div>
                 <select aria-label="Filter kategori" value={searchParams.get('kategori') ?? ''} onChange={(e) => set('kategori', e.target.value)} className={selectClass}>
@@ -229,7 +229,7 @@ export function LombaFilter({ resultCount }: Props) {
               <button
                 type="button"
                 onClick={() => setOpen(false)}
-                className="mt-5 min-h-[48px] w-full rounded-[10px] bg-indigo-600 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700 active:scale-[0.98]"
+                className="mt-5 min-h-[48px] w-full rounded-[10px] bg-brand-600 py-3 text-sm font-semibold text-white transition hover:bg-brand-700 active:scale-[0.98]"
               >
                 Terapkan
               </button>

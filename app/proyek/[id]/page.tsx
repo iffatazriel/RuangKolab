@@ -99,15 +99,15 @@ export default async function ProyekDetailPage({ params }: { params: Promise<{ i
 
   return (
     <PageContainer width="wide">
-      <nav aria-label="Jejak navigasi" className="mb-4 text-sm text-slate-500">
-        <Link href="/proyek" className="inline-flex min-h-[44px] items-center hover:text-indigo-600">Proyek</Link>
+      <nav aria-label="Jejak navigasi" className="mb-4 text-sm text-stone-500 dark:text-stone-400">
+        <Link href="/proyek" className="inline-flex min-h-[44px] items-center hover:text-brand-600 dark:hover:text-brand-400">Proyek</Link>
         <span aria-hidden="true"> / </span>
-        <span className="text-slate-700">{post.judul}</span>
+        <span className="text-stone-700 dark:text-stone-300">{post.judul}</span>
       </nav>
 
       <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-12">
         <div className="space-y-6 lg:col-span-8">
-          <article className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm sm:p-8">
+          <article className="rounded-2xl border border-stone-200 dark:border-stone-800/80 bg-white dark:bg-stone-900 p-6 shadow-sm sm:p-8">
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
@@ -116,22 +116,22 @@ export default async function ProyekDetailPage({ params }: { params: Promise<{ i
                     {post.status === 'open' ? 'Membuka kolaborator' : post.status === 'full' ? 'Slot penuh' : 'Ditutup'}
                   </StatusPill>
                 </div>
-                <h1 className="mt-3 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">{post.judul}</h1>
+                <h1 className="mt-3 text-2xl font-bold tracking-tight text-stone-900 dark:text-stone-100 sm:text-3xl">{post.judul}</h1>
               </div>
               {user && !isOwner && <ReportButton targetType="post" targetId={post.id} />}
             </div>
 
             <div className="mt-6">
-              <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900">Deskripsi proyek</h2>
-              <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-slate-700">{post.deskripsi}</p>
+              <h2 className="text-sm font-bold uppercase tracking-wider text-stone-900 dark:text-stone-100">Deskripsi proyek</h2>
+              <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-stone-700 dark:text-stone-300">{post.deskripsi}</p>
             </div>
 
             {requiredSkills.length > 0 && (
               <div className="mt-6">
-                <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900">Keahlian yang dibutuhkan</h2>
+                <h2 className="text-sm font-bold uppercase tracking-wider text-stone-900 dark:text-stone-100">Keahlian yang dibutuhkan</h2>
                 <ul className="mt-2 flex flex-wrap gap-2">
                   {requiredSkills.map((s) => (
-                    <li key={s.id} className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700">
+                    <li key={s.id} className="rounded-full bg-stone-100 dark:bg-stone-800 px-3 py-1 text-xs font-medium text-stone-700 dark:text-stone-300">
                       {s.nama}
                     </li>
                   ))}
@@ -140,18 +140,18 @@ export default async function ProyekDetailPage({ params }: { params: Promise<{ i
             )}
 
             {(post.komitmen || post.repo_url) && (
-              <dl className="mt-6 grid gap-4 rounded-xl border border-slate-100 bg-slate-50/60 p-4 text-sm sm:grid-cols-2">
+              <dl className="mt-6 grid gap-4 rounded-xl border border-stone-100 dark:border-stone-800 bg-stone-50 dark:bg-stone-900/60 p-4 text-sm sm:grid-cols-2">
                 {post.komitmen && (
                   <div>
-                    <dt className="text-xs font-medium text-slate-500">Estimasi komitmen waktu</dt>
-                    <dd className="mt-1 font-semibold text-slate-900">{post.komitmen}</dd>
+                    <dt className="text-xs font-medium text-stone-500 dark:text-stone-400">Estimasi komitmen waktu</dt>
+                    <dd className="mt-1 font-semibold text-stone-900 dark:text-stone-100">{post.komitmen}</dd>
                   </div>
                 )}
                 {post.repo_url && (
                   <div>
-                    <dt className="text-xs font-medium text-slate-500">Repositori atau dokumen</dt>
+                    <dt className="text-xs font-medium text-stone-500 dark:text-stone-400">Repositori atau dokumen</dt>
                     <dd className="mt-1">
-                      <a href={post.repo_url} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-[44px] items-center gap-1.5 break-all font-semibold text-indigo-600 hover:underline">
+                      <a href={post.repo_url} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-[44px] items-center gap-1.5 break-all font-semibold text-brand-600 dark:text-brand-400 hover:underline">
                         Buka tautan
                         <ArrowSquareOut size={16} />
                       </a>
@@ -161,20 +161,20 @@ export default async function ProyekDetailPage({ params }: { params: Promise<{ i
               </dl>
             )}
 
-            <dl className="mt-6 grid grid-cols-2 gap-4 border-t border-slate-100 pt-5 text-sm">
+            <dl className="mt-6 grid grid-cols-2 gap-4 border-t border-stone-100 dark:border-stone-800 pt-5 text-sm">
               <div>
-                <dt className="text-xs font-medium text-slate-500">Inisiator</dt>
-                <dd className="mt-1 font-semibold text-slate-900">
+                <dt className="text-xs font-medium text-stone-500 dark:text-stone-400">Inisiator</dt>
+                <dd className="mt-1 font-semibold text-stone-900 dark:text-stone-100">
                   {ownerTyped?.nama}
                   {ownerTyped?.jurusan && (
-                    <span className="block text-xs font-normal text-slate-500">
+                    <span className="block text-xs font-normal text-stone-500 dark:text-stone-400">
                       {ownerTyped.jurusan}{ownerTyped.angkatan ? `, angkatan ${ownerTyped.angkatan}` : ''}
                     </span>
                   )}
                 </dd>
               </div>
               <div>
-                <dt className="text-xs font-medium text-slate-500">Slot tersedia</dt>
+                <dt className="text-xs font-medium text-stone-500 dark:text-stone-400">Slot tersedia</dt>
                 <dd className="mt-1">
                   <SlotBar terisi={post.slot_terisi} total={post.slot_total} className="max-w-[240px]" />
                 </dd>
@@ -184,7 +184,7 @@ export default async function ProyekDetailPage({ params }: { params: Promise<{ i
 
           {isOwner && (
             <section aria-labelledby="kelola-pengajuan" className="space-y-4">
-              <h2 id="kelola-pengajuan" className="text-lg font-bold tracking-tight text-slate-900">Kelola pengajuan</h2>
+              <h2 id="kelola-pengajuan" className="text-lg font-bold tracking-tight text-stone-900 dark:text-stone-100">Kelola pengajuan</h2>
               <ManageRequests postId={post.id} requests={allRequests} postStatus={post.status} />
             </section>
           )}
@@ -196,24 +196,24 @@ export default async function ProyekDetailPage({ params }: { params: Promise<{ i
           )}
 
           {!isOwner && user && post.status === 'open' && (
-            <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
+            <div className="rounded-2xl border border-stone-200 dark:border-stone-800/80 bg-white dark:bg-stone-900 p-5 shadow-sm">
               <AjukanGabungForm postId={post.id} existingStatus={userRequest?.status ?? null} requestId={userRequest?.id ?? null} />
             </div>
           )}
 
           {!isOwner && user && post.status !== 'open' && (
-            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5 text-sm text-slate-700">
+            <div className="rounded-2xl border border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-900 p-5 text-sm text-stone-700 dark:text-stone-300">
               Proyek ini sudah tidak membuka pendaftaran.
             </div>
           )}
 
           {!user && post.status === 'open' && (
-            <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
-              <p className="text-sm font-semibold text-slate-900">Ingin bergabung?</p>
-              <p className="mt-1 text-sm text-slate-600">Masuk dulu untuk mengajukan gabung ke proyek ini.</p>
+            <div className="rounded-2xl border border-stone-200 dark:border-stone-800/80 bg-white dark:bg-stone-900 p-5 shadow-sm">
+              <p className="text-sm font-semibold text-stone-900 dark:text-stone-100">Ingin bergabung?</p>
+              <p className="mt-1 text-sm text-stone-600 dark:text-stone-400">Masuk dulu untuk mengajukan gabung ke proyek ini.</p>
               <Link
                 href={`/masuk?redirect=/proyek/${post.id}`}
-                className="mt-4 inline-flex min-h-[48px] w-full items-center justify-center rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700 active:scale-[0.98]"
+                className="mt-4 inline-flex min-h-[48px] w-full items-center justify-center rounded-full bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-700 active:scale-[0.98]"
               >
                 Masuk untuk mengajukan
               </Link>
@@ -221,9 +221,9 @@ export default async function ProyekDetailPage({ params }: { params: Promise<{ i
           )}
 
           {isOwner && (
-            <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
-              <p className="text-sm font-semibold text-slate-900">Postingan milikmu</p>
-              <p className="mt-1 text-sm text-slate-600">Pengajuan masuk ada di bagian kelola pengajuan.</p>
+            <div className="rounded-2xl border border-stone-200 dark:border-stone-800/80 bg-white dark:bg-stone-900 p-5 shadow-sm">
+              <p className="text-sm font-semibold text-stone-900 dark:text-stone-100">Postingan milikmu</p>
+              <p className="mt-1 text-sm text-stone-600 dark:text-stone-400">Pengajuan masuk ada di bagian kelola pengajuan.</p>
               <div className="mt-4">
                 <DeletePostButton postId={post.id} redirectTo="/dashboard" />
               </div>

@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -56,7 +56,7 @@ export function NotificationList({ items }: { items: NotificationItem[] }) {
   }
 
   if (items.length === 0) {
-    return <p className="mt-4 text-sm text-slate-500">Belum ada notifikasi.</p>
+    return <p className="mt-4 text-sm text-stone-500 dark:text-stone-400">Belum ada notifikasi.</p>
   }
 
   return (
@@ -66,7 +66,7 @@ export function NotificationList({ items }: { items: NotificationItem[] }) {
           type="button"
           onClick={markAllRead}
           disabled={marking}
-          className="mb-3 text-xs font-medium text-indigo-600 hover:underline disabled:opacity-50"
+          className="mb-3 text-xs font-medium text-brand-600 dark:text-brand-400 hover:underline disabled:opacity-50"
         >
           Tandai semua sudah dibaca ({unread.length})
         </button>
@@ -77,23 +77,23 @@ export function NotificationList({ items }: { items: NotificationItem[] }) {
             <button
               type="button"
               onClick={() => open(n)}
-              className={`flex w-full items-center justify-between gap-3 rounded-lg border p-3 text-left text-sm transition hover:shadow-sm ${
-                n.dibaca ? 'border-slate-200 bg-white' : 'border-indigo-200 bg-indigo-50/60'
+              className={`flex w-full items-center justify-between gap-3 rounded-2xl border p-3 text-left text-sm transition hover:shadow-sm ${
+                n.dibaca ? 'border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900' : 'border-brand-200 dark:border-brand-800 bg-brand-50 dark:bg-brand-950/60'
               }`}
             >
               <div className="min-w-0">
-                <p className={`font-medium ${n.dibaca ? 'text-slate-700' : 'text-slate-900'}`}>
+                <p className={`font-medium ${n.dibaca ? 'text-stone-700 dark:text-stone-300' : 'text-stone-900 dark:text-stone-100'}`}>
                   {LABEL[n.tipe] ?? n.tipe}
                 </p>
-                {n.payload?.judul && <p className="truncate text-xs text-slate-500">{n.payload.judul}</p>}
-                <p className="text-[11px] text-slate-400">{new Date(n.created_at).toLocaleString('id-ID')}</p>
+                {n.payload?.judul && <p className="truncate text-xs text-stone-500 dark:text-stone-400">{n.payload.judul}</p>}
+                <p className="text-[11px] text-stone-400">{new Date(n.created_at).toLocaleString('id-ID')}</p>
               </div>
-              {!n.dibaca && <span className="h-2 w-2 shrink-0 rounded-full bg-indigo-600" aria-label="Belum dibaca" />}
+              {!n.dibaca && <span className="h-2 w-2 shrink-0 rounded-full bg-brand-600" aria-label="Belum dibaca" />}
             </button>
           </li>
         ))}
       </ul>
-      <p className="mt-3 text-xs text-slate-400">
+      <p className="mt-3 text-xs text-stone-400">
         <Link href="/dashboard" className="hover:underline">Muat ulang</Link> untuk melihat notifikasi terbaru.
       </p>
     </div>

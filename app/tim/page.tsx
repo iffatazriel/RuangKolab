@@ -1,9 +1,10 @@
-import { createClient } from '@/lib/supabase/server'
+﻿import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { Suspense } from 'react'
 import { TimFilter } from './TimFilter'
 import { PageContainer, PageHeader, PrimaryLink, EmptyState, StatusPill } from '@/components/ui/Page'
 import { AnimateGrid, GridItem } from '@/components/motion/AppMotion'
+import { TiltCard } from '@/components/motion/TiltCard'
 
 interface SearchParams { keahlian?: string; q?: string }
 
@@ -65,25 +66,27 @@ export default async function TimPage({ searchParams }: { searchParams: Promise<
               const compTyped = comp as { judul?: string } | null
               return (
                 <GridItem key={p.id}>
+                  <TiltCard className="h-full">
                   <Link
                     href={`/tim/${p.id}`}
-                    className="group flex h-full flex-col rounded-2xl border border-slate-200/70 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+                    className="group flex h-full flex-col rounded-2xl border border-stone-200/70 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:border-stone-800 dark:bg-stone-900"
                   >
                     {compTyped?.judul && (
-                      <p className="truncate text-[11px] font-semibold tracking-wider text-indigo-600 uppercase">{compTyped.judul}</p>
+                      <p className="truncate text-[11px] font-semibold tracking-wider text-brand-600 dark:text-brand-400 uppercase">{compTyped.judul}</p>
                     )}
-                    <h3 className="mt-2 line-clamp-2 text-lg font-bold leading-snug text-slate-900 group-hover:text-indigo-600">
+                    <h3 className="mt-2 line-clamp-2 text-lg font-bold leading-snug text-stone-900 dark:text-stone-100 group-hover:text-brand-600 dark:group-hover:text-brand-400">
                       {p.judul}
                     </h3>
-                    <p className="mt-1 line-clamp-2 text-sm text-slate-500">{p.deskripsi}</p>
-                    <div className="mt-auto flex items-center justify-between border-t border-slate-100 pt-3 text-xs text-slate-500">
-                      <span>oleh <span className="font-medium text-slate-700">{(owner as { nama?: string })?.nama ?? 'Anonim'}</span></span>
+                    <p className="mt-1 line-clamp-2 text-sm text-stone-500 dark:text-stone-400">{p.deskripsi}</p>
+                    <div className="mt-auto flex items-center justify-between border-t border-stone-100 dark:border-stone-800 pt-3 text-xs text-stone-500 dark:text-stone-400">
+                      <span>oleh <span className="font-medium text-stone-700 dark:text-stone-300">{(owner as { nama?: string })?.nama ?? 'Anonim'}</span></span>
                       <span className="flex items-center gap-2">
                         Slot {p.slot_terisi}/{p.slot_total}
                         {p.status === 'full' && <StatusPill tone="red">Penuh</StatusPill>}
                       </span>
                     </div>
                   </Link>
+                  </TiltCard>
                 </GridItem>
               )
             })}

@@ -1,12 +1,13 @@
-import Link from 'next/link'
+﻿import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
-import { Trophy, UsersThree, Rocket, ArrowRight, CalendarDots, Users } from '@phosphor-icons/react/dist/ssr'
-import { CompetitionCard, PosterFallback, type CompetitionCardData } from '@/components/ui/CompetitionCard'
-import { getDeadlineTone } from '@/lib/deadline'
+import { Trophy, UsersThree, Rocket, ArrowRight } from '@phosphor-icons/react/dist/ssr'
+import { CompetitionCard, type CompetitionCardData } from '@/components/ui/CompetitionCard'
+import { Avatar } from '@/components/ui/Avatar'
 import {
   HeroLines,
   HeroSequence,
   HeroParallax,
+  HeroStack,
   SnapRow,
   SnapCard,
   SpotlightCard,
@@ -17,12 +18,7 @@ import {
   RevealGroup,
   RevealItem,
 } from '@/components/motion/LandingMotion'
-
-function deadlineLabel(iso: string) {
-  // Versi ringkas untuk kartu unggulan hero; daftar memakai getDeadlineTone
-  const { pendek } = getDeadlineTone(iso)
-  return pendek
-}
+import { TiltCard } from '@/components/motion/TiltCard'
 
 export default async function Home() {
   const supabase = await createClient()
@@ -38,7 +34,7 @@ export default async function Home() {
       .limit(6),
     supabase
       .from('team_posts')
-      .select('id, tipe, judul, deskripsi, slot_total, slot_terisi, status')
+      .select('id, tipe, judul, deskripsi, slot_total, slot_terisi, status, users(nama)')
       .in('status', ['open', 'full'])
       .order('created_at', { ascending: false })
       .limit(6),
@@ -62,7 +58,6 @@ export default async function Home() {
   const lombaList = competitions ?? []
   const teamList = (teamPosts ?? []).filter((p) => p.tipe === 'competition').slice(0, 4)
   const proyekList = (teamPosts ?? []).filter((p) => p.tipe === 'project').slice(0, 3)
-  const featured = lombaList[0] ?? null
 
   // Sinyal tim: jumlah rekrutmen terbuka per lomba untuk kartu carousel
   const lombaIds = lombaList.map((c) => c.id)
@@ -82,28 +77,28 @@ export default async function Home() {
 
   return (
     <div>
-      {/* HERO: stagger per baris mengarahkan mata; kartu unggulan parallax, tanpa fade (LCP) */}
+      {/* HERO: split asimetris, teks kiri + tumpukan kartu 3D kanan, muat viewport */}
       <section className="mx-auto max-w-7xl px-4 pt-10 pb-14 sm:px-6 lg:pt-16 lg:pb-20">
-        <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-12">
+        <div className="grid min-h-[calc(100dvh-var(--nav-h)-7rem)] grid-cols-1 items-center gap-10 lg:grid-cols-12">
           <div className="lg:col-span-7">
             <HeroLines />
             <HeroSequence>
-              <p className="mt-4 max-w-xl text-base leading-relaxed text-slate-600 sm:text-lg">
-                Hubungkan keahlianmu dengan mahasiswa lintas jurusan untuk kompetisi dan proyek kampus.
+              <p className="mt-4 max-w-xl text-base leading-relaxed text-stone-600 sm:text-lg dark:text-stone-400">
+                Satu tempat untuk lomba kampus, rekrutmen tim, dan proyek kolaborasi mahasiswa.
               </p>
               <div className="mt-8 flex flex-wrap items-center gap-3">
                 <Link
                   href="/lomba"
-                  className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-lg bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 active:scale-[0.98]"
+                  className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full bg-brand-600 px-7 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-700 active:scale-[0.98]"
                 >
-                  Jelajahi Lomba
+                  Cari Lomba
                   <ArrowRight size={18} weight="bold" />
                 </Link>
                 <Link
                   href="/tim"
-                  className="inline-flex min-h-[48px] items-center justify-center rounded-lg border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 active:scale-[0.98]"
+                  className="inline-flex min-h-[48px] items-center justify-center rounded-full border border-stone-300 bg-white px-7 py-3 text-sm font-semibold text-stone-700 transition hover:bg-stone-50 active:scale-[0.98] dark:active:border-stone-700 dark:bg-stone-900 dark:text-stone-200 dark:hover:bg-stone-800"
                 >
-                  Cari Rekan Tim
+                  Cari Tim
                 </Link>
               </div>
             </HeroSequence>
@@ -111,65 +106,45 @@ export default async function Home() {
 
           <div className="lg:col-span-5">
             <HeroParallax>
-              <Link href={featured ? `/lomba/${featured.id}` : '/lomba'} className="block surface-card overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm">
-                <div className="relative mb-4 aspect-[16/10] overflow-hidden rounded-xl bg-slate-100">
-                  {featured?.poster_url ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={featured.poster_url}
-                      alt={`Poster ${featured.judul}`}
-                      fetchPriority="high"
-                      className="absolute inset-0 h-full w-full object-cover object-top"
-                    />
-                  ) : (
-                    <PosterFallback kategori={featured?.kategori ?? 'Teknologi'} />
-                  )}
-                </div>
-                <div className="px-2 pb-2">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="font-semibold text-indigo-600">{featured?.kategori ?? 'Teknologi'}</span>
-                    <span className="flex items-center gap-1 font-mono text-slate-500">
-                      <CalendarDots size={14} />
-                      {featured ? deadlineLabel(featured.deadline) : 'Segera'}
-                    </span>
-                  </div>
-                  <span className="mt-1.5 block text-lg font-bold text-slate-900 transition-colors hover:text-indigo-600 line-clamp-1">
-                    {featured?.judul ?? 'Hackathon UI/UX Nasional'}
-                  </span>
-                  <p className="mt-1 text-xs text-slate-500 line-clamp-1">
-                    Penyelenggara: {featured?.penyelenggara ?? 'UKM Komputer Mahasiswa'}
-                  </p>
-                </div>
-              </Link>
+              <HeroStack
+                cards={lombaList.slice(0, 3).map((c, i) => (
+                  <CompetitionCard
+                    key={c.id}
+                    comp={c as CompetitionCardData}
+                    timMencari={timMap[c.id] ?? 0}
+                    priority={i === 0}
+                  />
+                ))}
+              />
             </HeroParallax>
           </div>
         </div>
       </section>
 
       {/* STRIP STATISTIK: angka riil dari database */}
-      <section className="border-y border-slate-100 bg-white">
+      <section className="border-y border-stone-100 dark:border-stone-800 bg-white dark:bg-stone-900">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-6 sm:px-6">
           <div className="flex items-center gap-3">
-            <Trophy size={24} weight="duotone" className="text-indigo-600" />
+            <Trophy size={24} weight="duotone" className="text-brand-600 dark:text-brand-400" />
             <div>
-              <p className="font-mono text-xl font-bold tracking-tight text-slate-900">{totalComps ?? 0}</p>
-              <p className="text-xs font-medium text-slate-500">Lomba aktif</p>
+              <p className="font-mono text-xl font-bold tracking-tight text-stone-900 dark:text-stone-100">{totalComps ?? 0}</p>
+              <p className="text-xs font-medium text-stone-500 dark:text-stone-400">Lomba aktif</p>
             </div>
           </div>
-          <div className="h-8 w-px bg-slate-200" />
+          <div className="h-8 w-px bg-stone-200" />
           <div className="flex items-center gap-3">
-            <UsersThree size={24} weight="duotone" className="text-indigo-600" />
+            <UsersThree size={24} weight="duotone" className="text-brand-600 dark:text-brand-400" />
             <div>
-              <p className="font-mono text-xl font-bold tracking-tight text-slate-900">{(totalPosts ?? 0) - (totalProjects ?? 0)}</p>
-              <p className="text-xs font-medium text-slate-500">Rekrutmen tim</p>
+              <p className="font-mono text-xl font-bold tracking-tight text-stone-900 dark:text-stone-100">{(totalPosts ?? 0) - (totalProjects ?? 0)}</p>
+              <p className="text-xs font-medium text-stone-500 dark:text-stone-400">Rekrutmen tim</p>
             </div>
           </div>
-          <div className="hidden h-8 w-px bg-slate-200 sm:block" />
+          <div className="hidden h-8 w-px bg-stone-200 sm:block" />
           <div className="hidden items-center gap-3 sm:flex">
-            <Rocket size={24} weight="duotone" className="text-indigo-600" />
+            <Rocket size={24} weight="duotone" className="text-brand-600 dark:text-brand-400" />
             <div>
-              <p className="font-mono text-xl font-bold tracking-tight text-slate-900">{totalProjects ?? 0}</p>
-              <p className="text-xs font-medium text-slate-500">Proyek terbuka</p>
+              <p className="font-mono text-xl font-bold tracking-tight text-stone-900 dark:text-stone-100">{totalProjects ?? 0}</p>
+              <p className="text-xs font-medium text-stone-500 dark:text-stone-400">Proyek terbuka</p>
             </div>
           </div>
         </div>
@@ -179,10 +154,10 @@ export default async function Home() {
       <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:py-16">
         <div className="mb-6 flex items-end justify-between">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight text-slate-900">Segera berakhir</h2>
-            <p className="mt-1 text-xs text-slate-500">Pendaftaran menutup paling cepat pada lomba-lomba ini.</p>
+            <h2 className="text-2xl font-bold tracking-tight text-stone-900 dark:text-stone-100">Segera berakhir</h2>
+            <p className="mt-1 text-xs text-stone-500 dark:text-stone-400">Pendaftaran menutup paling cepat pada lomba-lomba ini.</p>
           </div>
-          <Link href="/lomba" className="flex min-h-[44px] items-center gap-1 text-sm font-semibold text-indigo-600 transition-colors hover:text-indigo-700">
+          <Link href="/lomba" className="flex min-h-[44px] items-center gap-1 text-sm font-semibold text-brand-600 dark:text-brand-400 transition-colors hover:text-brand-700 dark:hover:text-brand-300">
             Semua lomba
             <ArrowRight size={16} weight="bold" />
           </Link>
@@ -191,19 +166,21 @@ export default async function Home() {
           <SnapRow label="Lomba mendekati deadline">
             {lombaList.map((c, i) => (
               <SnapCard key={c.id}>
-                <CompetitionCard
-                  comp={c as CompetitionCardData}
-                  timMencari={timMap[c.id] ?? 0}
-                  priority={i < 3}
-                />
+                <TiltCard className="h-full">
+                  <CompetitionCard
+                    comp={c as CompetitionCardData}
+                    timMencari={timMap[c.id] ?? 0}
+                    priority={i < 3}
+                  />
+                </TiltCard>
               </SnapCard>
             ))}
           </SnapRow>
         ) : (
-          <div className="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-10 text-center">
-            <p className="font-semibold text-slate-800">Belum ada lomba aktif</p>
-            <p className="mt-1 text-sm text-slate-500">Ketahui lomba yang belum terdaftar? Usulkan agar temanmu ikut serta.</p>
-            <Link href="/lomba/usul" className="mt-4 inline-flex min-h-[44px] items-center rounded-lg border border-indigo-600 px-4 py-2.5 text-sm font-semibold text-indigo-600 transition hover:bg-indigo-50">
+          <div className="rounded-2xl border border-dashed border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 px-6 py-10 text-center">
+            <p className="font-semibold text-stone-800 dark:text-stone-200">Belum ada lomba aktif</p>
+            <p className="mt-1 text-sm text-stone-500 dark:text-stone-400">Ketahui lomba yang belum terdaftar? Usulkan agar temanmu ikut serta.</p>
+            <Link href="/lomba/usul" className="mt-4 inline-flex min-h-[44px] items-center rounded-full border border-brand-600 px-4 py-2.5 text-sm font-semibold text-brand-600 dark:text-brand-400 transition hover:bg-brand-50 dark:hover:bg-brand-950 dark:hover:bg-brand-950">
               Usulkan Lomba
             </Link>
           </div>
@@ -211,9 +188,9 @@ export default async function Home() {
       </section>
 
       {/* CARA KERJA: garis tergambar mengikuti scroll, alur Temukan, Ajukan, Bentuk tim */}
-      <section className="border-t border-slate-100 bg-white">
+      <section className="border-t border-stone-100 dark:border-stone-800 bg-white dark:bg-stone-900">
         <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:py-16">
-          <h2 className="text-2xl font-bold tracking-tight text-slate-900">Cara kerjanya</h2>
+          <h2 className="text-2xl font-bold tracking-tight text-stone-900 dark:text-stone-100">Cara kerjanya</h2>
           <HowItWorks
             steps={[
               { title: 'Temukan', body: 'Telusuri lomba yang masih membuka pendaftaran, urut dari deadline terdekat, lengkap dengan biaya dan tingkatnya.' },
@@ -240,8 +217,8 @@ export default async function Home() {
                   />
                 </div>
                 <div className="flex flex-1 flex-col justify-center p-6">
-                  <h3 className="text-lg font-bold text-slate-900">Satu platform, tiga tujuan</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-slate-600">
+                  <h3 className="text-lg font-bold text-stone-900 dark:text-stone-100">Satu platform, tiga tujuan</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-stone-600 dark:text-stone-400">
                     Lomba, rekrutmen tim, dan proyek kolaborasi dalam satu tempat. Tidak perlu lagi menyebar info lewat grup chat.
                   </p>
                 </div>
@@ -250,26 +227,32 @@ export default async function Home() {
           </RevealItem>
           <RevealItem>
             <SpotlightCard className="flex h-full flex-col justify-between p-6">
-              <Trophy size={32} weight="duotone" className="text-indigo-600" />
+              <Trophy size={32} weight="duotone" className="text-brand-600 dark:text-brand-400" />
               <div className="mt-6">
-                <p className="font-mono text-3xl font-bold tracking-tight text-slate-900">{totalComps ?? 0}</p>
-                <p className="mt-1 text-sm text-slate-600">lomba aktif menunggu pendaftaran</p>
+                <p className="font-mono text-3xl font-bold tracking-tight text-stone-900 dark:text-stone-100">{totalComps ?? 0}</p>
+                <p className="mt-1 text-sm text-stone-600 dark:text-stone-400">lomba aktif menunggu pendaftaran</p>
               </div>
             </SpotlightCard>
           </RevealItem>
           <RevealItem className="md:col-span-3">
             <SpotlightCard className="flex flex-wrap items-center justify-between gap-4 p-6">
-              <div className="flex items-center gap-4">
-                <Users size={32} weight="duotone" className="text-indigo-600" />
+              <div className="flex min-w-0 items-center gap-4">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="https://picsum.photos/seed/ruangkolab-tim-belajar/200/200"
+                  alt="Kelompok mahasiswa belajar bersama"
+                  loading="lazy"
+                  className="hidden h-16 w-16 shrink-0 rounded-xl object-cover sm:block"
+                />
                 <div>
-                  <p className="font-bold text-slate-900">Rekrutmen terbuka</p>
-                  <p className="text-sm text-slate-600">
+                  <p className="font-bold text-stone-900 dark:text-stone-100">Rekrutmen terbuka</p>
+                  <p className="text-sm text-stone-600 dark:text-stone-400">
                     <span className="font-mono font-bold">{(totalPosts ?? 0) - (totalProjects ?? 0)}</span> tim lomba dan{' '}
                     <span className="font-mono font-bold">{totalProjects ?? 0}</span> proyek sedang mencari anggota
                   </p>
                 </div>
               </div>
-              <Link href="/tim" className="inline-flex min-h-[44px] items-center gap-1 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 active:scale-[0.98]">
+              <Link href="/tim" className="inline-flex min-h-[44px] items-center gap-1 rounded-full border border-stone-300 bg-white px-4 py-2 text-sm font-semibold text-stone-700 transition hover:bg-stone-50 active:scale-[0.98] dark:border-stone-700 dark:bg-stone-900 dark:text-stone-200 dark:hover:bg-stone-800">
                 Lihat rekrutmen
                 <ArrowRight size={16} weight="bold" />
               </Link>
@@ -279,7 +262,7 @@ export default async function Home() {
       </section>
 
       {/* MARQUEE: satu-satunya, keahlian populer dari database */}
-      <section className="border-y border-slate-100 bg-slate-50/60 py-8">
+      <section className="border-y border-stone-100 dark:border-stone-800 bg-stone-50 dark:bg-stone-900/60 py-8">
         <Marquee items={skillNames.length > 0 ? skillNames : ['Frontend', 'UI/UX', 'Data', 'Karya Tulis', 'Video', 'IoT']} />
       </section>
 
@@ -287,22 +270,29 @@ export default async function Home() {
       {teamList.length > 0 && (
         <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:py-16">
           <div className="mb-6 flex items-end justify-between">
-            <h2 className="text-2xl font-bold tracking-tight text-slate-900">Baru membuka slot</h2>
-            <Link href="/tim" className="flex min-h-[44px] items-center gap-1 text-sm font-semibold text-indigo-600 transition-colors hover:text-indigo-700">
+            <h2 className="text-2xl font-bold tracking-tight text-stone-900 dark:text-stone-100">Baru membuka slot</h2>
+            <Link href="/tim" className="flex min-h-[44px] items-center gap-1 text-sm font-semibold text-brand-600 dark:text-brand-400 transition-colors hover:text-brand-700 dark:hover:text-brand-300">
               Semua tim
               <ArrowRight size={16} weight="bold" />
             </Link>
           </div>
           <div className="grid grid-cols-1 gap-x-10 md:grid-cols-2">
-            {teamList.map((p) => (
-              <Link key={p.id} href={`/tim/${p.id}`} className="group flex items-start justify-between gap-4 border-t border-slate-100 py-5 first:border-t-0 md:first:border-t">
-                <div className="min-w-0">
-                  <h3 className="line-clamp-1 text-base font-bold text-slate-900 transition-colors group-hover:text-indigo-600">{p.judul}</h3>
-                  <p className="mt-1 line-clamp-1 text-sm text-slate-500">{p.deskripsi}</p>
-                </div>
-                <span className="font-mono shrink-0 text-xs font-medium text-slate-500">{p.slot_terisi}/{p.slot_total}</span>
-              </Link>
-            ))}
+            {teamList.map((p) => {
+              const rawUsers = (p as unknown as { users?: { nama?: string } | { nama?: string }[] | null }).users
+              const nama = (Array.isArray(rawUsers) ? rawUsers[0]?.nama : rawUsers?.nama) ?? 'Anonim'
+              return (
+                <Link key={p.id} href={`/tim/${p.id}`} className="group flex items-center justify-between gap-4 border-t border-stone-100 py-5 first:border-t-0 md:first:border-t dark:border-stone-800">
+                  <div className="flex min-w-0 items-center gap-3">
+                    <Avatar nama={nama} size="md" />
+                    <div className="min-w-0">
+                      <h3 className="line-clamp-1 text-base font-bold text-stone-900 transition-colors group-hover:text-brand-600 dark:text-stone-100 dark:group-hover:text-brand-400">{p.judul}</h3>
+                      <p className="mt-0.5 line-clamp-1 text-sm text-stone-500 dark:text-stone-400">oleh {nama} · Slot {p.slot_terisi}/{p.slot_total}</p>
+                    </div>
+                  </div>
+                  <span className="font-mono shrink-0 text-xs font-medium text-stone-500 dark:text-stone-400">Lihat</span>
+                </Link>
+              )
+            })}
           </div>
         </section>
       )}
@@ -311,25 +301,25 @@ export default async function Home() {
       {proyekList.length > 0 && (
         <section className="mx-auto max-w-7xl px-4 pb-12 sm:px-6 lg:pb-16">
           <div className="mb-6 flex items-end justify-between">
-            <h2 className="text-2xl font-bold tracking-tight text-slate-900">Proyek kolaborasi</h2>
-            <Link href="/proyek" className="flex min-h-[44px] items-center gap-1 text-sm font-semibold text-indigo-600 transition-colors hover:text-indigo-700">
+            <h2 className="text-2xl font-bold tracking-tight text-stone-900 dark:text-stone-100">Proyek kolaborasi</h2>
+            <Link href="/proyek" className="flex min-h-[44px] items-center gap-1 text-sm font-semibold text-brand-600 dark:text-brand-400 transition-colors hover:text-brand-700 dark:hover:text-brand-300">
               Semua proyek
               <ArrowRight size={16} weight="bold" />
             </Link>
           </div>
           <div className="flex flex-col gap-3">
             {proyekList.map((p) => (
-              <Link key={p.id} href={`/proyek/${p.id}`} className="surface-card group flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
+              <Link key={p.id} href={`/proyek/${p.id}`} className="surface-card group flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-stone-200 dark:border-stone-800/80 bg-white dark:bg-stone-900 p-5 shadow-sm">
                 <div className="flex min-w-0 items-center gap-4">
-                  <div className="hidden h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 sm:flex">
+                  <div className="hidden h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-50 dark:bg-brand-950 text-brand-600 dark:text-brand-400 sm:flex">
                     <Rocket size={22} />
                   </div>
                   <div className="min-w-0">
-                    <h3 className="line-clamp-1 text-base font-bold text-slate-900 transition-colors group-hover:text-indigo-600">{p.judul}</h3>
-                    <p className="mt-0.5 line-clamp-1 text-sm text-slate-500">{p.deskripsi}</p>
+                    <h3 className="line-clamp-1 text-base font-bold text-stone-900 dark:text-stone-100 transition-colors group-hover:text-brand-600 dark:group-hover:text-brand-400">{p.judul}</h3>
+                    <p className="mt-0.5 line-clamp-1 text-sm text-stone-500 dark:text-stone-400">{p.deskripsi}</p>
                   </div>
                 </div>
-                <span className="shrink-0 font-mono text-xs font-medium text-slate-500">Anggota {p.slot_terisi}/{p.slot_total}</span>
+                <span className="shrink-0 font-mono text-xs font-medium text-stone-500 dark:text-stone-400">Anggota {p.slot_terisi}/{p.slot_total}</span>
               </Link>
             ))}
           </div>
@@ -337,16 +327,16 @@ export default async function Home() {
       )}
 
       {/* CTA PENUTUP: magnetik, latar aksen bergeser lambat */}
-      <DriftBackdrop className="border-t border-slate-100 bg-white">
+      <DriftBackdrop className="border-t border-stone-100 dark:border-stone-800 bg-white dark:bg-stone-900">
         <section className="mx-auto max-w-7xl px-4 py-16 text-center sm:px-6 lg:py-20">
-          <h2 className="mx-auto max-w-2xl text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
+          <h2 className="mx-auto max-w-2xl text-3xl font-extrabold tracking-tight text-stone-900 dark:text-stone-100 sm:text-4xl">
             Punya keahlian? Ada tim yang menunggu.
           </h2>
-          <p className="mx-auto mt-3 max-w-xl text-base text-slate-600">
+          <p className="mx-auto mt-3 max-w-xl text-base text-stone-600 dark:text-stone-400">
             Daftar, lengkapi profilmu, dan mulai dari postingan pertama hari ini.
           </p>
           <div className="mt-8">
-            <MagneticLink href="/daftar">Daftar Sekarang</MagneticLink>
+            <MagneticLink href="/daftar">Daftar</MagneticLink>
           </div>
         </section>
       </DriftBackdrop>

@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+﻿import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { PostForm } from '@/components/PostForm'
 import { PageContainer, PageHeader } from '@/components/ui/Page'
@@ -30,7 +30,7 @@ export default async function TimBaruPage({
         title="Buka rekrutmen tim"
         description="Satu postingan untuk satu lomba. Jelaskan peran yang dibutuhkan agar calon anggota tepat sasaran."
       />
-      <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm sm:p-8">
+      <div className="rounded-2xl border border-stone-200 dark:border-stone-800/80 bg-white dark:bg-stone-900 p-6 shadow-sm sm:p-8">
         <PostForm
           tipe="competition"
           competitions={competitions ?? []}

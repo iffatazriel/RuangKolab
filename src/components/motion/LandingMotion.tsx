@@ -1,7 +1,7 @@
-'use client'
+﻿'use client'
 
-import { useRef } from 'react'
-import { motion, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform, type MotionValue } from 'motion/react'
+import { useRef, useState } from 'react'
+import { motion, useMotionValue, useMotionValueEvent, useReducedMotion, useScroll, useSpring, useTransform, type MotionValue } from 'motion/react'
 import type { ReactNode } from 'react'
 import {
   fadeUp,
@@ -17,28 +17,20 @@ import {
 
 export function HeroLines() {
   const reduce = useReducedMotion()
-  const items = [
-    'Temukan Lomba,',
-    'Bentuk Tim,',
-    'Wujudkan Proyek.',
-  ]
   return (
     <motion.h1
-      className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-5xl sm:leading-[1.12]"
+      className="text-4xl font-extrabold tracking-tight text-stone-900 sm:text-5xl sm:leading-[1.12] dark:text-stone-100"
       initial={reduce ? false : 'hidden'}
       animate="show"
-      variants={staggerContainer(items.length)}
-      aria-label="Temukan Lomba, Bentuk Tim, Wujudkan Proyek."
+      variants={staggerContainer(2)}
+      aria-label="Temukan lomba, bentuk tim impianmu."
     >
-      {items.map((line) => (
-        <motion.span
-          key={line}
-          className="block"
-          variants={fadeUp}
-        >
-          {line}
-        </motion.span>
-      ))}
+      <motion.span className="block" variants={fadeUp}>
+        Temukan Lomba,
+      </motion.span>
+      <motion.span className="block" variants={fadeUp}>
+        <em>Bentuk Tim</em> Impianmu.
+      </motion.span>
     </motion.h1>
   )
 }
@@ -84,22 +76,88 @@ export function HeroParallax({ children }: { children: ReactNode }) {
   )
 }
 
+/* ---------- HERO STACK 3D: 2-3 kartu lomba asli, parallax kursor (desktop saja) ---------- */
+
+export function HeroStack({ cards }: { cards: ReactNode[] }) {
+  const reduce = useReducedMotion()
+  const ref = useRef<HTMLDivElement>(null)
+  const mx = useMotionValue(0)
+  const my = useMotionValue(0)
+  const rx = useSpring(useTransform(my, [-0.5, 0.5], [4, -4]), SPRING)
+  const ry = useSpring(useTransform(mx, [-0.5, 0.5], [-6, 6]), SPRING)
+
+  const shown = cards.slice(0, 3)
+
+  if (shown.length === 0) {
+    return (
+      <div className="rounded-2xl border border-dashed border-stone-300 bg-white p-8 text-center dark:border-stone-700 dark:bg-stone-900">
+        <p className="text-sm font-medium text-stone-600 dark:text-stone-400">Belum ada lomba aktif (contoh)</p>
+      </div>
+    )
+  }
+
+  return (
+    <div
+      ref={ref}
+      className="[perspective:1200px]"
+      onPointerMove={(e) => {
+        if (reduce || e.pointerType !== 'mouse') return
+        const r = e.currentTarget.getBoundingClientRect()
+        mx.set((e.clientX - r.left) / r.width - 0.5)
+        my.set((e.clientY - r.top) / r.height - 0.5)
+      }}
+      onPointerLeave={() => {
+        mx.set(0)
+        my.set(0)
+      }}
+    >
+      {/* HP: satu kartu statis */}
+      <div className="lg:hidden">{shown[0]}</div>
+      {/* Desktop: tumpukan berlapis dengan kedalaman translateZ */}
+      <motion.div
+        className="relative hidden h-[440px] [transform-style:preserve-3d] lg:block"
+        style={reduce ? undefined : { rotateX: rx, rotateY: ry }}
+        aria-label="Contoh lomba yang sedang dibuka"
+      >
+        {shown.map((card, i) => (
+          <motion.div
+            key={i}
+            className="absolute inset-x-8 top-0"
+            style={{ zIndex: shown.length - i }}
+            initial={reduce ? false : { opacity: 0, y: 32 }}
+            animate={{ opacity: 1, y: 0, z: -i * 90 }}
+            transition={{ duration: 0.7, ease: EASE_OUT, delay: 0.15 + i * 0.12 }}
+          >
+            <div
+              className="overflow-hidden rounded-2xl shadow-xl"
+              style={{ transform: `translate(${-i * 22}px, ${i * 26}px) rotate(${-i * 2}deg)` }}
+            >
+              {card}
+            </div>
+          </motion.div>
+        ))}
+      </motion.div>
+    </div>
+  )
+}
+
 /* ---------- NAVBAR: blur + border muncul saat scroll, tinggi tetap --nav-h ---------- */
 
 export function NavbarShell({ left, right }: { left: ReactNode; right: ReactNode }) {
-  const reduce = useReducedMotion()
   const { scrollY } = useScroll()
-  const scrolled = useTransform(scrollY, [0, 80], [0, 1])
-  const bg = useTransform(scrolled, [0, 1], ['rgba(255,255,255,0.7)', 'rgba(255,255,255,0.9)'])
-  const blur = useTransform(scrolled, [0, 1], ['backdrop-blur-none', 'backdrop-blur-md'])
-  const borderColor = useTransform(scrolled, [0, 1], ['rgba(241,245,249,0)', 'rgba(226,232,240,0.8)'])
+  const [scrolled, setScrolled] = useState(false)
+  useMotionValueEvent(scrollY, 'change', (v) => {
+    setScrolled((prev) => (v > 80 ? true : v <= 40 ? false : prev))
+  })
 
   return (
     <motion.header
-      className="sticky top-0 z-50 border-b"
-      style={reduce
-        ? { height: 'var(--nav-h)', backgroundColor: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(8px)', borderColor: 'rgba(226,232,240,0.8)' }
-        : { height: 'var(--nav-h)', backgroundColor: bg, backdropFilter: blur, borderColor }}
+      className={`sticky top-0 z-50 border-b transition-[background-color,border-color] duration-300 ${
+        scrolled
+          ? 'border-stone-200/80 bg-white/90 backdrop-blur-md dark:border-stone-800 dark:bg-stone-950/90'
+          : 'border-transparent bg-white/70 dark:bg-stone-950/70'
+      }`}
+      style={{ height: 'var(--nav-h)' }}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6" style={{ height: 'var(--nav-h)' }}>
         {left}
@@ -185,11 +243,11 @@ export function HowItWorks({ steps }: { steps: { title: string; body: string }[]
   return (
     <div ref={ref} className="relative mt-8 max-w-2xl">
       {/* Garis penghubung: latar abu + garis indigo yang tergambar */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 left-[27px] w-0.5 bg-slate-200" />
+      <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 left-[27px] w-0.5 bg-stone-200" />
       <svg aria-hidden="true" className="pointer-events-none absolute inset-y-0 left-[27px] h-full w-0.5" preserveAspectRatio="none" viewBox="0 0 2 100">
         <motion.line
           x1="1" y1="0" x2="1" y2="100"
-          stroke="#4f46e5"
+          stroke="#2b5cb4"
           strokeWidth="2"
           vectorEffect="non-scaling-stroke"
           style={reduce ? { pathLength: 1 } : { pathLength: scrollYProgress }}
@@ -229,8 +287,8 @@ function StepItem({
   // Langkah menyala saat garis mencapainya: rentang proporsional posisi langkah
   const start = Math.max(0, index / total - 0.12)
   const end = Math.min(1, index / total + 0.05)
-  const borderColor = useTransform(progress, [start, end], ['#e2e8f0', '#4f46e5'])
-  const bg = useTransform(progress, [start, end], ['#ffffff', '#4f46e5'])
+  const borderColor = useTransform(progress, [start, end], ['#e2e8f0', '#2b5cb4'])
+  const bg = useTransform(progress, [start, end], ['#ffffff', '#2b5cb4'])
   const color = useTransform(progress, [start, end], ['#94a3b8', '#ffffff'])
 
   return (
@@ -244,13 +302,13 @@ function StepItem({
       <motion.span
         aria-hidden="true"
         className="relative z-10 flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 text-sm font-bold"
-        style={reduce ? { borderColor: '#4f46e5', backgroundColor: '#4f46e5', color: '#ffffff' } : { borderColor, backgroundColor: bg, color }}
+        style={reduce ? { borderColor: '#2b5cb4', backgroundColor: '#2b5cb4', color: '#ffffff' } : { borderColor, backgroundColor: bg, color }}
       >
         {index + 1}
       </motion.span>
       <div className="pt-2">
-        <h3 className="text-lg font-bold text-slate-900">{title}</h3>
-        <p className="mt-1 max-w-[65ch] text-sm leading-relaxed text-slate-600">{body}</p>
+        <h3 className="text-lg font-bold text-stone-900 dark:text-stone-100">{title}</h3>
+        <p className="mt-1 max-w-[65ch] text-sm leading-relaxed text-stone-600 dark:text-stone-400">{body}</p>
       </div>
     </motion.li>
   )
@@ -265,12 +323,12 @@ export function SpotlightCard({ children, className = '' }: { children: ReactNod
   const bg = useTransform(
     [mx, my],
     ([x, y]: number[]) =>
-      `radial-gradient(240px circle at ${x}px ${y}px, rgba(79,70,229,0.10), transparent 70%)`
+      `radial-gradient(240px circle at ${x}px ${y}px, rgba(43, 92, 180,0.10), transparent 70%)`
   )
 
   return (
     <div
-      className={`group relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm transition-shadow hover:shadow-md ${className}`}
+      className={`group relative overflow-hidden rounded-2xl border border-stone-200 dark:border-stone-800/80 bg-white dark:bg-stone-900 shadow-sm transition-shadow hover:shadow-md ${className}`}
       onPointerMove={(e) => {
         if (reduce || e.pointerType !== 'mouse') return
         const r = e.currentTarget.getBoundingClientRect()
@@ -312,7 +370,7 @@ export function MagneticLink({ href, children, className = '' }: { href: string;
     >
       <a
         href={href}
-        className={`inline-flex min-h-[48px] items-center justify-center gap-2 rounded-lg bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-indigo-700 active:scale-[0.98] ${className}`}
+        className={`inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full bg-brand-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-brand-700 active:scale-[0.98] ${className}`}
       >
         {children}
       </a>
@@ -328,7 +386,7 @@ export function Marquee({ items }: { items: string[] }) {
     return (
       <div className="flex flex-wrap justify-center gap-2">
         {items.map((it) => (
-          <span key={it} className="rounded-full bg-white px-3.5 py-1.5 text-sm font-medium text-slate-700 ring-1 ring-slate-200">{it}</span>
+          <span key={it} className="rounded-full bg-white dark:bg-stone-900 px-3.5 py-1.5 text-sm font-medium text-stone-700 dark:text-stone-300 ring-1 ring-stone-200 dark:ring-stone-700">{it}</span>
         ))}
       </div>
     )
@@ -341,7 +399,7 @@ export function Marquee({ items }: { items: string[] }) {
           <span
             key={`${it}-${i}`}
             aria-hidden={i >= items.length}
-            className="rounded-full bg-white px-3.5 py-1.5 text-sm font-medium text-slate-700 ring-1 ring-slate-200"
+            className="rounded-full bg-white dark:bg-stone-900 px-3.5 py-1.5 text-sm font-medium text-stone-700 dark:text-stone-300 ring-1 ring-stone-200 dark:ring-stone-700"
           >
             {it}
           </span>
@@ -362,7 +420,7 @@ export function DriftBackdrop({ children, className = '' }: { children: ReactNod
         className="pointer-events-none absolute inset-[-50%]"
         style={{
           background:
-            'radial-gradient(600px circle at 30% 30%, rgba(79,70,229,0.08), transparent 60%), radial-gradient(600px circle at 70% 70%, rgba(79,70,229,0.06), transparent 60%)',
+            'radial-gradient(600px circle at 30% 30%, rgba(43, 92, 180,0.08), transparent 60%), radial-gradient(600px circle at 70% 70%, rgba(43, 92, 180,0.06), transparent 60%)',
         }}
         animate={reduce ? undefined : { rotate: [0, 8, 0], scale: [1, 1.05, 1] }}
         transition={reduce ? undefined : { duration: 40, repeat: Infinity, ease: 'easeInOut' }}

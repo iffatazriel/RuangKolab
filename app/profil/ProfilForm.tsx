@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -95,31 +95,31 @@ export function ProfilForm({ profile, email, allSkills, userSkillIds, whatsapp: 
   return (
     <form onSubmit={submit} className="mt-6 flex flex-col gap-5" noValidate>
       {error && (
-        <div role="alert" className="rounded-lg border border-rose-200 bg-rose-50 px-3.5 py-2.5 text-sm font-medium text-rose-800">
+        <div role="alert" className="rounded-[10px] border border-rose-200 dark:border-rose-800 bg-rose-50 dark:bg-rose-950 px-3.5 py-2.5 text-sm font-medium text-rose-800 dark:text-rose-400">
           {error}
         </div>
       )}
 
       <div className="flex flex-col gap-1.5">
-        <label htmlFor="email-readonly" className="text-xs font-semibold text-slate-700">Email (tidak dapat diubah)</label>
+        <label htmlFor="email-readonly" className="text-xs font-semibold text-stone-700 dark:text-stone-300">Email (tidak dapat diubah)</label>
         <input
           id="email-readonly"
           value={email}
           disabled
-          className="w-full rounded-lg border border-slate-200 bg-slate-100 px-3 py-2 text-sm text-slate-500"
+          className="w-full rounded-[10px] border border-stone-200 dark:border-stone-800 bg-stone-100 dark:bg-stone-800 px-3 py-2 text-sm text-stone-500 dark:text-stone-400"
         />
       </div>
 
       <Input id="nama" name="nama" label="Nama Lengkap" required value={form.nama} onChange={change} />
 
       <div className="flex flex-col gap-1.5">
-        <label htmlFor="campus_id" className="text-xs font-semibold text-slate-700">Kampus</label>
+        <label htmlFor="campus_id" className="text-xs font-semibold text-stone-700 dark:text-stone-300">Kampus</label>
         <select
           id="campus_id"
           name="campus_id"
           value={form.campus_id}
           onChange={change}
-          className="custom-input min-h-[44px] w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:outline-none"
+          className="custom-input min-h-[44px] w-full rounded-[10px] border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 px-3 py-2 text-sm text-stone-900 dark:text-stone-100 focus:outline-none"
         >
           {campuses.map((c) => (
             <option key={c.id} value={c.id}>
@@ -127,7 +127,7 @@ export function ProfilForm({ profile, email, allSkills, userSkillIds, whatsapp: 
             </option>
           ))}
         </select>
-        <p className="text-xs text-slate-500">
+        <p className="text-xs text-stone-500 dark:text-stone-400">
           Cakupan pilot masih satu kampus. Daftar kampus akan bertambah saat ekspansi.
         </p>
       </div>
@@ -174,8 +174,8 @@ export function ProfilForm({ profile, email, allSkills, userSkillIds, whatsapp: 
       />
 
       <fieldset>
-        <legend className="text-sm font-semibold text-slate-800">Keahlian &amp; minat</legend>
-        <p className="mt-1 text-xs text-slate-500">
+        <legend className="text-sm font-semibold text-stone-800 dark:text-stone-200">Keahlian &amp; minat</legend>
+        <p className="mt-1 text-xs text-stone-500 dark:text-stone-400">
           Dipakai untuk merekomendasikanmu ke tim yang mencari keahlian ini lewat filter.
         </p>
         <div className="mt-3 flex flex-wrap gap-2">
@@ -189,8 +189,8 @@ export function ProfilForm({ profile, email, allSkills, userSkillIds, whatsapp: 
                 aria-pressed={active}
                 className={`inline-flex min-h-[44px] items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium transition-colors active:scale-[0.98] ${
                   active
-                    ? 'bg-indigo-600 text-white shadow-sm'
-                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                    ? 'bg-brand-600 text-white shadow-sm'
+                    : 'bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:bg-stone-200'
                 }`}
               >
                 {active && <Check size={14} weight="bold" />}
@@ -201,7 +201,7 @@ export function ProfilForm({ profile, email, allSkills, userSkillIds, whatsapp: 
         </div>
       </fieldset>
 
-      <div className="border-t border-slate-100 pt-5">
+      <div className="border-t border-stone-100 dark:border-stone-800 pt-5">
         <Button type="submit" loading={loading} size="lg">
           Simpan Profil
         </Button>

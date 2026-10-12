@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -55,10 +55,10 @@ export function FavoriteButton({ competitionId, initiallySaved, judul }: Props) 
       onClick={toggle}
       disabled={loading}
       whileTap={reduce ? undefined : { scale: 0.97 }}
-      className={`inline-flex min-h-[44px] items-center gap-2 rounded-lg border px-4 py-2.5 text-sm font-semibold transition-colors disabled:opacity-60 ${
+      className={`inline-flex min-h-[44px] items-center gap-2 rounded-full border px-4 py-2.5 text-sm font-semibold transition-colors disabled:opacity-60 ${
         saved
-          ? 'border-amber-300 bg-amber-50 text-amber-800 hover:bg-amber-100'
-          : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-50'
+          ? 'border-amber-300 bg-amber-50 dark:bg-amber-950 text-amber-800 dark:text-amber-300 hover:bg-amber-100'
+          : 'border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-900'
       }`}
       aria-pressed={saved}
     >
