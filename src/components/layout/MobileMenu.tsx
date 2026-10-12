@@ -4,8 +4,9 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
-import { List, X } from '@phosphor-icons/react'
+import { List, X, Sun, Moon } from '@phosphor-icons/react'
 import { EASE_OUT, D_COMPONENT } from '@/lib/motion'
+import { useTheme } from '@/components/ui/ThemeToggle'
 
 interface Props {
   isLoggedIn: boolean
@@ -17,6 +18,7 @@ export function MobileMenu({ isLoggedIn, isStaff }: Props) {
   const [open, setOpen] = useState(false)
   const pathname = usePathname()
   const reduce = useReducedMotion()
+  const { theme, toggleTheme } = useTheme()
 
   const items = [
     { href: '/lomba', label: 'Lomba' },
@@ -67,6 +69,27 @@ export function MobileMenu({ isLoggedIn, isStaff }: Props) {
                 </Link>
               )
             })}
+            <div className="mt-1 flex min-h-[48px] items-center justify-between rounded-xl px-4 text-sm font-medium text-stone-700 dark:text-stone-300">
+              <span className="flex items-center gap-2">
+                {theme === 'dark' ? <Moon size={18} aria-hidden="true" /> : <Sun size={18} aria-hidden="true" />}
+                Tema {theme === 'dark' ? 'gelap' : 'terang'}
+              </span>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={theme === 'dark'}
+                aria-label="Ganti tema terang atau gelap"
+                onClick={toggleTheme}
+                className="relative h-7 w-12 shrink-0 rounded-full bg-stone-200 transition-colors dark:bg-stone-700"
+              >
+                <span
+                  aria-hidden="true"
+                  className={`absolute top-1 h-5 w-5 rounded-full bg-white shadow transition-all dark:bg-stone-950 ${
+                    theme === 'dark' ? 'left-6' : 'left-1'
+                  }`}
+                />
+              </button>
+            </div>
           </motion.nav>
         )}
       </AnimatePresence>

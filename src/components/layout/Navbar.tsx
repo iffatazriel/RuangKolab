@@ -6,6 +6,7 @@ import { BadgePop } from '@/components/motion/AppMotion'
 import { NavLinks } from './NavLinks'
 import { MobileMenu } from './MobileMenu'
 import { Avatar } from '@/components/ui/Avatar'
+import { ThemeToggle } from '@/components/ui/ThemeToggle'
 import { Bell } from '@phosphor-icons/react/dist/ssr'
 
 function Logo() {
@@ -61,7 +62,8 @@ export async function Navbar() {
         </div>
       }
       right={
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-1 sm:gap-2">
+          <ThemeToggle />
           {user ? (
             <>
               <Link
