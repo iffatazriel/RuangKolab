@@ -1,6 +1,7 @@
 ﻿import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { Suspense } from 'react'
+import { UsersThree } from '@phosphor-icons/react/dist/ssr'
 import { TimFilter } from './TimFilter'
 import { PageContainer, PageHeader, PrimaryLink, EmptyState, StatusPill } from '@/components/ui/Page'
 import { AnimateGrid, GridItem } from '@/components/motion/AppMotion'
@@ -56,7 +57,7 @@ export default async function TimPage({ searchParams }: { searchParams: Promise<
       </Suspense>
 
       {!posts || posts.length === 0 ? (
-        <EmptyState title="Belum ada postingan tim" description="Jadilah yang pertama membuka pencarian tim." />
+        <EmptyState title="Belum ada postingan tim" description="Jadilah yang pertama membuka pencarian tim." icon={<UsersThree size={48} weight="duotone" aria-hidden="true" />} />
       ) : (
         <div className="mt-6">
           <AnimateGrid className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

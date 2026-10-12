@@ -27,7 +27,7 @@ export default async function ProfilPage() {
         title="Profil Saya"
         description="Kelola informasi pribadi, identitas kampus, dan keahlian untuk kolaborasi."
       />
-      <TiltCard max={4} className="mb-6">
+      <TiltCard max={8} perspective={800} className="mb-6">
         <div className="flex items-center gap-4 rounded-2xl border border-stone-200/80 bg-white p-5 shadow-sm dark:border-stone-800 dark:bg-stone-900">
           <Avatar nama={profile?.nama ?? '?'} size="lg" />
           <div className="min-w-0">

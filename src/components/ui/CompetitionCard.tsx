@@ -18,6 +18,8 @@ interface Props {
   timMencari?: number
   /** 3 kartu pertama halaman: eager + high priority, sisanya lazy. */
   priority?: boolean
+  /** Tampilkan deadline sebagai pill kaca di atas poster (khusus kartu hero). */
+  overlayGlass?: boolean
 }
 
 /**
@@ -39,7 +41,7 @@ export function PosterFallback({ kategori }: { kategori: string | null }) {
  * tanpa shadow saat diam (hanya hover halus), tanpa pill di atas gambar.
  * Seluruh kartu satu tautan (stretched link) ke detail.
  */
-export function CompetitionCard({ comp, timMencari = 0, priority = false }: Props) {
+export function CompetitionCard({ comp, timMencari = 0, priority = false, overlayGlass = false }: Props) {
   const dl = getDeadlineTone(comp.deadline)
   const poster = comp.poster_url
 
@@ -58,6 +60,14 @@ export function CompetitionCard({ comp, timMencari = 0, priority = false }: Prop
           />
         ) : (
           <PosterFallback kategori={comp.kategori} />
+        )}
+        {/* web glass approximation - bukan Apple Liquid Glass resmi.
+           Pill kaca deadline di atas foto, hanya untuk kartu hero. */}
+        {overlayGlass && (
+          <span className="glass-pill absolute bottom-3 left-3 z-20 inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-black/30 px-3 py-1 font-mono text-xs font-semibold tabular-nums text-white backdrop-blur-[12px]">
+            <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-white/80" />
+            {dl.pendek}
+          </span>
         )}
       </div>
 

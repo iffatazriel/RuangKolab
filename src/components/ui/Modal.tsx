@@ -45,11 +45,13 @@ export function Modal({ open, onClose, title, children }: Props) {
             aria-hidden="true"
           />
           <div className="fixed inset-0 z-[96] flex items-end justify-center p-0 sm:items-center sm:p-6">
+            {/* web glass approximation - bukan Apple Liquid Glass resmi.
+               Fallback solid saat transparansi dikurangi (lihat globals). */}
             <motion.div
               role="dialog"
               aria-modal="true"
               aria-label={title}
-              className="w-full max-w-lg rounded-t-2xl border border-stone-200 bg-white p-6 shadow-xl sm:rounded-2xl dark:border-stone-800 dark:bg-stone-900"
+              className="modal-glass w-full max-w-lg rounded-t-2xl border border-white/20 bg-white/85 p-6 shadow-xl backdrop-blur-[24px] backdrop-saturate-[180%] [box-shadow:inset_0_1px_0_rgba(255,255,255,0.3),0_18px_60px_rgba(0,0,0,0.18)] sm:rounded-2xl dark:border-white/20 dark:bg-stone-900/70 dark:[box-shadow:inset_0_1px_0_rgba(255,255,255,0.12),0_18px_60px_rgba(0,0,0,0.42)]"
               initial={reduce ? false : { opacity: 0, y: 32, scale: 0.98 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={reduce ? undefined : { opacity: 0, y: 24, scale: 0.98 }}

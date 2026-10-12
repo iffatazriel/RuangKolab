@@ -60,7 +60,7 @@ export default async function PenggunaDetailPage({ params }: { params: Promise<{
               rel="noopener noreferrer"
               className="mt-1.5 inline-block text-sm font-semibold text-brand-600 dark:text-brand-400 hover:underline"
             >
-              Buka Tautan Portofolio â†—
+              Buka Tautan Portofolio â†
             </a>
           </div>
         )}

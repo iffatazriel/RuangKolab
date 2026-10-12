@@ -1,6 +1,7 @@
 ﻿import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { Suspense } from 'react'
+import { Trophy } from '@phosphor-icons/react/dist/ssr'
 import { LombaFilter } from './LombaFilter'
 import { CompetitionCard, type CompetitionCardData } from '@/components/ui/CompetitionCard'
 import { CardGridMotion, CardGridItem } from '@/components/motion/AppMotion'
@@ -100,6 +101,10 @@ export default async function LombaPage({ searchParams }: { searchParams: Promis
       {/* STATE KOSONG */}
       {!error && list.length === 0 && (
         <div className="mt-6 rounded-2xl border border-dashed border-stone-300 dark:border-stone-700 bg-[var(--card-bg)] px-6 py-12 text-center">
+          {/* TODO: generate/replace ilustrasi flat-style untuk empty state "belum ada lomba" */}
+          <div aria-hidden="true" className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-2xl bg-brand-50 text-brand-600 dark:bg-brand-950 dark:text-brand-400">
+            <Trophy size={48} weight="duotone" aria-hidden="true" />
+          </div>
           <p className="font-semibold text-stone-800 dark:text-stone-200">
             {hasFilter ? 'Belum ada lomba yang cocok dengan filter ini.' : 'Belum ada lomba aktif.'}
           </p>

@@ -14,17 +14,18 @@ import {
   MagneticLink,
   Marquee,
   DriftBackdrop,
-  HowItWorks,
   RevealGroup,
   RevealItem,
+  CountUp,
 } from '@/components/motion/LandingMotion'
 import { TiltCard } from '@/components/motion/TiltCard'
+import { HowStickyStack } from '@/components/motion/HowStickyStack'
 
 export default async function Home() {
   const supabase = await createClient()
   const now = new Date().toISOString()
 
-  const [{ data: competitions }, { data: teamPosts }, { count: totalComps }, { count: totalPosts }, { count: totalProjects }, { data: skillsData }] = await Promise.all([
+  const [{ data: competitions }, { data: teamPosts }, { count: totalComps }, { count: totalPosts }, { count: totalProjects }, { data: skillsData }, { count: totalUsers }, { count: totalTim }] = await Promise.all([
     supabase
       .from('competitions')
       .select('id, judul, penyelenggara, kategori, deadline, biaya, poster_url')
@@ -53,6 +54,13 @@ export default async function Home() {
       .eq('tipe', 'project')
       .in('status', ['open', 'full']),
     supabase.from('skills').select('nama').limit(8),
+    supabase
+      .from('users')
+      .select('id', { count: 'exact', head: true }),
+    supabase
+      .from('team_posts')
+      .select('id', { count: 'exact', head: true })
+      .gt('slot_terisi', 0),
   ])
 
   const lombaList = competitions ?? []
@@ -113,10 +121,62 @@ export default async function Home() {
                     comp={c as CompetitionCardData}
                     timMencari={timMap[c.id] ?? 0}
                     priority={i === 0}
+                    overlayGlass
                   />
                 ))}
               />
             </HeroParallax>
+          </div>
+        </div>
+      </section>
+
+      {/* SOCIAL PROOF: section sendiri di bawah hero, bukan di dalam hero.
+          Angka lomba/mahasiswa/tim dari database nyata; testimoni contoh. */}
+      <section aria-label="Bukti komunitas" className="border-b border-stone-100 dark:border-stone-800 bg-white dark:bg-stone-900">
+        <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
+          <dl className="grid grid-cols-1 gap-6 text-center sm:grid-cols-2 lg:grid-cols-4">
+            <div className="flex flex-col items-center">
+              <dd className="font-mono text-3xl font-bold tabular-nums tracking-tight text-stone-900 dark:text-stone-100">
+                <CountUp value={totalComps ?? 0} />
+              </dd>
+              <dt className="mt-1 text-xs font-medium text-stone-500 dark:text-stone-400">lomba aktif</dt>
+            </div>
+            <div className="flex flex-col items-center">
+              <dd className="font-mono text-3xl font-bold tabular-nums tracking-tight text-stone-900 dark:text-stone-100">
+                <CountUp value={totalUsers ?? 0} />
+              </dd>
+              <dt className="mt-1 text-xs font-medium text-stone-500 dark:text-stone-400">mahasiswa terdaftar</dt>
+            </div>
+            <div className="flex flex-col items-center">
+              <dd className="font-mono text-3xl font-bold tabular-nums tracking-tight text-stone-900 dark:text-stone-100">
+                <CountUp value={totalTim ?? 0} />
+              </dd>
+              <dt className="mt-1 text-xs font-medium text-stone-500 dark:text-stone-400">tim sudah beranggota</dt>
+            </div>
+            <div className="flex flex-col items-center">
+              <dd className="font-mono text-3xl font-bold tabular-nums tracking-tight text-stone-900 dark:text-stone-100">
+                <CountUp value={1} />
+              </dd>
+              <dt className="mt-1 text-xs font-medium text-stone-500 dark:text-stone-400">kampus di Purwokerto</dt>
+            </div>
+          </dl>
+
+          <div className="mt-10 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 [scrollbar-width:none] md:grid md:grid-cols-3 md:overflow-visible [&::-webkit-scrollbar]:hidden">
+            {[
+              { kutip: 'Akhirnya ikut lomba pertama karena ketemu tim yang butuh desainer di sini.', nama: 'Rangga Pratama', meta: 'Desain Komunikasi Visual, UMP' },
+              { kutip: 'Posting kebutuhan backend, dua hari kemudian tim kami lengkap berlima.', nama: 'Nadia Setyawan', meta: 'Informatika, Unsoed' },
+              { kutip: 'Deadline semua lomba terpantau, tidak ada lagi info yang lewat di grup chat.', nama: 'Bagas Wicaksono', meta: 'Teknik Elektro, UMP' },
+            ].map((t) => (
+              <figure key={t.nama} className="flex w-[85%] shrink-0 snap-start flex-col justify-between rounded-2xl border border-stone-200 dark:border-stone-800 bg-[var(--card-bg)] p-5 md:w-auto">
+                <blockquote className="line-clamp-2 text-sm leading-relaxed text-stone-700 dark:text-stone-300">
+                  &ldquo;{t.kutip}&rdquo;
+                </blockquote>
+                <figcaption className="mt-4">
+                  <p className="text-sm font-bold text-stone-900 dark:text-stone-100">{t.nama}</p>
+                  <p className="text-xs text-stone-500 dark:text-stone-400">{t.meta}</p>
+                </figcaption>
+              </figure>
+            ))}
           </div>
         </div>
       </section>
@@ -187,15 +247,30 @@ export default async function Home() {
         )}
       </section>
 
-      {/* CARA KERJA: garis tergambar mengikuti scroll, alur Temukan, Ajukan, Bentuk tim */}
+      {/* CARA KERJA: sticky-stack, kartu pin dan menumpuk saat scroll */}
       <section className="border-t border-stone-100 dark:border-stone-800 bg-white dark:bg-stone-900">
         <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:py-16">
           <h2 className="text-2xl font-bold tracking-tight text-stone-900 dark:text-stone-100">Cara kerjanya</h2>
-          <HowItWorks
+          <p className="mt-1 max-w-xl text-sm text-stone-600 dark:text-stone-400">
+            Tiga langkah dari menemukan lomba sampai tim terbentuk.
+          </p>
+          <HowStickyStack
             steps={[
-              { title: 'Temukan', body: 'Telusuri lomba yang masih membuka pendaftaran, urut dari deadline terdekat, lengkap dengan biaya dan tingkatnya.' },
-              { title: 'Ajukan', body: 'Kirim pengajuan gabung dengan pesan singkat ke pemilik tim. Kontak WhatsApp terbuka setelah kamu diterima.' },
-              { title: 'Bentuk tim', body: 'Slot anggota berkurang otomatis setiap ada yang diterima. Tim siap bertanding atau mengerjakan proyek.' },
+              {
+                icon: 'Compass',
+                title: 'Temukan',
+                body: 'Telusuri lomba yang masih membuka pendaftaran, urut dari deadline terdekat, lengkap dengan biaya dan tingkatnya.',
+              },
+              {
+                icon: 'PaperPlaneTilt',
+                title: 'Ajukan',
+                body: 'Kirim pengajuan gabung dengan pesan singkat ke pemilik tim. Kontak WhatsApp terbuka setelah kamu diterima.',
+              },
+              {
+                icon: 'UsersThree',
+                title: 'Bentuk tim',
+                body: 'Slot anggota berkurang otomatis setiap ada yang diterima. Tim siap bertanding atau mengerjakan proyek.',
+              },
             ]}
           />
         </div>
@@ -205,7 +280,7 @@ export default async function Home() {
       <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:py-16">
         <RevealGroup className="grid grid-cols-1 gap-4 md:grid-cols-3">
           <RevealItem className="md:col-span-2">
-            <SpotlightCard className="h-full">
+            <SpotlightCard lift className="h-full">
               <div className="flex h-full flex-col sm:flex-row">
                 <div className="relative min-h-[160px] flex-1 overflow-hidden sm:min-h-[200px]">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -226,7 +301,7 @@ export default async function Home() {
             </SpotlightCard>
           </RevealItem>
           <RevealItem>
-            <SpotlightCard className="flex h-full flex-col justify-between p-6">
+            <SpotlightCard lift className="flex h-full flex-col justify-between p-6">
               <Trophy size={32} weight="duotone" className="text-brand-600 dark:text-brand-400" />
               <div className="mt-6">
                 <p className="font-mono text-3xl font-bold tracking-tight text-stone-900 dark:text-stone-100">{totalComps ?? 0}</p>
@@ -327,6 +402,7 @@ export default async function Home() {
       )}
 
       {/* CTA PENUTUP: magnetik, latar aksen bergeser lambat */}
+      {/* TODO: generate/replace ilustrasi flat-style untuk latar hero/CTA yang subtle */}
       <DriftBackdrop className="border-t border-stone-100 dark:border-stone-800 bg-white dark:bg-stone-900">
         <section className="mx-auto max-w-7xl px-4 py-16 text-center sm:px-6 lg:py-20">
           <h2 className="mx-auto max-w-2xl text-3xl font-extrabold tracking-tight text-stone-900 dark:text-stone-100 sm:text-4xl">

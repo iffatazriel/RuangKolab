@@ -128,3 +128,21 @@ body::after {
     scroll-behavior: auto !important;
   }
 }
+
+/* Glass fallback: saat transparansi dikurangi, semua permukaan kaca
+   kembali solid agar kontras tetap AA. */
+@media (prefers-reduced-transparency: reduce) {
+  .modal-glass {
+    background: rgb(255 255 255 / 0.96);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .dark .modal-glass {
+    background: rgb(28 25 23 / 0.96);
+  }
+  .glass-pill {
+    background: rgb(0 0 0 / 0.55);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}

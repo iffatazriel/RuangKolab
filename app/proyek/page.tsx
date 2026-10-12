@@ -1,6 +1,7 @@
 ﻿import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { Suspense } from 'react'
+import { Rocket } from '@phosphor-icons/react/dist/ssr'
 import { ProyekFilter } from './ProyekFilter'
 import { PageContainer, PageHeader, PrimaryLink, EmptyState, StatusPill } from '@/components/ui/Page'
 import { AnimateGrid, GridItem } from '@/components/motion/AppMotion'
@@ -54,7 +55,7 @@ export default async function ProyekPage({ searchParams }: { searchParams: Promi
       </Suspense>
 
       {!posts || posts.length === 0 ? (
-        <EmptyState title="Belum ada proyek kolaborasi" description="Mulai proyekmu dan cari kolaborator yang tepat." />
+        <EmptyState title="Belum ada proyek kolaborasi" description="Mulai proyekmu dan cari kolaborator yang tepat." icon={<Rocket size={48} weight="duotone" aria-hidden="true" />} />
       ) : (
         <div className="mt-6">
           <AnimateGrid className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

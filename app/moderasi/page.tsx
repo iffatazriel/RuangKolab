@@ -69,7 +69,7 @@ export default async function ModerasiPage() {
                     <p className="mt-2 font-semibold text-stone-900 dark:text-stone-100">{c.judul}</p>
                     {c.penyelenggara && <p className="text-xs text-stone-500 dark:text-stone-400">{c.penyelenggara}</p>}
                     <a href={c.url} target="_blank" rel="noopener noreferrer" className="mt-1 inline-flex min-h-[44px] items-center text-xs font-medium text-brand-600 dark:text-brand-400 hover:underline">
-                      Cek tautan resmi â†—
+                      Cek tautan resmi â†
                     </a>
                   </div>
                   <ProposalButtons competitionId={c.id} />

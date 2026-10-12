@@ -1,7 +1,7 @@
 ﻿'use client'
 
-import { useRef, useState } from 'react'
-import { motion, useMotionValue, useMotionValueEvent, useReducedMotion, useScroll, useSpring, useTransform, type MotionValue } from 'motion/react'
+import { useRef, useState, useEffect } from 'react'
+import { motion, useInView, animate, useMotionValue, useMotionValueEvent, useReducedMotion, useScroll, useSpring, useTransform } from 'motion/react'
 import type { ReactNode } from 'react'
 import {
   fadeUp,
@@ -83,8 +83,9 @@ export function HeroStack({ cards }: { cards: ReactNode[] }) {
   const ref = useRef<HTMLDivElement>(null)
   const mx = useMotionValue(0)
   const my = useMotionValue(0)
-  const rx = useSpring(useTransform(my, [-0.5, 0.5], [4, -4]), SPRING)
-  const ry = useSpring(useTransform(mx, [-0.5, 0.5], [-6, 6]), SPRING)
+  // rotate ±8deg mengikuti kursor; pegas agar terasa fisik
+  const rx = useSpring(useTransform(my, [-0.5, 0.5], [8, -8]), SPRING)
+  const ry = useSpring(useTransform(mx, [-0.5, 0.5], [-8, 8]), SPRING)
 
   const shown = cards.slice(0, 3)
 
@@ -120,46 +121,84 @@ export function HeroStack({ cards }: { cards: ReactNode[] }) {
         aria-label="Contoh lomba yang sedang dibuka"
       >
         {shown.map((card, i) => (
-          <motion.div
-            key={i}
-            className="absolute inset-x-8 top-0"
-            style={{ zIndex: shown.length - i }}
-            initial={reduce ? false : { opacity: 0, y: 32 }}
-            animate={{ opacity: 1, y: 0, z: -i * 90 }}
-            transition={{ duration: 0.7, ease: EASE_OUT, delay: 0.15 + i * 0.12 }}
-          >
+          <StackCard key={i} index={i} total={shown.length}>
             <div
               className="overflow-hidden rounded-2xl shadow-xl"
               style={{ transform: `translate(${-i * 22}px, ${i * 26}px) rotate(${-i * 2}deg)` }}
             >
               {card}
             </div>
-          </motion.div>
+          </StackCard>
         ))}
       </motion.div>
     </div>
   )
 }
 
-/* ---------- NAVBAR: blur + border muncul saat scroll, tinggi tetap --nav-h ---------- */
+/**
+ * Satu kartu dalam tumpukan hero.
+ * Parallax scroll multi-kecepatan: kartu atas (depan) bergerak lebih cepat
+ * daripada kartu bawah. Tiap kartu punya useTransform sendiri (bukan loop).
+ */
+function StackCard({ index, total, children }: { index: number; total: number; children: ReactNode }) {
+  const reduce = useReducedMotion()
+  const { scrollY } = useScroll()
+  // Kartu paling atas (index 0) paling cepat: -64px; paling bawah paling lambat
+  const speed = -64 + index * 20
+  const y = useTransform(scrollY, [0, 600], [0, reduce ? 0 : speed])
+  const z = (total - 1 - index) * 40
+
+  return (
+    <motion.div
+      className="absolute inset-x-8 top-0"
+      style={{ zIndex: total - index }}
+      initial={reduce ? false : { opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.7, ease: EASE_OUT, delay: 0.15 + index * 0.12 }}
+    >
+      {/* Lapisan dalam khusus parallax scroll agar tidak konflik dengan entrance */}
+      <motion.div style={{ y, z }}>{children}</motion.div>
+    </motion.div>
+  )
+}
+
+/* ---------- NAVBAR: shrink 72-56 + glass blur 16px saat scroll ---------- */
 
 export function NavbarShell({ left, right }: { left: ReactNode; right: ReactNode }) {
+  const reduce = useReducedMotion()
   const { scrollY } = useScroll()
+  const h = useTransform(scrollY, [0, 120], [72, 56])
+  const hPx = useTransform(h, (v) => `${v}px`)
   const [scrolled, setScrolled] = useState(false)
   useMotionValueEvent(scrollY, 'change', (v) => {
     setScrolled((prev) => (v > 80 ? true : v <= 40 ? false : prev))
   })
 
+  if (reduce) {
+    return (
+      <header
+        className="sticky top-0 z-50 border-b border-stone-200/80 bg-white/90 backdrop-blur-md dark:border-stone-800 dark:bg-stone-950/90"
+        style={{ height: 'var(--nav-h)' }}
+      >
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-6" style={{ height: 'var(--nav-h)' }}>
+          {left}
+          {right}
+        </div>
+      </header>
+    )
+  }
+
   return (
     <motion.header
       className={`sticky top-0 z-50 border-b transition-[background-color,border-color] duration-300 ${
+        /* web glass approximation - bukan Apple Liquid Glass resmi */
         scrolled
-          ? 'border-stone-200/80 bg-white/90 backdrop-blur-md dark:border-stone-800 dark:bg-stone-950/90'
+          ? 'border-white/10 bg-white/75 backdrop-blur-lg backdrop-saturate-[160%] shadow-[inset_0_-1px_0_rgba(255,255,255,0.06)] dark:border-white/10 dark:bg-stone-950/70'
           : 'border-transparent bg-white/70 dark:bg-stone-950/70'
       }`}
-      style={{ height: 'var(--nav-h)' }}
+      style={{ height: hPx }}
     >
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-6" style={{ height: 'var(--nav-h)' }}>
+      <div className="mx-auto flex h-full max-w-7xl items-center justify-between px-6">
         {left}
         {right}
       </div>
@@ -168,6 +207,58 @@ export function NavbarShell({ left, right }: { left: ReactNode; right: ReactNode
 }
 
 /* ---------- SECTION REVEAL: kartu masuk dengan stagger ---------- */
+
+/* ---------- COUNTER: count-up satu kali saat masuk viewport ----------
+   Tanpa setState loop: useMotionValue + animate(), angka dirender via
+   useTransform yang dibulatkan. Alasan: memberi bobot pada angka bukti. */
+export function CountUp({ value, className = '' }: { value: number; className?: string }) {
+  const reduce = useReducedMotion()
+  const ref = useRef<HTMLSpanElement>(null)
+  const inView = useInView(ref, { once: true, amount: 0.5 })
+  const mv = useMotionValue(0)
+  const rounded = useTransform(mv, (v) => String(Math.round(v)))
+
+  useEffect(() => {
+    if (reduce || !inView) {
+      mv.set(value)
+      return
+    }
+    const controls = animate(mv, value, { duration: 1.2, ease: EASE_OUT })
+    return () => controls.stop()
+  }, [inView, reduce, value, mv])
+
+  return (
+    <motion.span ref={ref} className={className}>
+      {rounded}
+    </motion.span>
+  )
+}
+
+/* ---------- SCROLL-REVEAL STAGGER (ringan, tanpa pin) ----------
+   Untuk "items appear as they enter viewport": pakai whileInView,
+   bukan GSAP. Simpan GSAP hanya untuk pin/scrub (sticky-stack). */
+export function RevealStagger({ items }: { items: string[] }) {
+  const reduce = useReducedMotion()
+  return (
+    <ul className="grid gap-6">
+      {items.map((item, i) => (
+        <motion.li
+          key={item}
+          initial={reduce ? false : { opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{
+            duration: 0.6,
+            delay: i * 0.06,
+            ease: [0.16, 1, 0.3, 1],
+          }}
+        >
+          {item}
+        </motion.li>
+      ))}
+    </ul>
+  )
+}
 
 export function RevealGroup({ children, className = '' }: { children: ReactNode[]; className?: string }) {
   const reduce = useReducedMotion()
@@ -233,90 +324,9 @@ export function SnapCard({ children, className = '' }: { children: ReactNode; cl
   )
 }
 
-/* ---------- CARA KERJA: garis SVG tergambar mengikuti scroll, langkah menyala saat garis sampai ---------- */
-
-export function HowItWorks({ steps }: { steps: { title: string; body: string }[] }) {
-  const reduce = useReducedMotion()
-  const ref = useRef<HTMLDivElement>(null)
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start 0.8', 'end 0.55'] })
-
-  return (
-    <div ref={ref} className="relative mt-8 max-w-2xl">
-      {/* Garis penghubung: latar abu + garis indigo yang tergambar */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 left-[27px] w-0.5 bg-stone-200" />
-      <svg aria-hidden="true" className="pointer-events-none absolute inset-y-0 left-[27px] h-full w-0.5" preserveAspectRatio="none" viewBox="0 0 2 100">
-        <motion.line
-          x1="1" y1="0" x2="1" y2="100"
-          stroke="#2b5cb4"
-          strokeWidth="2"
-          vectorEffect="non-scaling-stroke"
-          style={reduce ? { pathLength: 1 } : { pathLength: scrollYProgress }}
-        />
-      </svg>
-
-      <ol className="flex flex-col">
-        {steps.map((s, i) => (
-          <StepItem
-            key={s.title}
-            index={i}
-            total={steps.length}
-            progress={scrollYProgress}
-            title={s.title}
-            body={s.body}
-          />
-        ))}
-      </ol>
-    </div>
-  )
-}
-
-function StepItem({
-  index,
-  total,
-  progress,
-  title,
-  body,
-}: {
-  index: number
-  total: number
-  progress: MotionValue<number>
-  title: string
-  body: string
-}) {
-  const reduce = useReducedMotion()
-  // Langkah menyala saat garis mencapainya: rentang proporsional posisi langkah
-  const start = Math.max(0, index / total - 0.12)
-  const end = Math.min(1, index / total + 0.05)
-  const borderColor = useTransform(progress, [start, end], ['#e2e8f0', '#2b5cb4'])
-  const bg = useTransform(progress, [start, end], ['#ffffff', '#2b5cb4'])
-  const color = useTransform(progress, [start, end], ['#94a3b8', '#ffffff'])
-
-  return (
-    <motion.li
-      className="relative flex gap-5 pb-10 last:pb-0"
-      initial={reduce ? false : { opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={VIEWPORT_ONCE}
-      transition={{ duration: 0.5, ease: EASE_OUT }}
-    >
-      <motion.span
-        aria-hidden="true"
-        className="relative z-10 flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 text-sm font-bold"
-        style={reduce ? { borderColor: '#2b5cb4', backgroundColor: '#2b5cb4', color: '#ffffff' } : { borderColor, backgroundColor: bg, color }}
-      >
-        {index + 1}
-      </motion.span>
-      <div className="pt-2">
-        <h3 className="text-lg font-bold text-stone-900 dark:text-stone-100">{title}</h3>
-        <p className="mt-1 max-w-[65ch] text-sm leading-relaxed text-stone-600 dark:text-stone-400">{body}</p>
-      </div>
-    </motion.li>
-  )
-}
-
 /* ---------- SPOTLIGHT BORDER: menyala mengikuti kursor, hanya pointer halus ---------- */
 
-export function SpotlightCard({ children, className = '' }: { children: ReactNode; className?: string }) {
+export function SpotlightCard({ children, className = '', lift = false }: { children: ReactNode; className?: string; lift?: boolean }) {
   const reduce = useReducedMotion()
   const mx = useMotionValue(0)
   const my = useMotionValue(0)
@@ -326,9 +336,21 @@ export function SpotlightCard({ children, className = '' }: { children: ReactNod
       `radial-gradient(240px circle at ${x}px ${y}px, rgba(43, 92, 180,0.10), transparent 70%)`
   )
 
+  // Lift translateZ 8-12px saat hover: terasa naik tanpa berlebihan
+  const inner = (
+    <motion.div
+      className="h-full"
+      whileHover={reduce || !lift ? undefined : { z: 10 }}
+      transition={reduce || !lift ? undefined : { type: 'spring', stiffness: 150, damping: 18 }}
+      style={{ transformStyle: 'preserve-3d' }}
+    >
+      {children}
+    </motion.div>
+  )
+
   return (
     <div
-      className={`group relative overflow-hidden rounded-2xl border border-stone-200 dark:border-stone-800/80 bg-white dark:bg-stone-900 shadow-sm transition-shadow hover:shadow-md ${className}`}
+      className={`group relative overflow-hidden rounded-2xl border border-stone-200 dark:border-stone-800/80 bg-white dark:bg-stone-900 shadow-sm transition-shadow hover:shadow-md ${lift ? '[perspective:800px]' : ''} ${className}`}
       onPointerMove={(e) => {
         if (reduce || e.pointerType !== 'mouse') return
         const r = e.currentTarget.getBoundingClientRect()
@@ -342,7 +364,7 @@ export function SpotlightCard({ children, className = '' }: { children: ReactNod
         className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100 [@media(hover:hover)_and_(pointer:fine)]:block hidden"
         style={{ background: bg }}
       />
-      {children}
+      {inner}
     </div>
   )
 }
