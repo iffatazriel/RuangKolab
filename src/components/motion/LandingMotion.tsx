@@ -19,7 +19,7 @@ export function HeroLines() {
   const reduce = useReducedMotion()
   return (
     <motion.h1
-      className="text-4xl font-extrabold tracking-tight text-stone-900 sm:text-5xl sm:leading-[1.12] dark:text-stone-100"
+      className="rk-ensure-visible text-4xl font-extrabold tracking-tight text-stone-900 sm:text-5xl sm:leading-[1.12] dark:text-stone-100"
       initial={reduce ? false : 'hidden'}
       animate="show"
       variants={staggerContainer(2)}
@@ -54,6 +54,7 @@ export function HeroSequence({ children }: { children: ReactNode }) {
   const reduce = useReducedMotion()
   return (
     <motion.div
+      className="rk-ensure-visible"
       initial={reduce ? false : { opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: EASE_OUT, delay: 0.25 }}

@@ -173,3 +173,23 @@ body::after {
     -webkit-backdrop-filter: none;
   }
 }
+
+/* Jaring pengaman anti-blank: jika animasi entrance macet (JS terhambat di
+   perangkat lama), paksa elemen tampil setelah 2.2 detik. Tidak mengganggu
+   animasi normal karena nilai akhirnya identik dengan keadaan selesai. */
+@keyframes rk-force-show {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.rk-ensure-visible {
+  animation: rk-force-show 0.4s ease 2.2s both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rk-ensure-visible {
+    animation: none;
+  }
+}

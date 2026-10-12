@@ -94,7 +94,7 @@ export async function Navbar() {
             <>
               <Link
                 href="/masuk"
-                className="inline-flex min-h-[40px] items-center rounded-full px-4 text-sm font-medium text-stone-700 transition-colors hover:text-brand-600 dark:hover:text-stone-300 dark:hover:text-brand-400"
+                className="hidden min-h-[40px] items-center rounded-full px-4 text-sm font-medium text-stone-700 transition-colors hover:text-brand-600 min-[420px]:inline-flex dark:hover:text-stone-300 dark:hover:text-brand-400"
               >
                 Masuk
               </Link>
