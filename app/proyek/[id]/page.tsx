@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+﻿import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { ReportButton } from '@/components/ui/ReportButton'
@@ -6,6 +6,9 @@ import { DeletePostButton } from '@/components/ui/DeletePostButton'
 import { AjukanGabungForm } from '@/app/tim/[id]/AjukanGabungForm'
 import { ManageRequests } from '@/app/tim/[id]/ManageRequests'
 import { PageContainer, StatusPill } from '@/components/ui/Page'
+import { ContactCard } from '@/components/ui/ContactCard'
+import { SlotBar } from '@/components/ui/SlotBar'
+import { ArrowSquareOut } from '@phosphor-icons/react/dist/ssr'
 
 export default async function ProyekDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -95,121 +98,139 @@ export default async function ProyekDetailPage({ params }: { params: Promise<{ i
   const ownerTyped = owner as { nama: string; jurusan?: string; angkatan?: number } | null
 
   return (
-    <PageContainer width="medium">
-      <div className="rounded-2xl border border-slate-200/80 bg-white p-6 sm:p-8 shadow-sm">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div className="flex-1">
-            <div className="flex flex-wrap items-center gap-2">
-              <StatusPill tone="indigo">Proyek Kolaborasi</StatusPill>
-              <StatusPill tone={post.status === 'open' ? 'green' : post.status === 'full' ? 'red' : 'gray'}>
-                {post.status === 'open' ? 'Membuka Kolaborator' : post.status === 'full' ? 'Slot Penuh' : 'Ditutup'}
-              </StatusPill>
+    <PageContainer width="wide">
+      <nav aria-label="Jejak navigasi" className="mb-4 text-sm text-slate-500">
+        <Link href="/proyek" className="inline-flex min-h-[44px] items-center hover:text-indigo-600">Proyek</Link>
+        <span aria-hidden="true"> / </span>
+        <span className="text-slate-700">{post.judul}</span>
+      </nav>
+
+      <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-12">
+        <div className="space-y-6 lg:col-span-8">
+          <article className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm sm:p-8">
+            <div className="flex flex-wrap items-start justify-between gap-4">
+              <div className="min-w-0 flex-1">
+                <div className="flex flex-wrap items-center gap-2">
+                  <StatusPill tone="indigo">Proyek kolaborasi</StatusPill>
+                  <StatusPill tone={post.status === 'open' ? 'green' : post.status === 'full' ? 'red' : 'gray'}>
+                    {post.status === 'open' ? 'Membuka kolaborator' : post.status === 'full' ? 'Slot penuh' : 'Ditutup'}
+                  </StatusPill>
+                </div>
+                <h1 className="mt-3 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">{post.judul}</h1>
+              </div>
+              {user && !isOwner && <ReportButton targetType="post" targetId={post.id} />}
             </div>
-            <h1 className="mt-3 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
-              {post.judul}
-            </h1>
-          </div>
-          {user && !isOwner && <ReportButton targetType="post" targetId={post.id} />}
-        </div>
 
-        <div className="mt-6">
-          <h2 className="text-sm font-bold text-slate-900 uppercase tracking-wider">Deskripsi Proyek</h2>
-          <p className="mt-2 text-sm leading-relaxed text-slate-700 whitespace-pre-line">
-            {post.deskripsi}
-          </p>
-        </div>
-
-        {requiredSkills.length > 0 && (
-          <div className="mt-6">
-            <h2 className="text-sm font-bold text-slate-900 uppercase tracking-wider">Keahlian yang Dibutuhkan</h2>
-            <div className="mt-2 flex flex-wrap gap-2">
-              {requiredSkills.map((s) => (
-                <span key={s.id} className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700">
-                  {s.nama}
-                </span>
-              ))}
+            <div className="mt-6">
+              <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900">Deskripsi proyek</h2>
+              <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-slate-700">{post.deskripsi}</p>
             </div>
-          </div>
-        )}
 
-        {(post.komitmen || post.repo_url) && (
-          <div className="mt-6 grid gap-4 rounded-xl border border-slate-100 bg-slate-50/60 p-4 sm:grid-cols-2 text-sm">
-            {post.komitmen && (
-              <div>
-                <p className="text-xs font-medium text-slate-500">Estimasi Komitmen Waktu</p>
-                <p className="mt-1 font-semibold text-slate-900">{post.komitmen}</p>
+            {requiredSkills.length > 0 && (
+              <div className="mt-6">
+                <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900">Keahlian yang dibutuhkan</h2>
+                <ul className="mt-2 flex flex-wrap gap-2">
+                  {requiredSkills.map((s) => (
+                    <li key={s.id} className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700">
+                      {s.nama}
+                    </li>
+                  ))}
+                </ul>
               </div>
             )}
-            {post.repo_url && (
-              <div>
-                <p className="text-xs font-medium text-slate-500">Repositori / Tautan Dokumen</p>
-                <a href={post.repo_url} target="_blank" rel="noopener noreferrer" className="mt-1 block font-semibold text-indigo-600 hover:underline break-all">
-                  Buka Tautan Resmi ↗
-                </a>
-              </div>
-            )}
-          </div>
-        )}
 
-        <div className="mt-6 border-t border-slate-100 pt-4 text-xs text-slate-500">
-          <p>
-            Inisiator: <span className="font-semibold text-slate-900">{ownerTyped?.nama}</span>
-            {ownerTyped?.jurusan && ` (${ownerTyped.jurusan}${ownerTyped.angkatan ? ` '${ownerTyped.angkatan}` : ''})`}
-          </p>
-          <p className="mt-1">
-            Slot kolaborator: <span className="font-semibold text-slate-900">{post.slot_total - post.slot_terisi}</span> dari {post.slot_total} orang
-          </p>
+            {(post.komitmen || post.repo_url) && (
+              <dl className="mt-6 grid gap-4 rounded-xl border border-slate-100 bg-slate-50/60 p-4 text-sm sm:grid-cols-2">
+                {post.komitmen && (
+                  <div>
+                    <dt className="text-xs font-medium text-slate-500">Estimasi komitmen waktu</dt>
+                    <dd className="mt-1 font-semibold text-slate-900">{post.komitmen}</dd>
+                  </div>
+                )}
+                {post.repo_url && (
+                  <div>
+                    <dt className="text-xs font-medium text-slate-500">Repositori atau dokumen</dt>
+                    <dd className="mt-1">
+                      <a href={post.repo_url} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-[44px] items-center gap-1.5 break-all font-semibold text-indigo-600 hover:underline">
+                        Buka tautan
+                        <ArrowSquareOut size={16} />
+                      </a>
+                    </dd>
+                  </div>
+                )}
+              </dl>
+            )}
+
+            <dl className="mt-6 grid grid-cols-2 gap-4 border-t border-slate-100 pt-5 text-sm">
+              <div>
+                <dt className="text-xs font-medium text-slate-500">Inisiator</dt>
+                <dd className="mt-1 font-semibold text-slate-900">
+                  {ownerTyped?.nama}
+                  {ownerTyped?.jurusan && (
+                    <span className="block text-xs font-normal text-slate-500">
+                      {ownerTyped.jurusan}{ownerTyped.angkatan ? `, angkatan ${ownerTyped.angkatan}` : ''}
+                    </span>
+                  )}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-xs font-medium text-slate-500">Slot tersedia</dt>
+                <dd className="mt-1">
+                  <SlotBar terisi={post.slot_terisi} total={post.slot_total} className="max-w-[240px]" />
+                </dd>
+              </div>
+            </dl>
+          </article>
+
+          {isOwner && (
+            <section aria-labelledby="kelola-pengajuan" className="space-y-4">
+              <h2 id="kelola-pengajuan" className="text-lg font-bold tracking-tight text-slate-900">Kelola pengajuan</h2>
+              <ManageRequests postId={post.id} requests={allRequests} postStatus={post.status} />
+            </section>
+          )}
         </div>
 
-        {ownerContact && (
-          <div className="mt-6 rounded-xl border border-emerald-200 bg-emerald-50/70 p-4">
-            <h3 className="font-bold text-emerald-900">Pengajuan Anda Diterima</h3>
-            <p className="mt-1 text-sm text-emerald-800">
-              Silakan hubungi pemilik proyek melalui WhatsApp:{' '}
-              <a
-                href={`https://wa.me/${ownerContact.replace(/^0/, '62')}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-bold underline"
+        <aside className="space-y-4 lg:sticky lg:top-24 lg:col-span-4">
+          {user && !isOwner && (ownerContact || userRequest?.status === 'accepted' || userRequest?.status === 'pending' || post.status === 'open') && (
+            <ContactCard whatsapp={userRequest?.status === 'accepted' ? ownerContact : null} ownerName={ownerTyped?.nama ?? 'pemilik proyek'} />
+          )}
+
+          {!isOwner && user && post.status === 'open' && (
+            <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
+              <AjukanGabungForm postId={post.id} existingStatus={userRequest?.status ?? null} requestId={userRequest?.id ?? null} />
+            </div>
+          )}
+
+          {!isOwner && user && post.status !== 'open' && (
+            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5 text-sm text-slate-700">
+              Proyek ini sudah tidak membuka pendaftaran.
+            </div>
+          )}
+
+          {!user && post.status === 'open' && (
+            <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
+              <p className="text-sm font-semibold text-slate-900">Ingin bergabung?</p>
+              <p className="mt-1 text-sm text-slate-600">Masuk dulu untuk mengajukan gabung ke proyek ini.</p>
+              <Link
+                href={`/masuk?redirect=/proyek/${post.id}`}
+                className="mt-4 inline-flex min-h-[48px] w-full items-center justify-center rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700 active:scale-[0.98]"
               >
-                {ownerContact}
-              </a>
-            </p>
-          </div>
-        )}
+                Masuk untuk mengajukan
+              </Link>
+            </div>
+          )}
 
-        {!isOwner && user && post.status === 'open' && (
-          <div className="mt-6 border-t border-slate-100 pt-6">
-            <AjukanGabungForm
-              postId={post.id}
-              existingStatus={userRequest?.status ?? null}
-              requestId={userRequest?.id ?? null}
-            />
-          </div>
-        )}
-
-        {!user && post.status === 'open' && (
-          <div className="mt-6 border-t border-slate-100 pt-6 text-sm text-slate-600">
-            <Link href={`/masuk?redirect=/proyek/${post.id}`} className="font-semibold text-indigo-600 hover:underline">
-              Masuk
-            </Link>{' '}
-            untuk mengajukan bergabung ke proyek ini.
-          </div>
-        )}
-
-        {isOwner && (
-          <div className="mt-6 border-t border-slate-100 pt-4">
-            <DeletePostButton postId={post.id} redirectTo="/dashboard" />
-          </div>
-        )}
+          {isOwner && (
+            <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
+              <p className="text-sm font-semibold text-slate-900">Postingan milikmu</p>
+              <p className="mt-1 text-sm text-slate-600">Pengajuan masuk ada di bagian kelola pengajuan.</p>
+              <div className="mt-4">
+                <DeletePostButton postId={post.id} redirectTo="/dashboard" />
+              </div>
+            </div>
+          )}
+        </aside>
       </div>
-
-      {isOwner && (
-        <section className="mt-10">
-          <h2 className="text-xl font-bold tracking-tight text-slate-900">Kelola Pengajuan Kolaborator</h2>
-          <ManageRequests postId={post.id} requests={allRequests} postStatus={post.status} />
-        </section>
-      )}
     </PageContainer>
   )
 }

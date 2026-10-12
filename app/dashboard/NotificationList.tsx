@@ -56,7 +56,7 @@ export function NotificationList({ items }: { items: NotificationItem[] }) {
   }
 
   if (items.length === 0) {
-    return <p className="mt-4 text-sm text-gray-500">Belum ada notifikasi.</p>
+    return <p className="mt-4 text-sm text-slate-500">Belum ada notifikasi.</p>
   }
 
   return (
@@ -78,22 +78,22 @@ export function NotificationList({ items }: { items: NotificationItem[] }) {
               type="button"
               onClick={() => open(n)}
               className={`flex w-full items-center justify-between gap-3 rounded-lg border p-3 text-left text-sm transition hover:shadow-sm ${
-                n.dibaca ? 'border-gray-200 bg-white' : 'border-indigo-200 bg-indigo-50/60'
+                n.dibaca ? 'border-slate-200 bg-white' : 'border-indigo-200 bg-indigo-50/60'
               }`}
             >
               <div className="min-w-0">
-                <p className={`font-medium ${n.dibaca ? 'text-gray-700' : 'text-gray-900'}`}>
+                <p className={`font-medium ${n.dibaca ? 'text-slate-700' : 'text-slate-900'}`}>
                   {LABEL[n.tipe] ?? n.tipe}
                 </p>
-                {n.payload?.judul && <p className="truncate text-xs text-gray-500">{n.payload.judul}</p>}
-                <p className="text-[11px] text-gray-400">{new Date(n.created_at).toLocaleString('id-ID')}</p>
+                {n.payload?.judul && <p className="truncate text-xs text-slate-500">{n.payload.judul}</p>}
+                <p className="text-[11px] text-slate-400">{new Date(n.created_at).toLocaleString('id-ID')}</p>
               </div>
               {!n.dibaca && <span className="h-2 w-2 shrink-0 rounded-full bg-indigo-600" aria-label="Belum dibaca" />}
             </button>
           </li>
         ))}
       </ul>
-      <p className="mt-3 text-xs text-gray-400">
+      <p className="mt-3 text-xs text-slate-400">
         <Link href="/dashboard" className="hover:underline">Muat ulang</Link> untuk melihat notifikasi terbaru.
       </p>
     </div>

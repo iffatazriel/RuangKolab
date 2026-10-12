@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/Button'
 import { friendlyError } from '@/lib/errors'
+import { useToast } from '@/components/ui/Toast'
 
 interface Props {
   reportId: string
@@ -14,6 +15,7 @@ interface Props {
 
 export function ResolveReportButton({ reportId, targetType, targetId }: Props) {
   const router = useRouter()
+  const toast = useToast()
   const [loading, setLoading] = useState<'resolve' | 'delete' | null>(null)
   const [error, setError] = useState('')
 
@@ -29,6 +31,7 @@ export function ResolveReportButton({ reportId, targetType, targetId }: Props) {
     if (reportErr) {
       setLoading(null)
       setError(friendlyError(reportErr))
+      toast.push(friendlyError(reportErr), 'error')
       return
     }
 
@@ -46,11 +49,13 @@ export function ResolveReportButton({ reportId, targetType, targetId }: Props) {
       if (contentErr) {
         setLoading(null)
         setError(friendlyError(contentErr))
+        toast.push(friendlyError(contentErr), 'error')
         return
       }
     }
 
     setLoading(null)
+    toast.push('Laporan ditandai selesai.')
     router.refresh()
   }
 

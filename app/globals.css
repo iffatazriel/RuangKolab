@@ -41,3 +41,53 @@ body {
   border-color: #cbd5e1;
   box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.05), 0 8px 10px -6px rgba(15, 23, 42, 0.02);
 }
+
+/* Marquee keahlian: ambient loop, hanya transform, berhenti saat hover (kelas di komponen) */
+@keyframes rk-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* Skeleton shimmer: satu-satunya animasi berulang di layar aplikasi.
+   Base warna dari class bg-slate-* yang menyertai; overlay hanya transform. */
+@keyframes rk-shimmer {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(100%); }
+}
+
+.skeleton {
+  position: relative;
+  overflow: hidden;
+}
+
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+  animation: rk-shimmer 1.6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Grain: fixed, pointer-events-none, di atas konten tapi tidak menghalangi interaksi */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .motion-safe\:animate-\[rk-marquee_28s_linear_infinite\] {
+    animation: none;
+  }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

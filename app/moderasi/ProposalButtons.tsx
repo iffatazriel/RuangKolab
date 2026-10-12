@@ -5,9 +5,11 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/Button'
 import { friendlyError } from '@/lib/errors'
+import { useToast } from '@/components/ui/Toast'
 
 export function ProposalButtons({ competitionId }: { competitionId: string }) {
   const router = useRouter()
+  const toast = useToast()
   const [loading, setLoading] = useState<'published' | 'draft' | null>(null)
   const [error, setError] = useState('')
 
@@ -22,8 +24,10 @@ export function ProposalButtons({ competitionId }: { competitionId: string }) {
     setLoading(null)
     if (dbError) {
       setError(friendlyError(dbError))
+      toast.push(friendlyError(dbError), 'error')
       return
     }
+    toast.push(status === 'published' ? 'Usulan diterbitkan. Pengusul sudah diberi tahu.' : 'Usulan tidak diterbitkan.')
     router.refresh()
   }
 

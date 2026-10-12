@@ -1,10 +1,21 @@
 import { createClient } from '@/lib/supabase/server'
 import { Suspense } from 'react'
 import Link from 'next/link'
+import { CalendarDots, Tag, Wallet } from '@phosphor-icons/react/dist/ssr'
 import { LombaFilter } from './LombaFilter'
-import { PageContainer, PageHeader, PrimaryLink, EmptyState, StatusPill } from '@/components/ui/Page'
+import { PageContainer, PageHeader, PrimaryLink, EmptyState } from '@/components/ui/Page'
+import { AnimateGrid, GridItem } from '@/components/motion/AppMotion'
 
 interface SearchParams { q?: string; kategori?: string; tingkat?: string; biaya?: string; deadline?: string }
+
+function deadlineLabel(iso: string) {
+  const diffMs = new Date(iso).getTime() - Date.now()
+  const days = Math.ceil(diffMs / (1000 * 60 * 60 * 24))
+  if (days <= 0) return 'Hari ini'
+  if (days === 1) return '1 hari lagi'
+  if (days <= 14) return `${days} hari lagi`
+  return new Date(iso).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })
+}
 
 export default async function LombaPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
   const sp = await searchParams
@@ -44,6 +55,8 @@ export default async function LombaPage({ searchParams }: { searchParams: Promis
     <PrimaryLink href="/lomba/usul" variant="outline">+ Usulkan Lomba</PrimaryLink>
   ) : null
 
+  const hasFilter = !!(sp.q || sp.kategori || sp.tingkat || sp.biaya || sp.deadline)
+
   return (
     <PageContainer>
       <PageHeader
@@ -57,34 +70,65 @@ export default async function LombaPage({ searchParams }: { searchParams: Promis
       </Suspense>
 
       {!competitions || competitions.length === 0 ? (
-        <EmptyState title="Belum ada lomba yang cocok" description="Coba ubah filter atau kata kunci pencarian." />
+        <div className="mt-8">
+          <EmptyState
+            title={hasFilter ? 'Tidak ada lomba yang cocok' : 'Belum ada lomba aktif'}
+            description={
+              hasFilter
+                ? 'Coba ubah filter atau kata kunci pencarian.'
+                : 'Ketahui lomba yang belum terdaftar di sini? Usulkan agar temanmu ikut serta.'
+            }
+            action={
+              hasFilter ? undefined : (
+                <PrimaryLink href="/lomba/usul" variant="outline">+ Usulkan Lomba</PrimaryLink>
+              )
+            }
+          />
+        </div>
       ) : (
-        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {competitions.map((c) => (
-            <Link
-              key={c.id}
-              href={`/lomba/${c.id}`}
-              className="group flex flex-col rounded-2xl border border-slate-200/70 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
-            >
-              <div className="flex items-start justify-between gap-2">
-                <p className="text-[11px] font-semibold tracking-wider text-indigo-600 uppercase">{c.kategori ?? 'Umum'}</p>
-                {c.biaya === 0 ? <StatusPill tone="green">Gratis</StatusPill> : <StatusPill tone="yellow">Berbayar</StatusPill>}
-              </div>
-              <h3 className="mt-2 line-clamp-2 font-heading text-lg font-bold leading-snug text-slate-900 group-hover:text-indigo-600">
-                {c.judul}
-              </h3>
-              {c.penyelenggara && <p className="mt-1 text-xs text-slate-500">{c.penyelenggara}</p>}
-              <div className="mt-auto flex items-center justify-between border-t border-slate-100 pt-3 text-xs text-slate-500">
-                <span>
-                  Deadline{' '}
-                  <span className="font-medium text-slate-700">
-                    {new Date(c.deadline).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
-                  </span>
-                </span>
-                {c.tingkat && <StatusPill tone="indigo">{c.tingkat}</StatusPill>}
-              </div>
-            </Link>
-          ))}
+        <div className="mt-6">
+          <AnimateGrid className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {competitions.map((c) => (
+              <GridItem key={c.id}>
+                <Link
+                  href={`/lomba/${c.id}`}
+                  className="surface-card group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm"
+                >
+                  <div className="aspect-[2/1] overflow-hidden bg-slate-100">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={c.poster_url ?? `https://picsum.photos/seed/${encodeURIComponent(c.judul)}/800/500`}
+                      alt={c.judul}
+                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    />
+                  </div>
+                  <div className="flex flex-1 flex-col p-5">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-semibold text-indigo-700">
+                        <Tag size={12} weight="bold" />
+                        {c.kategori ?? 'Umum'}
+                      </span>
+                      <span className="text-xs font-semibold text-rose-600">{deadlineLabel(c.deadline)}</span>
+                    </div>
+                    <h2 className="mt-3 line-clamp-2 text-base font-bold leading-snug text-slate-900 transition-colors group-hover:text-indigo-600">
+                      {c.judul}
+                    </h2>
+                    {c.penyelenggara && <p className="mt-1 line-clamp-1 text-xs text-slate-500">{c.penyelenggara}</p>}
+                    <div className="mt-auto flex items-center justify-between border-t border-slate-100 pt-3 text-xs text-slate-500">
+                      <span className="inline-flex items-center gap-1.5">
+                        <CalendarDots size={14} />
+                        {new Date(c.deadline).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                      </span>
+                      <span className={`inline-flex items-center gap-1 font-semibold ${c.biaya === 0 ? 'text-emerald-600' : 'text-slate-700'}`}>
+                        <Wallet size={14} />
+                        {c.biaya === 0 ? 'Gratis' : `Rp ${c.biaya.toLocaleString('id-ID')}`}
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              </GridItem>
+            ))}
+          </AnimateGrid>
         </div>
       )}
     </PageContainer>

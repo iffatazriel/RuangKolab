@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, Suspense } from 'react'
 import Link from 'next/link'
@@ -206,8 +206,8 @@ function MasukForm() {
                 </div>
 
                 {error && (
-                  <div className="flex items-start gap-2 rounded-lg border border-rose-200 bg-rose-50 px-3.5 py-2.5 text-xs text-rose-700">
-                    <svg className="mt-0.5 h-4 w-4 shrink-0 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div role="alert" className="flex items-start gap-2 rounded-lg border border-rose-200 bg-rose-50 px-3.5 py-2.5 text-xs text-rose-700">
+                    <svg role="alert" className="mt-0.5 h-4 w-4 shrink-0 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <circle cx="12" cy="12" r="10" strokeWidth="2" />
                       <line strokeLinecap="round" strokeWidth="2" x1="12" x2="12" y1="8" y2="12" />
                       <circle cx="12" cy="16" fill="currentColor" r="1" />

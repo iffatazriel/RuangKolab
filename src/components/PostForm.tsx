@@ -4,9 +4,10 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from './ui/Button'
-import { Input, Textarea, Select } from './ui/FormFields'
-import type { PostType } from '@/lib/types'
+import { Input } from './ui/FormFields'
 import { friendlyError } from '@/lib/errors'
+import { X, Check } from '@phosphor-icons/react'
+import type { PostType } from '@/lib/types'
 
 interface Props {
   tipe: PostType
@@ -15,8 +16,12 @@ interface Props {
   defaultCompetitionId?: string
 }
 
+const MAX_DESKRIPSI = 1000
+const MAX_SLOT = 20
+
 export function PostForm({ tipe, competitions = [], allSkills, defaultCompetitionId = '' }: Props) {
   const router = useRouter()
+  const isLomba = tipe === 'competition'
   const [form, setForm] = useState({
     judul: '',
     deskripsi: '',
@@ -28,9 +33,11 @@ export function PostForm({ tipe, competitions = [], allSkills, defaultCompetitio
   const [selectedSkills, setSelectedSkills] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
 
   function change(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
     setForm((f) => ({ ...f, [e.target.name]: e.target.value }))
+    setFieldErrors((fe) => ({ ...fe, [e.target.name]: '' }))
   }
 
   function toggleSkill(id: string) {
@@ -39,21 +46,37 @@ export function PostForm({ tipe, competitions = [], allSkills, defaultCompetitio
     )
   }
 
+  /** Validasi klien: pesan per field, tampil inline di bawah input */
+  function validate(): boolean {
+    const fe: Record<string, string> = {}
+    if (isLomba && !form.competition_id) fe.competition_id = 'Pilih lomba yang akan diikuti.'
+    if (!form.judul.trim()) fe.judul = 'Judul wajib diisi.'
+    else if (form.judul.trim().length < 10) fe.judul = 'Judul terlalu pendek, jelaskan tujuan tim atau proyek.'
+    if (!form.deskripsi.trim()) fe.deskripsi = 'Deskripsi wajib diisi.'
+    else if (form.deskripsi.trim().length < 30) fe.deskripsi = 'Deskripsi minimal 30 karakter agar calon anggota paham kebutuhanmu.'
+    const slot = parseInt(form.slot_total, 10)
+    if (Number.isNaN(slot) || slot < 1) fe.slot_total = 'Slot minimal 1.'
+    else if (slot > MAX_SLOT) fe.slot_total = `Slot maksimal ${MAX_SLOT}.`
+    setFieldErrors(fe)
+    return Object.keys(fe).length === 0
+  }
+
   async function submit(e: React.FormEvent) {
     e.preventDefault()
-    setLoading(true)
     setError('')
+    if (!validate()) return
+    setLoading(true)
     const supabase = createClient()
     const { data: { user } } = await supabase.auth.getUser()
-    if (!user) { setError('Tidak terautentikasi.'); setLoading(false); return }
+    if (!user) { setError('Sesi kamu berakhir. Masuk lagi untuk menerbitkan postingan.'); setLoading(false); return }
 
     const payload = {
       owner_id: user.id,
       tipe,
-      judul: form.judul,
-      deskripsi: form.deskripsi,
+      judul: form.judul.trim(),
+      deskripsi: form.deskripsi.trim(),
       slot_total: parseInt(form.slot_total, 10),
-      competition_id: tipe === 'competition' && form.competition_id ? form.competition_id : null,
+      competition_id: isLomba && form.competition_id ? form.competition_id : null,
       ...(tipe === 'project'
         ? {
             komitmen: form.komitmen.trim() || null,
@@ -83,30 +106,102 @@ export function PostForm({ tipe, competitions = [], allSkills, defaultCompetitio
   }
 
   return (
-    <form onSubmit={submit} className="mt-6 flex flex-col gap-4">
-      {error && <div className="rounded-lg bg-red-50 p-3 text-sm text-red-800">{error}</div>}
-
-      {tipe === 'competition' && competitions.length > 0 && (
-        <Select id="competition_id" name="competition_id" label="Lomba Terkait" value={form.competition_id} onChange={change} required>
-          <option value="">Pilih Lomba</option>
-          {competitions.map((c) => (
-            <option key={c.id} value={c.id}>{c.judul}</option>
-          ))}
-        </Select>
+    <form onSubmit={submit} className="flex flex-col gap-6" noValidate>
+      {/* Error umum (server): inline, role alert */}
+      {error && (
+        <div role="alert" className="rounded-lg border border-rose-200 bg-rose-50 px-3.5 py-2.5 text-sm font-medium text-rose-800">
+          {error}
+        </div>
       )}
 
-      <Input id="judul" name="judul" label="Judul Postingan" required value={form.judul} onChange={change} placeholder="Cari anggota untuk..." />
-      <Textarea id="deskripsi" name="deskripsi" label="Deskripsi (peran yang dicari, syarat, dll.)" required rows={5} value={form.deskripsi} onChange={change} />
+      {isLomba && (
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor="competition_id" className="text-sm font-semibold text-slate-800">
+            Lomba yang diikuti <span aria-hidden="true" className="text-rose-600">*</span>
+          </label>
+          <select
+            id="competition_id"
+            name="competition_id"
+            value={form.competition_id}
+            onChange={change}
+            required
+            aria-invalid={!!fieldErrors.competition_id || undefined}
+            aria-describedby={fieldErrors.competition_id ? 'competition_id-error' : 'competition_id-bantuan'}
+            className={`custom-input min-h-[48px] w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none ${
+              fieldErrors.competition_id ? 'border-rose-400' : 'border-slate-300'
+            }`}
+          >
+            <option value="">Pilih lomba</option>
+            {competitions.map((c) => (
+              <option key={c.id} value={c.id}>{c.judul}</option>
+            ))}
+          </select>
+          {fieldErrors.competition_id ? (
+            <p id="competition_id-error" className="text-xs font-medium text-rose-700">{fieldErrors.competition_id}</p>
+          ) : (
+            <p id="competition_id-bantuan" className="text-xs text-slate-500">
+              {competitions.length > 0
+                ? 'Hanya lomba yang masih membuka pendaftaran yang tampil di sini.'
+                : 'Belum ada lomba aktif. Coba lagi nanti atau usulkan lomba baru.'}
+            </p>
+          )}
+        </div>
+      )}
+
+      <Input
+        id="judul"
+        name="judul"
+        label="Judul postingan"
+        required
+        value={form.judul}
+        onChange={change}
+        error={fieldErrors.judul}
+        aria-describedby="judul-bantuan"
+        placeholder={isLomba ? 'Contoh: Butuh desainer UI untuk hackathon' : 'Contoh: Kolaborasi aplikasi donasi kampus'}
+      />
+      <p id="judul-bantuan" className="-mt-4 text-xs text-slate-500">
+        Maksimal 80 karakter, satu kalimat yang jelas.
+      </p>
+
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor="deskripsi" className="text-sm font-semibold text-slate-800">
+          Deskripsi <span aria-hidden="true" className="text-rose-600">*</span>
+        </label>
+        <textarea
+          id="deskripsi"
+          name="deskripsi"
+          required
+          rows={6}
+          maxLength={MAX_DESKRIPSI}
+          value={form.deskripsi}
+          onChange={change}
+          aria-invalid={!!fieldErrors.deskripsi || undefined}
+          aria-describedby="deskripsi-bantuan"
+          placeholder="Peran yang dibutuhkan, syarat, rencana kerja, dan cara kamu membagi tugas."
+          className={`custom-input w-full rounded-lg border px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none ${
+            fieldErrors.deskripsi ? 'border-rose-400' : 'border-slate-300'
+          }`}
+        />
+        <p id="deskripsi-bantuan" className="text-xs text-slate-500">
+          {form.deskripsi.length}/{MAX_DESKRIPSI} karakter. Minimal 30 karakter.
+        </p>
+        {fieldErrors.deskripsi && (
+          <p className="text-xs font-medium text-rose-700">{fieldErrors.deskripsi}</p>
+        )}
+      </div>
+
       <Input
         id="slot_total"
         name="slot_total"
         type="number"
+        inputMode="numeric"
         min="1"
-        max="20"
-        label="Jumlah Slot yang Dibuka"
+        max={MAX_SLOT}
         required
+        label="Jumlah slot yang dibuka"
         value={form.slot_total}
         onChange={change}
+        error={fieldErrors.slot_total}
       />
 
       {tipe === 'project' && (
@@ -114,8 +209,8 @@ export function PostForm({ tipe, competitions = [], allSkills, defaultCompetitio
           <Input
             id="komitmen"
             name="komitmen"
-            label="Komitmen Waktu (opsional)"
-            placeholder="Contoh: 5-8 jam/minggu, durasi 3 bulan"
+            label="Komitmen waktu"
+            placeholder="Contoh: 5-8 jam per minggu, selama 3 bulan"
             value={form.komitmen}
             onChange={change}
           />
@@ -123,7 +218,7 @@ export function PostForm({ tipe, competitions = [], allSkills, defaultCompetitio
             id="repo_url"
             name="repo_url"
             type="url"
-            label="Tautan Repo / Dokumen (opsional)"
+            label="Tautan repo atau dokumen"
             placeholder="https://github.com/..."
             value={form.repo_url}
             onChange={change}
@@ -131,9 +226,13 @@ export function PostForm({ tipe, competitions = [], allSkills, defaultCompetitio
         </>
       )}
 
-      <div className="flex flex-col gap-2">
-        <label className="text-sm font-medium text-gray-700">Keahlian yang Dicari</label>
-        <div className="flex flex-wrap gap-2">
+      {/* Skill chips: fieldset agar terbaca sebagai satu pertanyaan oleh pembaca layar */}
+      <fieldset>
+        <legend className="text-sm font-semibold text-slate-800">Keahlian yang dicari</legend>
+        <p className="mt-1 text-xs text-slate-500">
+          Pilih beberapa. Calon anggota memakai ini untuk menemukan postinganmu lewat filter keahlian.
+        </p>
+        <div className="mt-3 flex flex-wrap gap-2">
           {allSkills.map((s) => {
             const active = selectedSkills.includes(s.id)
             return (
@@ -141,19 +240,29 @@ export function PostForm({ tipe, competitions = [], allSkills, defaultCompetitio
                 type="button"
                 key={s.id}
                 onClick={() => toggleSkill(s.id)}
-                className={`rounded-full px-3 py-1 text-xs font-medium transition ${
-                  active ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                aria-pressed={active}
+                className={`inline-flex min-h-[44px] items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium transition active:scale-[0.98] ${
+                  active
+                    ? 'bg-indigo-600 text-white shadow-sm'
+                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                 }`}
               >
+                {active && <Check size={14} weight="bold" />}
                 {s.nama}
+                {active && <X size={14} weight="bold" aria-label={`Hapus ${s.nama}`} />}
               </button>
             )
           })}
         </div>
-      </div>
+      </fieldset>
 
-      <div className="pt-2">
-        <Button type="submit" loading={loading} size="lg">Terbitkan Postingan</Button>
+      <div className="border-t border-slate-100 pt-5">
+        <Button type="submit" size="lg" loading={loading}>
+          {isLomba ? 'Terbitkan pencarian tim' : 'Terbitkan proyek'}
+        </Button>
+        <p className="mt-2 text-xs text-slate-500">
+          Postingan tampil publik. Kamu bisa menghapusnya kapan saja dari halaman detail.
+        </p>
       </div>
     </form>
   )

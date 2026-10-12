@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { ResolveReportButton } from './ResolveReportButton'
 import { ProposalButtons } from './ProposalButtons'
+import { FadeIn } from '@/components/motion/AppMotion'
 import { PageContainer, PageHeader, PrimaryLink, Card, EmptyState, StatusPill } from '@/components/ui/Page'
 
 function reportHref(targetType: string, targetId: string) {
@@ -55,23 +56,25 @@ export default async function ModerasiPage() {
         ) : (
           <div className="mt-3 flex flex-col gap-3">
             {proposals.map((c) => (
-              <Card key={c.id} className="flex flex-wrap items-start justify-between gap-4 border-indigo-200 bg-indigo-50/40">
-                <div className="min-w-0 flex-1">
-                  <div className="flex flex-wrap items-center gap-2">
-                    {c.kategori && <StatusPill tone="indigo">{c.kategori}</StatusPill>}
-                    {c.tingkat && <StatusPill>{c.tingkat}</StatusPill>}
-                    <span className="text-xs text-slate-500">
-                      Deadline {new Date(c.deadline).toLocaleDateString('id-ID')}
-                    </span>
+              <FadeIn key={c.id}>
+                <Card className="flex flex-wrap items-start justify-between gap-4 border-indigo-200 bg-indigo-50/40">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      {c.kategori && <StatusPill tone="indigo">{c.kategori}</StatusPill>}
+                      {c.tingkat && <StatusPill>{c.tingkat}</StatusPill>}
+                      <span className="text-xs text-slate-500">
+                        Deadline {new Date(c.deadline).toLocaleDateString('id-ID')}
+                      </span>
+                    </div>
+                    <p className="mt-2 font-semibold text-slate-900">{c.judul}</p>
+                    {c.penyelenggara && <p className="text-xs text-slate-500">{c.penyelenggara}</p>}
+                    <a href={c.url} target="_blank" rel="noopener noreferrer" className="mt-1 inline-flex min-h-[44px] items-center text-xs font-medium text-indigo-600 hover:underline">
+                      Cek tautan resmi ↗
+                    </a>
                   </div>
-                  <p className="mt-2 font-semibold text-slate-900">{c.judul}</p>
-                  {c.penyelenggara && <p className="text-xs text-slate-500">{c.penyelenggara}</p>}
-                  <a href={c.url} target="_blank" rel="noopener noreferrer" className="mt-1 inline-block text-xs font-medium text-indigo-600 hover:underline">
-                    Cek tautan resmi ↗
-                  </a>
-                </div>
-                <ProposalButtons competitionId={c.id} />
-              </Card>
+                  <ProposalButtons competitionId={c.id} />
+                </Card>
+              </FadeIn>
             ))}
           </div>
         )}

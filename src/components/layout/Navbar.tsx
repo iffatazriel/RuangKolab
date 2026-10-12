@@ -1,12 +1,14 @@
-import Link from 'next/link'
+﻿import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { LogoutButton } from './LogoutButton'
+import { NavbarShell } from '@/components/motion/LandingMotion'
+import { BadgePop } from '@/components/motion/AppMotion'
 
 function Logo() {
   return (
     <Link href="/" className="group flex items-center space-x-2.5 font-bold tracking-tight">
       <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600 text-white shadow-sm transition-transform group-hover:scale-105">
-        <svg className="h-4.5 w-4.5 fill-current" viewBox="0 0 24 24">
+        <svg className="h-4.5 w-4.5 fill-current" viewBox="0 0 24 24" aria-hidden="true">
           <path
             d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"
             fill="none"
@@ -17,7 +19,7 @@ function Logo() {
           />
         </svg>
       </div>
-      <span className="text-xl font-bold tracking-tight text-slate-900 group-hover:text-indigo-600 transition-colors">
+      <span className="text-xl font-bold tracking-tight text-slate-900 transition-colors group-hover:text-indigo-600">
         RuangKolab
       </span>
     </Link>
@@ -46,8 +48,8 @@ export async function Navbar() {
   }
 
   return (
-    <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/90 backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
+    <NavbarShell
+      left={
         <div className="flex items-center space-x-10">
           <Logo />
           <nav className="hidden items-center space-x-7 text-sm font-medium text-slate-600 md:flex">
@@ -62,7 +64,8 @@ export async function Navbar() {
             )}
           </nav>
         </div>
-
+      }
+      right={
         <div className="flex items-center space-x-4">
           {user ? (
             <>
@@ -71,12 +74,12 @@ export async function Navbar() {
                 aria-label={`Notifikasi, ${unreadCount} belum dibaca`}
                 className="relative rounded-lg p-2 text-slate-600 transition-colors hover:bg-slate-50 hover:text-indigo-600"
               >
-                <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M15 17h5l-1.4-1.4A2 2 0 0118 14.2V11a6 6 0 00-4-5.7V5a2 2 0 10-4 0v.3A6 6 0 006 11v3.2a2 2 0 01-.6 1.4L4 17h5m6 0a3 3 0 11-6 0m6 0H9" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
                 {unreadCount > 0 && (
-                  <span className="absolute top-1.5 right-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-bold text-white">
-                    {unreadCount > 9 ? '9+' : unreadCount}
+                  <span className="absolute right-1 top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-bold text-white">
+                    <BadgePop count={unreadCount} />
                   </span>
                 )}
               </Link>
@@ -105,14 +108,7 @@ export async function Navbar() {
             </>
           )}
         </div>
-      </div>
-      <div className="flex justify-around border-t border-slate-100 py-2 text-xs font-medium text-slate-600 md:hidden bg-white">
-        <Link href="/lomba">Lomba</Link>
-        <Link href="/tim">Cari Tim</Link>
-        <Link href="/proyek">Proyek</Link>
-        {user && <Link href="/dashboard">Dashboard</Link>}
-        {user && <Link href="/profil">Profil</Link>}
-      </div>
-    </header>
+      }
+    />
   )
 }

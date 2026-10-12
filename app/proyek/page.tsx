@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { Suspense } from 'react'
 import { ProyekFilter } from './ProyekFilter'
 import { PageContainer, PageHeader, PrimaryLink, EmptyState, StatusPill } from '@/components/ui/Page'
+import { AnimateGrid, GridItem } from '@/components/motion/AppMotion'
 
 interface SearchParams { keahlian?: string; q?: string }
 
@@ -54,29 +55,32 @@ export default async function ProyekPage({ searchParams }: { searchParams: Promi
       {!posts || posts.length === 0 ? (
         <EmptyState title="Belum ada proyek kolaborasi" description="Mulai proyekmu dan cari kolaborator yang tepat." />
       ) : (
-        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {posts.map((p) => {
-            const owner = Array.isArray(p.users) ? p.users[0] : p.users
-            return (
-              <Link
-                key={p.id}
-                href={`/proyek/${p.id}`}
-                className="group flex flex-col rounded-2xl border border-slate-200/70 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
-              >
-                <h3 className="line-clamp-2 font-heading text-lg font-bold leading-snug text-slate-900 group-hover:text-indigo-600">
-                  {p.judul}
-                </h3>
-                <p className="mt-1 line-clamp-2 text-sm text-slate-500">{p.deskripsi}</p>
-                <div className="mt-auto flex items-center justify-between border-t border-slate-100 pt-3 text-xs text-slate-500">
-                  <span>oleh <span className="font-medium text-slate-700">{(owner as { nama?: string })?.nama ?? 'Anonim'}</span></span>
-                  <span className="flex items-center gap-2">
-                    Slot {p.slot_terisi}/{p.slot_total}
-                    {p.status === 'full' && <StatusPill tone="red">Penuh</StatusPill>}
-                  </span>
-                </div>
-              </Link>
-            )
-          })}
+        <div className="mt-6">
+          <AnimateGrid className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {posts.map((p) => {
+              const owner = Array.isArray(p.users) ? p.users[0] : p.users
+              return (
+                <GridItem key={p.id}>
+                  <Link
+                    href={`/proyek/${p.id}`}
+                    className="group flex h-full flex-col rounded-2xl border border-slate-200/70 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+                  >
+                    <h3 className="line-clamp-2 text-lg font-bold leading-snug text-slate-900 group-hover:text-indigo-600">
+                      {p.judul}
+                    </h3>
+                    <p className="mt-1 line-clamp-2 text-sm text-slate-500">{p.deskripsi}</p>
+                    <div className="mt-auto flex items-center justify-between border-t border-slate-100 pt-3 text-xs text-slate-500">
+                      <span>oleh <span className="font-medium text-slate-700">{(owner as { nama?: string })?.nama ?? 'Anonim'}</span></span>
+                      <span className="flex items-center gap-2">
+                        Slot {p.slot_terisi}/{p.slot_total}
+                        {p.status === 'full' && <StatusPill tone="red">Penuh</StatusPill>}
+                      </span>
+                    </div>
+                  </Link>
+                </GridItem>
+              )
+            })}
+          </AnimateGrid>
         </div>
       )}
     </PageContainer>

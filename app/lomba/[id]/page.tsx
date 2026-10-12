@@ -114,7 +114,7 @@ export default async function LombaDetailPage({ params }: { params: Promise<{ id
             Buka Halaman Resmi
           </a>
           {user && comp.publish_status === 'published' && (
-            <FavoriteButton competitionId={comp.id} initiallySaved={isSaved} />
+            <FavoriteButton competitionId={comp.id} initiallySaved={isSaved} judul={comp.judul} />
           )}
           {user && !isExpired && comp.publish_status === 'published' && (
             <Link

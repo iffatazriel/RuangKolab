@@ -5,9 +5,11 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/Button'
 import { friendlyError } from '@/lib/errors'
+import { useToast } from '@/components/ui/Toast'
 
 export function IncomingRequestButtons({ requestId }: { requestId: string }) {
   const router = useRouter()
+  const toast = useToast()
   const [loading, setLoading] = useState<'accepted' | 'rejected' | null>(null)
   const [error, setError] = useState('')
 
@@ -23,8 +25,10 @@ export function IncomingRequestButtons({ requestId }: { requestId: string }) {
     setLoading(null)
     if (dbError) {
       setError(friendlyError(dbError))
+      toast.push(friendlyError(dbError), 'error')
       return
     }
+    toast.push(status === 'accepted' ? 'Pengajuan diterima. Kontak anggota sudah terbuka.' : 'Pengajuan ditolak.')
     router.refresh()
   }
 
@@ -45,6 +49,7 @@ export function IncomingRequestButtons({ requestId }: { requestId: string }) {
 
 export function CancelRequestButton({ requestId }: { requestId: string }) {
   const router = useRouter()
+  const toast = useToast()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -60,8 +65,10 @@ export function CancelRequestButton({ requestId }: { requestId: string }) {
     setLoading(false)
     if (dbError) {
       setError(friendlyError(dbError))
+      toast.push(friendlyError(dbError), 'error')
       return
     }
+    toast.push('Pengajuan dibatalkan.')
     router.refresh()
   }
 

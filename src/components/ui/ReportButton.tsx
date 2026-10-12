@@ -32,13 +32,13 @@ export function ReportButton({ targetType, targetId }: Props) {
     setOpen(false)
   }
 
-  if (done) return <span className="text-xs text-green-600">Dilaporkan</span>
+  if (done) return <span className="text-sm font-medium text-emerald-700">Laporan terkirim</span>
 
   return (
     <>
       <button
         onClick={() => setOpen(true)}
-        className="text-xs text-gray-400 hover:text-red-500"
+        className="inline-flex min-h-[44px] items-center px-2 text-sm text-slate-500 transition-colors hover:text-rose-600"
         type="button"
       >
         Laporkan
@@ -46,9 +46,9 @@ export function ReportButton({ targetType, targetId }: Props) {
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
           <div className="w-full max-w-sm rounded-xl bg-white p-6 shadow-xl">
-            <h3 className="font-semibold text-gray-900">Laporkan</h3>
+            <h3 className="font-semibold text-slate-900">Laporkan</h3>
             <textarea
-              className="mt-3 w-full rounded-lg border border-gray-300 p-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-400"
+              className="mt-3 w-full rounded-lg border border-slate-300 p-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-400"
               rows={3}
               placeholder="Jelaskan alasanmu..."
               value={alasan}
@@ -57,7 +57,7 @@ export function ReportButton({ targetType, targetId }: Props) {
             <div className="mt-3 flex justify-end gap-2">
               <button
                 onClick={() => setOpen(false)}
-                className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
+                className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-50"
               >
                 Batal
               </button>

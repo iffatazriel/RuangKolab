@@ -5,9 +5,11 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/Button'
 import { friendlyError } from '@/lib/errors'
+import { useToast } from '@/components/ui/Toast'
 
 export function DeleteCompetitionButton({ competitionId, judul }: { competitionId: string; judul: string }) {
   const router = useRouter()
+  const toast = useToast()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -23,8 +25,10 @@ export function DeleteCompetitionButton({ competitionId, judul }: { competitionI
     setLoading(false)
     if (dbError) {
       setError(friendlyError(dbError, 'Lomba tidak bisa dihapus. Kemungkinan masih ada postingan tim yang terkait; tutup postingannya dulu.'))
+      toast.push(friendlyError(dbError, 'Lomba tidak bisa dihapus. Kemungkinan masih ada postingan tim yang terkait; tutup postingannya dulu.'), 'error')
       return
     }
+    toast.push('Lomba dihapus.')
     router.push('/lomba')
     router.refresh()
   }

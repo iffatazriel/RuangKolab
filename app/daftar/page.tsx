@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import Link from 'next/link'
@@ -10,7 +10,7 @@ const inputBase =
 
 function FieldError({ message }: { message?: string }) {
   if (!message) return null
-  return <p className="mt-1 text-xs font-medium tracking-tight text-rose-600">{message}</p>
+  return <p role="alert" className="mt-1 text-xs font-medium tracking-tight text-rose-600">{message}</p>
 }
 
 const previewItems = [
@@ -246,8 +246,8 @@ export default function DaftarPage() {
             </div>
 
             {submitError && (
-              <div className="flex items-start gap-2 rounded-lg border border-rose-200 bg-rose-50 px-3.5 py-2.5 text-xs text-rose-700">
-                <svg className="mt-0.5 h-4 w-4 shrink-0 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div role="alert" className="flex items-start gap-2 rounded-lg border border-rose-200 bg-rose-50 px-3.5 py-2.5 text-xs text-rose-700">
+                <svg role="alert" className="mt-0.5 h-4 w-4 shrink-0 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <circle cx="12" cy="12" r="10" strokeWidth="2" />
                   <line strokeLinecap="round" strokeWidth="2" x1="12" x2="12" y1="8" y2="12" />
                   <circle cx="12" cy="16" fill="currentColor" r="1" />
@@ -357,7 +357,7 @@ export default function DaftarPage() {
           <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3 text-[11px] text-slate-400">
             <span>Kompetisi terverifikasi BEM &amp; Prodi</span>
             <Link href="/lomba" className="font-medium text-indigo-600 hover:underline">
-              Lihat Semua →
+              Lihat Semua â†’
             </Link>
           </div>
         </aside>

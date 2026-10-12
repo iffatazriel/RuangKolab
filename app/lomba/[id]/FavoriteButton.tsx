@@ -3,14 +3,21 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { motion, useReducedMotion } from 'motion/react'
+import { BookmarkSimple, Bookmark } from '@phosphor-icons/react'
+import { SPRING } from '@/lib/motion'
+import { useToast } from '@/components/ui/Toast'
 
 interface Props {
   competitionId: string
   initiallySaved: boolean
+  judul: string
 }
 
-export function FavoriteButton({ competitionId, initiallySaved }: Props) {
+export function FavoriteButton({ competitionId, initiallySaved, judul }: Props) {
   const router = useRouter()
+  const reduce = useReducedMotion()
+  const toast = useToast()
   const [saved, setSaved] = useState(initiallySaved)
   const [loading, setLoading] = useState(false)
 
@@ -20,6 +27,7 @@ export function FavoriteButton({ competitionId, initiallySaved }: Props) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) {
       setLoading(false)
+      toast.push('Masuk dulu untuk menyimpan lomba.', 'error')
       return
     }
     if (saved) {
@@ -29,28 +37,42 @@ export function FavoriteButton({ competitionId, initiallySaved }: Props) {
         .eq('user_id', user.id)
         .eq('competition_id', competitionId)
       setSaved(false)
+      toast.push('Dihapus dari minat saya.')
     } else {
       await supabase
         .from('competition_favorites')
         .insert({ user_id: user.id, competition_id: competitionId })
       setSaved(true)
+      toast.push(`Tersimpan: ${judul}`)
     }
     setLoading(false)
     router.refresh()
   }
 
   return (
-    <button
+    <motion.button
       type="button"
       onClick={toggle}
       disabled={loading}
-      className={`rounded-lg border px-5 py-2.5 text-sm font-medium transition disabled:opacity-60 ${
+      whileTap={reduce ? undefined : { scale: 0.97 }}
+      className={`inline-flex min-h-[44px] items-center gap-2 rounded-lg border px-4 py-2.5 text-sm font-semibold transition-colors disabled:opacity-60 ${
         saved
           ? 'border-amber-300 bg-amber-50 text-amber-800 hover:bg-amber-100'
-          : 'border-gray-300 text-gray-700 hover:bg-gray-50'
+          : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-50'
       }`}
+      aria-pressed={saved}
     >
-      {saved ? '★ Tersimpan di Minat Saya' : '☆ Simpan ke Minat Saya'}
-    </button>
+      {/* Ikon memantul dengan pegas saat disimpan */}
+      <motion.span
+        key={saved ? 'on' : 'off'}
+        initial={reduce ? false : { scale: 0.5, y: saved ? -6 : 0 }}
+        animate={{ scale: 1, y: 0 }}
+        transition={SPRING}
+        className="inline-flex"
+      >
+        {saved ? <BookmarkSimple size={18} weight="fill" /> : <Bookmark size={18} />}
+      </motion.span>
+      {saved ? 'Tersimpan' : 'Simpan ke minat saya'}
+    </motion.button>
   )
 }

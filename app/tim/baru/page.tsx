@@ -27,10 +27,10 @@ export default async function TimBaruPage({
   return (
     <PageContainer width="narrow">
       <PageHeader
-        title="Buka Postingan Cari Tim"
-        description="Jelaskan kebutuhan peran dan jumlah slot anggota untuk kompetisi yang ingin kamu ikuti."
+        title="Buka rekrutmen tim"
+        description="Satu postingan untuk satu lomba. Jelaskan peran yang dibutuhkan agar calon anggota tepat sasaran."
       />
-      <div className="rounded-2xl border border-slate-200/80 bg-white p-6 sm:p-8 shadow-sm">
+      <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm sm:p-8">
         <PostForm
           tipe="competition"
           competitions={competitions ?? []}

@@ -4,6 +4,8 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from './Button'
+import { friendlyError } from '@/lib/errors'
+import { useToast } from '@/components/ui/Toast'
 
 interface Props {
   postId: string
@@ -12,6 +14,7 @@ interface Props {
 
 export function DeletePostButton({ postId, redirectTo }: Props) {
   const router = useRouter()
+  const toast = useToast()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -23,9 +26,11 @@ export function DeletePostButton({ postId, redirectTo }: Props) {
     const { error: dbError } = await supabase.from('team_posts').delete().eq('id', postId)
     setLoading(false)
     if (dbError) {
-      setError(dbError.message)
+      setError(friendlyError(dbError))
+      toast.push(friendlyError(dbError), 'error')
       return
     }
+    toast.push('Postingan dihapus.')
     router.push(redirectTo)
     router.refresh()
   }

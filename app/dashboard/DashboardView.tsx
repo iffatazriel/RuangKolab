@@ -125,7 +125,7 @@ export function DashboardView({
                 key={item.key}
                 type="button"
                 onClick={() => setActiveTab(item.key)}
-                className={`flex w-full items-center justify-between rounded-xl px-3.5 py-2.5 text-xs font-semibold transition-all text-left ${
+                className={`flex w-full items-center justify-between rounded-xl px-3.5 py-2.5 text-xs font-semibold transition-[background-color,color,box-shadow] text-left ${
                   isActive
                     ? 'bg-indigo-600 text-white shadow-sm'
                     : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'

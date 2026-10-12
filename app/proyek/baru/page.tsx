@@ -13,10 +13,10 @@ export default async function ProyekBaruPage() {
   return (
     <PageContainer width="narrow">
       <PageHeader
-        title="Mulai Proyek Kolaborasi"
-        description="Ajak rekan mahasiswa untuk mengerjakan proyek kreatif, riset, atau startup kampus."
+        title="Mulai proyek kolaborasi"
+        description="Bukan lomba, tapi butuh rekan? Tuliskan idemu dan peran yang dicari."
       />
-      <div className="rounded-2xl border border-slate-200/80 bg-white p-6 sm:p-8 shadow-sm">
+      <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm sm:p-8">
         <PostForm tipe="project" allSkills={skills ?? []} />
       </div>
     </PageContainer>

@@ -5,7 +5,10 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/Button'
 import { Input, Textarea } from '@/components/ui/FormFields'
+import { Check } from '@phosphor-icons/react'
 import type { User, Skill } from '@/lib/types'
+import { friendlyError } from '@/lib/errors'
+import { useToast } from '@/components/ui/Toast'
 import { DeleteAccountSection } from './DeleteAccountSection'
 
 interface Props {
@@ -18,6 +21,7 @@ interface Props {
 
 export function ProfilForm({ profile, email, allSkills, userSkillIds, whatsapp: initWa }: Props) {
   const router = useRouter()
+  const toast = useToast()
   const [form, setForm] = useState({
     nama: profile?.nama ?? '',
     jurusan: profile?.jurusan ?? '',
@@ -28,7 +32,6 @@ export function ProfilForm({ profile, email, allSkills, userSkillIds, whatsapp: 
   })
   const [selectedSkills, setSelectedSkills] = useState<string[]>(userSkillIds)
   const [loading, setLoading] = useState(false)
-  const [success, setSuccess] = useState(false)
   const [error, setError] = useState('')
 
   function change(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
@@ -45,7 +48,6 @@ export function ProfilForm({ profile, email, allSkills, userSkillIds, whatsapp: 
     e.preventDefault()
     setLoading(true)
     setError('')
-    setSuccess(false)
     const supabase = createClient()
 
     const { error: profileError } = await supabase
@@ -60,7 +62,9 @@ export function ProfilForm({ profile, email, allSkills, userSkillIds, whatsapp: 
       .eq('id', profile.id)
 
     if (profileError) {
-      setError(profileError.message)
+      const msg = friendlyError(profileError)
+      setError(msg)
+      toast.push(msg, 'error')
       setLoading(false)
       return
     }
@@ -72,7 +76,7 @@ export function ProfilForm({ profile, email, allSkills, userSkillIds, whatsapp: 
       })
     }
 
-    // Refresh skills: delete all then insert selected
+    // Refresh skills: hapus semua lalu masukkan pilihan terbaru
     await supabase.from('user_skills').delete().eq('user_id', profile.id)
     if (selectedSkills.length > 0) {
       await supabase.from('user_skills').insert(
@@ -81,27 +85,37 @@ export function ProfilForm({ profile, email, allSkills, userSkillIds, whatsapp: 
     }
 
     setLoading(false)
-    setSuccess(true)
+    toast.push('Profil berhasil diperbarui.')
     router.refresh()
   }
 
   return (
-    <form onSubmit={submit} className="mt-6 flex flex-col gap-4">
-      {success && (
-        <div className="rounded-lg bg-green-50 p-3 text-sm text-green-800">
-          Profil berhasil diperbarui.
+    <form onSubmit={submit} className="mt-6 flex flex-col gap-5" noValidate>
+      {error && (
+        <div role="alert" className="rounded-lg border border-rose-200 bg-rose-50 px-3.5 py-2.5 text-sm font-medium text-rose-800">
+          {error}
         </div>
       )}
-      {error && <div className="rounded-lg bg-red-50 p-3 text-sm text-red-800">{error}</div>}
 
-      <Input label="Email (tidak dapat diubah)" value={email} disabled className="bg-gray-100" />
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor="email-readonly" className="text-xs font-semibold text-slate-700">Email (tidak dapat diubah)</label>
+        <input
+          id="email-readonly"
+          value={email}
+          disabled
+          className="w-full rounded-lg border border-slate-200 bg-slate-100 px-3 py-2 text-sm text-slate-500"
+        />
+      </div>
+
       <Input id="nama" name="nama" label="Nama Lengkap" required value={form.nama} onChange={change} />
       <Input id="jurusan" name="jurusan" label="Jurusan / Program Studi" value={form.jurusan} onChange={change} />
       <Input
         id="angkatan"
         name="angkatan"
         type="number"
-        label="Angkatan (contoh: 2023)"
+        inputMode="numeric"
+        label="Angkatan"
+        helper="Empat digit, contoh 2023."
         value={form.angkatan}
         onChange={change}
       />
@@ -109,7 +123,9 @@ export function ProfilForm({ profile, email, allSkills, userSkillIds, whatsapp: 
         id="whatsapp"
         name="whatsapp"
         type="tel"
-        label="Nomor WhatsApp (disimpan privat, hanya terbuka jika pengajuan tim diterima)"
+        inputMode="tel"
+        label="Nomor WhatsApp"
+        helper="Disimpan privat. Terbuka untuk pemilik postingan hanya setelah pengajuanmu diterima."
         placeholder="08123456789"
         value={form.whatsapp}
         onChange={change}
@@ -133,9 +149,12 @@ export function ProfilForm({ profile, email, allSkills, userSkillIds, whatsapp: 
         onChange={change}
       />
 
-      <div className="flex flex-col gap-2">
-        <label className="text-sm font-medium text-gray-700">Keahlian &amp; Minat</label>
-        <div className="flex flex-wrap gap-2">
+      <fieldset>
+        <legend className="text-sm font-semibold text-slate-800">Keahlian &amp; minat</legend>
+        <p className="mt-1 text-xs text-slate-500">
+          Dipakai untuk merekomendasikanmu ke tim yang mencari keahlian ini lewat filter.
+        </p>
+        <div className="mt-3 flex flex-wrap gap-2">
           {allSkills.map((s) => {
             const active = selectedSkills.includes(s.id)
             return (
@@ -143,20 +162,22 @@ export function ProfilForm({ profile, email, allSkills, userSkillIds, whatsapp: 
                 type="button"
                 key={s.id}
                 onClick={() => toggleSkill(s.id)}
-                className={`rounded-full px-3 py-1 text-xs font-medium transition ${
+                aria-pressed={active}
+                className={`inline-flex min-h-[44px] items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium transition-colors active:scale-[0.98] ${
                   active
-                    ? 'bg-indigo-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    ? 'bg-indigo-600 text-white shadow-sm'
+                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                 }`}
               >
+                {active && <Check size={14} weight="bold" />}
                 {s.nama}
               </button>
             )
           })}
         </div>
-      </div>
+      </fieldset>
 
-      <div className="pt-4">
+      <div className="border-t border-slate-100 pt-5">
         <Button type="submit" loading={loading} size="lg">
           Simpan Profil
         </Button>

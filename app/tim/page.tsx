@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { Suspense } from 'react'
 import { TimFilter } from './TimFilter'
 import { PageContainer, PageHeader, PrimaryLink, EmptyState, StatusPill } from '@/components/ui/Page'
+import { AnimateGrid, GridItem } from '@/components/motion/AppMotion'
 
 interface SearchParams { keahlian?: string; q?: string }
 
@@ -56,34 +57,37 @@ export default async function TimPage({ searchParams }: { searchParams: Promise<
       {!posts || posts.length === 0 ? (
         <EmptyState title="Belum ada postingan tim" description="Jadilah yang pertama membuka pencarian tim." />
       ) : (
-        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {posts.map((p) => {
-            const owner = Array.isArray(p.users) ? p.users[0] : p.users
-            const comp = Array.isArray(p.competitions) ? p.competitions[0] : p.competitions
-            const compTyped = comp as { judul?: string } | null
-            return (
-              <Link
-                key={p.id}
-                href={`/tim/${p.id}`}
-                className="group flex flex-col rounded-2xl border border-slate-200/70 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
-              >
-                {compTyped?.judul && (
-                  <p className="truncate text-[11px] font-semibold tracking-wider text-indigo-600 uppercase">{compTyped.judul}</p>
-                )}
-                <h3 className="mt-2 line-clamp-2 font-heading text-lg font-bold leading-snug text-slate-900 group-hover:text-indigo-600">
-                  {p.judul}
-                </h3>
-                <p className="mt-1 line-clamp-2 text-sm text-slate-500">{p.deskripsi}</p>
-                <div className="mt-auto flex items-center justify-between border-t border-slate-100 pt-3 text-xs text-slate-500">
-                  <span>oleh <span className="font-medium text-slate-700">{(owner as { nama?: string })?.nama ?? 'Anonim'}</span></span>
-                  <span className="flex items-center gap-2">
-                    Slot {p.slot_terisi}/{p.slot_total}
-                    {p.status === 'full' && <StatusPill tone="red">Penuh</StatusPill>}
-                  </span>
-                </div>
-              </Link>
-            )
-          })}
+        <div className="mt-6">
+          <AnimateGrid className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {posts.map((p) => {
+              const owner = Array.isArray(p.users) ? p.users[0] : p.users
+              const comp = Array.isArray(p.competitions) ? p.competitions[0] : p.competitions
+              const compTyped = comp as { judul?: string } | null
+              return (
+                <GridItem key={p.id}>
+                  <Link
+                    href={`/tim/${p.id}`}
+                    className="group flex h-full flex-col rounded-2xl border border-slate-200/70 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+                  >
+                    {compTyped?.judul && (
+                      <p className="truncate text-[11px] font-semibold tracking-wider text-indigo-600 uppercase">{compTyped.judul}</p>
+                    )}
+                    <h3 className="mt-2 line-clamp-2 text-lg font-bold leading-snug text-slate-900 group-hover:text-indigo-600">
+                      {p.judul}
+                    </h3>
+                    <p className="mt-1 line-clamp-2 text-sm text-slate-500">{p.deskripsi}</p>
+                    <div className="mt-auto flex items-center justify-between border-t border-slate-100 pt-3 text-xs text-slate-500">
+                      <span>oleh <span className="font-medium text-slate-700">{(owner as { nama?: string })?.nama ?? 'Anonim'}</span></span>
+                      <span className="flex items-center gap-2">
+                        Slot {p.slot_terisi}/{p.slot_total}
+                        {p.status === 'full' && <StatusPill tone="red">Penuh</StatusPill>}
+                      </span>
+                    </div>
+                  </Link>
+                </GridItem>
+              )
+            })}
+          </AnimateGrid>
         </div>
       )}
     </PageContainer>

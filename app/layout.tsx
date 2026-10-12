@@ -3,6 +3,8 @@ import { Geist } from 'next/font/google'
 import './globals.css'
 import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
+import { BottomNav } from '@/components/layout/BottomNav'
+import { ToastProvider } from '@/components/ui/Toast'
 
 const geist = Geist({ subsets: ['latin'], variable: '--font-geist' })
 
@@ -14,10 +16,13 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="id" className={geist.variable}>
-      <body className="flex min-h-screen flex-col bg-[#fafbfc] font-sans text-slate-800 antialiased">
-        <Navbar />
-        <main className="flex-1">{children}</main>
-        <Footer />
+      <body className="flex min-h-[100dvh] flex-col bg-[#fcfcfd] font-sans text-slate-800 antialiased">
+        <ToastProvider>
+          <Navbar />
+          <main className="flex-1 pb-16 md:pb-0">{children}</main>
+          <Footer />
+          <BottomNav />
+        </ToastProvider>
       </body>
     </html>
   )
