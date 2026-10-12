@@ -1,0 +1,43 @@
+import { createClient } from '@/lib/supabase/server'
+import { redirect } from 'next/navigation'
+import { PostForm } from '@/components/PostForm'
+import { PageContainer, PageHeader } from '@/components/ui/Page'
+
+export default async function TimBaruPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ lomba?: string }>
+}) {
+  const { lomba: defaultCompetitionId } = await searchParams
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/masuk?redirect=/tim/baru')
+
+  const now = new Date().toISOString()
+  const [{ data: competitions }, { data: skills }] = await Promise.all([
+    supabase
+      .from('competitions')
+      .select('id, judul')
+      .eq('publish_status', 'published')
+      .gte('deadline', now)
+      .order('deadline', { ascending: true }),
+    supabase.from('skills').select('id, nama').order('nama'),
+  ])
+
+  return (
+    <PageContainer width="narrow">
+      <PageHeader
+        title="Buka Postingan Cari Tim"
+        description="Jelaskan kebutuhan peran dan jumlah slot anggota untuk kompetisi yang ingin kamu ikuti."
+      />
+      <div className="rounded-2xl border border-slate-200/80 bg-white p-6 sm:p-8 shadow-sm">
+        <PostForm
+          tipe="competition"
+          competitions={competitions ?? []}
+          allSkills={skills ?? []}
+          defaultCompetitionId={defaultCompetitionId}
+        />
+      </div>
+    </PageContainer>
+  )
+}
