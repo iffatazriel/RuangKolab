@@ -1,10 +1,12 @@
 /**
  * Seed data contoh untuk fase uji pilot.
  * 4 kampus di Purwokerto + 30 lomba aktif (deadline relatif ke tanggal run,
- * jadi selalu di masa depan saat dijalankan).
+ * jadi selalu di masa depan saat dijalankan) + user demo + postingan tim/proyek
+ * + backfill poster.
  *
  * Catatan jujur: ini data contoh, bukan lomba sungguhan. Tautan memakai
- * example.com (domain RFC reserved) agar tidak menipu pengguna.
+ * example.com (domain RFC reserved) agar tidak menipu pengguna. Akun demo
+ * memakai email @contoh.id dan bio bertanda [AKUN DEMO].
  *
  * Jalankan: node scripts/seed.mjs        (idempoten: skip bila sudah >= 30 lomba)
  *           node scripts/seed.mjs --force (tambahkan ulang 30 lomba contoh)
@@ -94,30 +96,140 @@ async function main() {
   }
 
   if (count >= 30 && !FORCE) {
-    console.log(`Sudah ada ${count} lomba. Lewati seed (pakai --force untuk menambah ulang).`)
+    console.log(`Sudah ada ${count} lomba. Lewati seed lomba (pakai --force untuk menambah ulang).`)
+  } else {
+    const rows = LOMBA.map((l) => ({
+      campus_id: UMP_ID,
+      judul: l.judul,
+      penyelenggara: l.penyelenggara,
+      kategori: l.kategori,
+      tingkat: l.tingkat,
+      deadline: hari(l.d),
+      biaya: l.biaya,
+      url: l.url,
+      deskripsi: l.deskripsi,
+      publish_status: 'published',
+    }))
+
+    const { error: insErr } = await supabase.from('competitions').insert(rows)
+    if (insErr) {
+      console.error('Gagal seed lomba:', insErr.message)
+      process.exit(1)
+    }
+    console.log(`Lomba terseed: ${rows.length}`)
+    console.log('Selesai. Data ini contoh untuk fase uji, bukan lomba sungguhan.')
+  }
+
+  await seedPosterDanTim()
+}
+
+// --- Poster: picsum stabil per judul (konteks netral, andal, tanpa API key) ---
+function posterUntuk(judul) {
+  const slug = judul.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40)
+  return `https://picsum.photos/seed/${slug}/800/500`
+}
+
+// --- User demo (mahasiswa fiktif Purwokerto, email @contoh.id) ---
+const DEMO_USERS = [
+  { email: 'demo.rizky@contoh.id', nama: 'Rizky Pratama', jurusan: 'Informatika', angkatan: 2022, bio: '[AKUN DEMO] Suka ngoprek web dan ikut hackathon.' },
+  { email: 'demo.salsa@contoh.id', nama: 'Salsabila Zahra', jurusan: 'Desain Komunikasi Visual', angkatan: 2023, bio: '[AKUN DEMO] Desainer UI yang hobi bikin poster acara kampus.' },
+  { email: 'demo.bagas@contoh.id', nama: 'Bagas Aditya', jurusan: 'Teknik Elektro', angkatan: 2021, bio: '[AKUN DEMO] Main IoT dan robotik sejak semester 3.' },
+  { email: 'demo.nadia@contoh.id', nama: 'Nadia Rahmawati', jurusan: 'Manajemen', angkatan: 2023, bio: '[AKUN DEMO] Tertarik business plan dan pitching.' },
+  { email: 'demo.fajar@contoh.id', nama: 'Fajar Nugroho', jurusan: 'Sistem Informasi', angkatan: 2022, bio: '[AKUN DEMO] Fokus data dan riset.' },
+]
+
+async function seedPosterDanTim() {
+  // 1. Backfill poster yang kosong
+  const { data: tanpaPoster } = await supabase.from('competitions').select('id, judul').is('poster_url', null).limit(200)
+  for (const c of tanpaPoster ?? []) {
+    await supabase.from('competitions').update({ poster_url: posterUntuk(c.judul) }).eq('id', c.id)
+  }
+  console.log(`Poster dibackfill: ${(tanpaPoster ?? []).length}`)
+
+  // 2. User demo (idempoten via email)
+  const { data: existing } = await supabase.auth.admin.listUsers({ perPage: 200 })
+  const emailAda = new Set((existing?.users ?? []).map((u) => u.email))
+  const demoIds = {}
+  for (const d of DEMO_USERS) {
+    let id = existing?.users?.find((u) => u.email === d.email)?.id
+    if (!id) {
+      const { data, error } = await supabase.auth.admin.createUser({
+        email: d.email,
+        password: 'demo-ruangkolab-123',
+        email_confirm: true,
+        user_metadata: { nama: d.nama },
+      })
+      if (error) {
+        console.error(`Gagal buat ${d.email}:`, error.message)
+        continue
+      }
+      id = data.user.id
+      console.log(`User demo dibuat: ${d.email}`)
+    }
+    demoIds[d.email] = id
+    // Trigger 002 sudah membuat baris users; lengkapi profilnya
+    await supabase.from('users').update({
+      nama: d.nama, jurusan: d.jurusan, angkatan: d.angkatan, bio: d.bio,
+    }).eq('id', id)
+  }
+  if (Object.keys(demoIds).length === 0) {
+    console.log('Tidak ada user demo, lewati seed tim/proyek.')
     return
   }
 
-  const rows = LOMBA.map((l) => ({
-    campus_id: UMP_ID,
-    judul: l.judul,
-    penyelenggara: l.penyelenggara,
-    kategori: l.kategori,
-    tingkat: l.tingkat,
-    deadline: hari(l.d),
-    biaya: l.biaya,
-    url: l.url,
-    deskripsi: l.deskripsi,
-    publish_status: 'published',
-  }))
-
-  const { error: insErr } = await supabase.from('competitions').insert(rows)
-  if (insErr) {
-    console.error('Gagal seed lomba:', insErr.message)
-    process.exit(1)
+  // 3. Postingan tim/proyek (skip bila sudah ada)
+  const { count: postCount } = await supabase.from('team_posts').select('id', { count: 'exact', head: true })
+  if ((postCount ?? 0) >= 8 && !FORCE) {
+    console.log(`Sudah ada ${postCount} postingan. Lewati seed tim/proyek.`)
+    return
   }
-  console.log(`Lomba terseed: ${rows.length}`)
-  console.log('Selesai. Data ini contoh untuk fase uji, bukan lomba sungguhan.')
+
+  const { data: lomba } = await supabase
+    .from('competitions')
+    .select('id, judul')
+    .eq('publish_status', 'published')
+    .order('deadline', { ascending: true })
+    .limit(6)
+  const { data: skills } = await supabase.from('skills').select('id, nama')
+  const skillId = (nama) => skills?.find((s) => s.nama === nama)?.id
+  const jamLalu = (h) => new Date(Date.now() - h * 3600 * 1000).toISOString()
+  const pemilik = Object.values(demoIds)
+
+  const POSTS = [
+    { owner: 1, tipe: 'competition', lombaIdx: 0, judul: 'Butuh UI/UX Designer untuk hackathon kampus', deskripsi: 'Tim kami sudah ada 2 programmer, tinggal butuh 1 desainer untuk prototipe Figma dan slide pitch. Ketemuan rutin tiap sore di sekre UKM.', slot_total: 4, slot_terisi: 3, skills: ['UI/UX Design', 'Penyusunan Proposal Pitch Deck'], jam: 5 },
+    { owner: 0, tipe: 'competition', lombaIdx: 1, judul: 'Cari programmer backend untuk Web Dev Cup', deskripsi: 'Stack bebas, kami pakai Next.js + Supabase. Butuh yang bisa bantu API dan auth. Latihan tiap malam via Discord.', slot_total: 4, slot_terisi: 2, skills: ['Pengembangan Web/Aplikasi', 'Manajemen Proyek'], jam: 9 },
+    { owner: 4, tipe: 'competition', lombaIdx: 2, judul: 'Tim esai: butuh editor dan periset', deskripsi: 'Topik kesehatan masyarakat. Saya pegang kerangka, butuh 1 periset data dan 1 editor bahasa. Target submit minggu depan.', slot_total: 3, slot_terisi: 1, skills: ['Penyusunan Esai', 'Analisis Data'], jam: 14 },
+    { owner: 2, tipe: 'competition', lombaIdx: 3, judul: 'Butuh dokumenter foto/video untuk lomba robotik', deskripsi: 'Tim robotik kami butuh 1 orang dokumentasi untuk foto, video recap, dan konten medsos selama lomba.', slot_total: 5, slot_terisi: 4, skills: ['Fotografi & Videografi', 'Copywriting & Content Creation'], jam: 22 },
+    { owner: 3, tipe: 'competition', lombaIdx: 4, judul: 'Cari pitcher untuk final business plan', deskripsi: 'Deck dan finansial sudah jadi, tinggal butuh 1 orang yang pede presentasi dan jawab pertanyaan juri.', slot_total: 3, slot_terisi: 2, skills: ['Public Speaking & Pitching', 'Riset & Validasi Pasar'], jam: 30 },
+    { owner: 1, tipe: 'project', judul: 'Redesign aplikasi absensi UKM', deskripsi: 'Proyek santai bareng: redesign alur absensi UKM jadi aplikasi mobile. Cocok untuk portofolio. Ketemuan seminggu sekali.', slot_total: 4, slot_terisi: 1, skills: ['UI/UX Design', 'Pengembangan Web/Aplikasi'], jam: 40 },
+    { owner: 4, tipe: 'project', judul: 'Riset chatbot tanya-jawab kampus', deskripsi: 'Eksperimen bikin chatbot dari FAQ kampus pakai data publik. Butuh yang tertarik NLP dan evaluasi model.', slot_total: 3, slot_terisi: 1, skills: ['Kecerdasan Buatan & ML', 'Analisis Data'], jam: 55 },
+    { owner: 3, tipe: 'project', judul: 'Branding kantin kampus favorit', deskripsi: 'Bantu kantin langganan bikin logo, menu board, dan konten promo. Portofolio nyata + traktiran sepuasnya.', slot_total: 3, slot_terisi: 2, skills: ['Desain Grafis', 'Copywriting & Content Creation'], jam: 70 },
+  ]
+
+  let dibuat = 0
+  for (const p of POSTS) {
+    const row = {
+      owner_id: pemilik[p.owner % pemilik.length],
+      tipe: p.tipe,
+      competition_id: p.tipe === 'competition' ? (lomba?.[p.lombaIdx % (lomba?.length || 1)]?.id ?? null) : null,
+      judul: p.judul,
+      deskripsi: p.deskripsi,
+      slot_total: p.slot_total,
+      slot_terisi: p.slot_terisi,
+      status: p.slot_terisi >= p.slot_total ? 'full' : 'open',
+      created_at: jamLalu(p.jam),
+    }
+    if (p.tipe === 'competition' && !row.competition_id) continue
+    const { data: ins, error } = await supabase.from('team_posts').insert(row).select('id').single()
+    if (error || !ins) {
+      console.error(`Gagal seed post "${p.judul}":`, error?.message)
+      continue
+    }
+    const skillRows = (p.skills ?? []).map(skillId).filter(Boolean).map((skill_id) => ({ post_id: ins.id, skill_id }))
+    if (skillRows.length > 0) await supabase.from('post_skills').insert(skillRows)
+    dibuat++
+  }
+  console.log(`Postingan tim/proyek terseed: ${dibuat}`)
 }
 
 main()

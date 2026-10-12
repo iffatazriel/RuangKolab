@@ -44,7 +44,7 @@ export function CompetitionCard({ comp, timMencari = 0, priority = false }: Prop
   const poster = comp.poster_url
 
   return (
-    <article className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-stone-200 dark:border-stone-800 bg-[var(--card-bg)] transition-[transform,border-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-stone-300 dark:hover:border-stone-700 motion-safe:hover:-transtone-y-[3px] focus-within:ring-2 focus-within:ring-brand-500 focus-within:ring-offset-2">
+    <article className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-stone-200 dark:border-stone-800 bg-[var(--card-bg)] transition-[transform,border-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-stone-300 dark:hover:border-stone-700 motion-safe:hover:-translate-y-[3px] focus-within:ring-2 focus-within:ring-brand-500 focus-within:ring-offset-2">
       {/* Poster: rasio tetap, object-top karena judul poster umumnya di atas */}
       <div className="relative aspect-[16/10] overflow-hidden bg-stone-100 dark:bg-stone-800">
         {poster ? (
