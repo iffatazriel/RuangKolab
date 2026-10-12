@@ -52,7 +52,12 @@ function MasukForm() {
     })
     if (oauthError) {
       setOauthLoading(false)
-      setError('Login dengan Google belum tersedia. Coba lagi nanti atau gunakan email.')
+      const msg = oauthError.message.toLowerCase()
+      setError(
+        msg.includes('provider') && (msg.includes('not enabled') || msg.includes('disabled') || msg.includes('unsupported'))
+          ? 'Login Google belum diaktifkan oleh admin. Silakan masuk dengan email dulu.'
+          : 'Login dengan Google gagal. Coba lagi atau gunakan email.',
+      )
     }
   }
 

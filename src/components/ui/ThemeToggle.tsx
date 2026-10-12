@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Sun, Moon } from '@phosphor-icons/react'
+import { Sun, Moon } from '@phosphor-icons/react/dist/ssr'
 import { useReducedMotion } from 'motion/react'
 
 const EVENT = 'rk-theme-change'

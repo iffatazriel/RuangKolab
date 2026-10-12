@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { motion, useReducedMotion } from 'motion/react'
-import { BookmarkSimple, Bookmark } from '@phosphor-icons/react'
+import { BookmarkSimple, Bookmark } from '@phosphor-icons/react/dist/ssr'
 import { SPRING } from '@/lib/motion'
 import { useToast } from '@/components/ui/Toast'
 

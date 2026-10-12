@@ -3,7 +3,7 @@
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/Button'
-import { WarningCircle } from '@phosphor-icons/react'
+import { WarningCircle } from '@phosphor-icons/react/dist/ssr'
 
 export default function ErrorPage({
   error,

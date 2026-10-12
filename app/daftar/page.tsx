@@ -113,7 +113,12 @@ export default function DaftarPage() {
     })
     if (oauthError) {
       setOauthLoading(false)
-      setSubmitError('Daftar dengan Google belum tersedia. Coba lagi nanti atau gunakan email.')
+      const msg = oauthError.message.toLowerCase()
+      setSubmitError(
+        msg.includes('provider') && (msg.includes('not enabled') || msg.includes('disabled') || msg.includes('unsupported'))
+          ? 'Daftar dengan Google belum diaktifkan oleh admin. Silakan daftar dengan email dulu.'
+          : 'Daftar dengan Google gagal. Coba lagi atau gunakan email.',
+      )
     }
   }
 

@@ -130,12 +130,13 @@ function posterUntuk(judul) {
 }
 
 // --- User demo (mahasiswa fiktif Purwokerto, email @contoh.id) ---
+// Nomor WA fiktif 0812-0000-00x agar momen "kontak terbuka" bisa didemo.
 const DEMO_USERS = [
-  { email: 'demo.rizky@contoh.id', nama: 'Rizky Pratama', jurusan: 'Informatika', angkatan: 2022, bio: '[AKUN DEMO] Suka ngoprek web dan ikut hackathon.' },
-  { email: 'demo.salsa@contoh.id', nama: 'Salsabila Zahra', jurusan: 'Desain Komunikasi Visual', angkatan: 2023, bio: '[AKUN DEMO] Desainer UI yang hobi bikin poster acara kampus.' },
-  { email: 'demo.bagas@contoh.id', nama: 'Bagas Aditya', jurusan: 'Teknik Elektro', angkatan: 2021, bio: '[AKUN DEMO] Main IoT dan robotik sejak semester 3.' },
-  { email: 'demo.nadia@contoh.id', nama: 'Nadia Rahmawati', jurusan: 'Manajemen', angkatan: 2023, bio: '[AKUN DEMO] Tertarik business plan dan pitching.' },
-  { email: 'demo.fajar@contoh.id', nama: 'Fajar Nugroho', jurusan: 'Sistem Informasi', angkatan: 2022, bio: '[AKUN DEMO] Fokus data dan riset.' },
+  { email: 'demo.rizky@contoh.id', nama: 'Rizky Pratama', jurusan: 'Informatika', angkatan: 2022, bio: '[AKUN DEMO] Suka ngoprek web dan ikut hackathon.', whatsapp: '081200000011' },
+  { email: 'demo.salsa@contoh.id', nama: 'Salsabila Zahra', jurusan: 'Desain Komunikasi Visual', angkatan: 2023, bio: '[AKUN DEMO] Desainer UI yang hobi bikin poster acara kampus.', whatsapp: '081200000022' },
+  { email: 'demo.bagas@contoh.id', nama: 'Bagas Aditya', jurusan: 'Teknik Elektro', angkatan: 2021, bio: '[AKUN DEMO] Main IoT dan robotik sejak semester 3.', whatsapp: '081200000033' },
+  { email: 'demo.nadia@contoh.id', nama: 'Nadia Rahmawati', jurusan: 'Manajemen', angkatan: 2023, bio: '[AKUN DEMO] Tertarik business plan dan pitching.', whatsapp: '081200000044' },
+  { email: 'demo.fajar@contoh.id', nama: 'Fajar Nugroho', jurusan: 'Sistem Informasi', angkatan: 2022, bio: '[AKUN DEMO] Fokus data dan riset.', whatsapp: '081200000055' },
 ]
 
 async function seedPosterDanTim() {
@@ -148,7 +149,6 @@ async function seedPosterDanTim() {
 
   // 2. User demo (idempoten via email)
   const { data: existing } = await supabase.auth.admin.listUsers({ perPage: 200 })
-  const emailAda = new Set((existing?.users ?? []).map((u) => u.email))
   const demoIds = {}
   for (const d of DEMO_USERS) {
     let id = existing?.users?.find((u) => u.email === d.email)?.id
@@ -171,6 +171,11 @@ async function seedPosterDanTim() {
     await supabase.from('users').update({
       nama: d.nama, jurusan: d.jurusan, angkatan: d.angkatan, bio: d.bio,
     }).eq('id', id)
+    // Nomor demo agar alur buka-kontak bisa didemokan end-to-end
+    await supabase.from('user_contacts').upsert(
+      { user_id: id, whatsapp: d.whatsapp },
+      { onConflict: 'user_id' },
+    )
   }
   if (Object.keys(demoIds).length === 0) {
     console.log('Tidak ada user demo, lewati seed tim/proyek.')

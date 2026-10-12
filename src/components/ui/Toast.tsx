@@ -2,7 +2,7 @@
 
 import { createContext, useCallback, useContext, useMemo, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
-import { CheckCircle, WarningCircle } from '@phosphor-icons/react'
+import { CheckCircle, WarningCircle } from '@phosphor-icons/react/dist/ssr'
 import { EASE_OUT, D_COMPONENT } from '@/lib/motion'
 
 type Tone = 'success' | 'error'

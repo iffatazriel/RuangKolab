@@ -7,7 +7,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { Button } from '@/components/ui/Button'
 import { Modal } from '@/components/ui/Modal'
 import { friendlyError } from '@/lib/errors'
-import { Clock, CheckCircle, XCircle, Prohibit, PaperPlaneTilt, Check, UsersThree } from '@phosphor-icons/react'
+import { Clock, CheckCircle, XCircle, Prohibit, PaperPlaneTilt, Check, UsersThree } from '@phosphor-icons/react/dist/ssr'
 import { EASE_OUT, SPRING } from '@/lib/motion'
 import { useToast } from '@/components/ui/Toast'
 

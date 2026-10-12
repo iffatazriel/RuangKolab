@@ -19,6 +19,7 @@ Dibangun dengan Next.js + TypeScript + Tailwind CSS + Supabase.
    | `NEXT_PUBLIC_SUPABASE_URL` | URL proyek Supabase |
    | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Anon key (aman untuk klien) |
    | `SUPABASE_SERVICE_ROLE_KEY` | Service role key — **rahasia, hanya untuk script server** |
+   | `NEXT_PUBLIC_SITE_URL` | URL publik aplikasi (untuk sitemap/robots/canonical). Default: `https://ruangkolab.vercel.app` |
 
 3. Jalankan migrasi database **berurutan** (`001` → `007`) lewat
    Supabase Dashboard → SQL Editor:
@@ -46,7 +47,17 @@ Dibangun dengan Next.js + TypeScript + Tailwind CSS + Supabase.
    npm run dev     # development di http://localhost:3000
    npm run build   # verifikasi production build
    npm run lint    # verifikasi eslint
+   npm test        # unit test (node:test bawaan, tanpa dependensi tambahan)
    ```
+
+6. (Opsional) Verifikasi alur inti end-to-end terhadap database dev:
+
+   ```bash
+   node scripts/e2e-check.mjs   # ajukan-terima-WA-slot-notif via API asli, lalu bersih-bersih
+   ```
+
+   Script ini memakai akun demo, membuat postingan sementara `[E2E-CHECK]`,
+   lalu menghapusnya lagi. Harus 8/8 lolos.
 
 ## Login dengan Google (opsional)
 
@@ -72,6 +83,8 @@ Jika belum diaktifkan, aplikasi tetap berjalan normal dengan email + kata sandi.
 - `src/lib/` — client Supabase, tipe, error, util
 - `supabase/migrations/` — skema database + RLS + trigger (sumber kebenaran skema)
 - `scripts/seed.mjs` — data contoh fase uji
+- `scripts/e2e-check.mjs` — verifikasi alur inti end-to-end (8 cek)
+- `scripts/clean-demo.mjs` — hapus data demo sebelum launch production
 
 ## Catatan
 

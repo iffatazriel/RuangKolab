@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
-import { List, X, Sun, Moon } from '@phosphor-icons/react'
+import { List, X, Sun, Moon } from '@phosphor-icons/react/dist/ssr'
 import { EASE_OUT, D_COMPONENT } from '@/lib/motion'
 import { useTheme } from '@/components/ui/ThemeToggle'
 

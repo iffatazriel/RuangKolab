@@ -192,7 +192,7 @@ export default async function ProyekDetailPage({ params }: { params: Promise<{ i
 
         <aside className="space-y-4 lg:sticky lg:top-24 lg:col-span-4">
           {user && !isOwner && (ownerContact || userRequest?.status === 'accepted' || userRequest?.status === 'pending' || post.status === 'open') && (
-            <ContactCard whatsapp={userRequest?.status === 'accepted' ? ownerContact : null} ownerName={ownerTyped?.nama ?? 'pemilik proyek'} />
+            <ContactCard whatsapp={userRequest?.status === 'accepted' ? ownerContact : null} accepted={userRequest?.status === 'accepted'} ownerName={ownerTyped?.nama ?? 'pemilik proyek'} />
           )}
 
           {!isOwner && user && post.status === 'open' && (

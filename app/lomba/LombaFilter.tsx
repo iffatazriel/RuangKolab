@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useState } from 'react'
-import { MagnifyingGlass, SlidersHorizontal, X, ArrowDown } from '@phosphor-icons/react'
+import { MagnifyingGlass, SlidersHorizontal, X, ArrowDown } from '@phosphor-icons/react/dist/ssr'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { EASE_OUT } from '@/lib/motion'
 

@@ -6,7 +6,8 @@ import { createClient } from '@/lib/supabase/client'
 import { Button } from './ui/Button'
 import { Input } from './ui/FormFields'
 import { friendlyError } from '@/lib/errors'
-import { X, Check } from '@phosphor-icons/react'
+import { validatePostForm, MAX_DESKRIPSI, MAX_SLOT } from '@/lib/validate'
+import { X, Check } from '@phosphor-icons/react/dist/ssr'
 import type { PostType } from '@/lib/types'
 
 interface Props {
@@ -15,9 +16,6 @@ interface Props {
   allSkills: { id: string; nama: string }[]
   defaultCompetitionId?: string
 }
-
-const MAX_DESKRIPSI = 1000
-const MAX_SLOT = 20
 
 export function PostForm({ tipe, competitions = [], allSkills, defaultCompetitionId = '' }: Props) {
   const router = useRouter()
@@ -48,15 +46,13 @@ export function PostForm({ tipe, competitions = [], allSkills, defaultCompetitio
 
   /** Validasi klien: pesan per field, tampil inline di bawah input */
   function validate(): boolean {
-    const fe: Record<string, string> = {}
-    if (isLomba && !form.competition_id) fe.competition_id = 'Pilih lomba yang akan diikuti.'
-    if (!form.judul.trim()) fe.judul = 'Judul wajib diisi.'
-    else if (form.judul.trim().length < 10) fe.judul = 'Judul terlalu pendek, jelaskan tujuan tim atau proyek.'
-    if (!form.deskripsi.trim()) fe.deskripsi = 'Deskripsi wajib diisi.'
-    else if (form.deskripsi.trim().length < 30) fe.deskripsi = 'Deskripsi minimal 30 karakter agar calon anggota paham kebutuhanmu.'
-    const slot = parseInt(form.slot_total, 10)
-    if (Number.isNaN(slot) || slot < 1) fe.slot_total = 'Slot minimal 1.'
-    else if (slot > MAX_SLOT) fe.slot_total = `Slot maksimal ${MAX_SLOT}.`
+    const fe = validatePostForm({
+      tipe,
+      judul: form.judul,
+      deskripsi: form.deskripsi,
+      slot_total: form.slot_total,
+      competition_id: form.competition_id,
+    })
     setFieldErrors(fe)
     return Object.keys(fe).length === 0
   }

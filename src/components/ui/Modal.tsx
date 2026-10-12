@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
-import { X } from '@phosphor-icons/react'
+import { X } from '@phosphor-icons/react/dist/ssr'
 import { EASE_OUT, D_COMPONENT } from '@/lib/motion'
 
 interface Props {

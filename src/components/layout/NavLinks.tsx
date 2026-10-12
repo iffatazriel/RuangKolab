@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { ShieldCheck } from '@phosphor-icons/react'
+import { ShieldCheck } from '@phosphor-icons/react/dist/ssr'
 
 /**
  * Tautan nav desktop: penanda halaman aktif memakai garis bawah aksen brand.
