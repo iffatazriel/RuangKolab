@@ -36,12 +36,30 @@ scripts/              #   migrate.mjs, seed.mjs
 ```bash
 npm install
 cp .env.local.example .env.local   # isi nilainya
-node scripts/migrate.mjs           # jalankan migrasi 001-007 ke Supabase
-node scripts/seed.mjs              # data contoh: 4 kampus + 30 lomba
 npm run dev
 ```
 
 Buka `http://localhost:3000`.
+
+## Migrasi Database
+
+Migrasi dijalankan lewat **Supabase Dashboard → SQL Editor** (bukan script;
+DDL tidak bisa lewat REST). Salin isi file dari `supabase/migrations/`
+**urut sesuai nomor** (001 sampai 007) ke SQL Editor lalu Run satu per satu:
+
+1. `001_initial_schema.sql` - tabel inti, enum, seed kampus + skills
+2. `002_auth_trigger.sql` - auto-buat profil saat signup
+3. `003_slot_counter_trigger.sql` - slot otomatis + cegah self-join
+4. `004_rls_policies.sql` - Row-Level Security
+5. `005_fixes_notifications_project_fields.sql` - perbaikan RLS, notifikasi, kolom proyek
+6. `006_usulan_favorit_ratelimit.sql` - usulan lomba, favorit, rate limit
+7. `007_notifikasi_link_dan_validasi.sql` - link notifikasi, validasi pengajuan
+
+Setelah itu, isi data contoh:
+
+```bash
+node scripts/seed.mjs   # 4 kampus + 30 lomba contoh (idempoten)
+```
 
 ## Environment Variables
 
@@ -76,7 +94,7 @@ tambahan: `node scripts/seed.mjs --force`.
 
 1. Import repo ke Vercel
 2. Isi ketiga environment variable di Project Settings
-3. Deploy; jalankan migrasi dan seed sekali dari mesin lokal ke database produksi
+3. Deploy; jalankan migrasi via SQL Editor dan seed sekali dari mesin lokal ke database produksi
 
 ## Peta Fitur (PRD)
 
