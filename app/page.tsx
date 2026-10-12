@@ -325,27 +325,36 @@ export default async function Home() {
             </SpotlightCard>
           </RevealItem>
           <RevealItem className="md:col-span-3">
-            <SpotlightCard className="flex flex-wrap items-center justify-between gap-4 p-6">
-              <div className="flex min-w-0 items-center gap-4">
+            <SpotlightCard className="p-6">
+              <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="https://picsum.photos/seed/mahasiswa-belajar-bersama/200/200"
+                  src="https://picsum.photos/seed/mahasiswa-belajar-bersama/320/320"
                   alt="Kelompok mahasiswa belajar bersama"
                   loading="lazy"
-                  className="hidden h-16 w-16 shrink-0 rounded-xl object-cover sm:block"
+                  className="h-20 w-20 shrink-0 rounded-2xl object-cover"
                 />
-                <div>
+                <div className="min-w-0 flex-1">
                   <p className="font-bold text-stone-900 dark:text-stone-100">Rekrutmen terbuka</p>
-                  <p className="text-sm text-stone-600 dark:text-stone-400">
-                    <span className="font-mono font-bold">{(totalPosts ?? 0) - (totalProjects ?? 0)}</span> tim lomba dan{' '}
-                    <span className="font-mono font-bold">{totalProjects ?? 0}</span> proyek sedang mencari anggota
-                  </p>
+                  <div className="mt-2 flex items-center gap-4 text-sm">
+                    <p className="text-stone-600 dark:text-stone-400">
+                      <span className="font-mono text-lg font-bold tabular-nums text-stone-900 dark:text-stone-100">{(totalPosts ?? 0) - (totalProjects ?? 0)}</span>
+                      {' '}tim lomba
+                    </p>
+                    <span aria-hidden="true" className="h-8 w-px bg-stone-200 dark:bg-stone-700" />
+                    <p className="text-stone-600 dark:text-stone-400">
+                      <span className="font-mono text-lg font-bold tabular-nums text-stone-900 dark:text-stone-100">{totalProjects ?? 0}</span>
+                      {' '}proyek
+                    </p>
+                    <span aria-hidden="true" className="hidden h-8 w-px bg-stone-200 sm:block dark:bg-stone-700" />
+                    <p className="hidden text-stone-500 sm:block dark:text-stone-400">sedang mencari anggota</p>
+                  </div>
                 </div>
+                <Link href="/tim" className="inline-flex min-h-[44px] shrink-0 items-center justify-center gap-1.5 rounded-full bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-700 active:scale-[0.98] sm:w-auto">
+                  Lihat rekrutmen
+                  <ArrowRight size={16} weight="bold" aria-hidden="true" />
+                </Link>
               </div>
-              <Link href="/tim" className="inline-flex min-h-[44px] items-center gap-1 rounded-full border border-stone-300 bg-white px-4 py-2 text-sm font-semibold text-stone-700 transition hover:bg-stone-50 active:scale-[0.98] dark:border-stone-700 dark:bg-stone-900 dark:text-stone-200 dark:hover:bg-stone-800">
-                Lihat rekrutmen
-                <ArrowRight size={16} weight="bold" />
-              </Link>
             </SpotlightCard>
           </RevealItem>
         </RevealGroup>
