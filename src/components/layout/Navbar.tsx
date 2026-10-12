@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { LogoutButton } from './LogoutButton'
 import { NavbarShell } from '@/components/motion/LandingMotion'
 import { BadgePop } from '@/components/motion/AppMotion'
+import { NavLinks } from './NavLinks'
 
 function Logo() {
   return (
@@ -33,6 +34,7 @@ export async function Navbar() {
   let userRole: string | null = null
   let userName: string | null = null
   let unreadCount = 0
+  let isStaff = false
   if (user) {
     const [{ data: profile }, { count }] = await Promise.all([
       supabase.from('users').select('nama, role').eq('id', user.id).single(),
@@ -45,24 +47,15 @@ export async function Navbar() {
     userRole = profile?.role ?? null
     userName = profile?.nama ?? user.email ?? null
     unreadCount = count ?? 0
+    isStaff = userRole === 'admin' || userRole === 'moderator'
   }
 
   return (
     <NavbarShell
       left={
-        <div className="flex items-center space-x-10">
+        <div className="flex items-center gap-8">
           <Logo />
-          <nav className="hidden items-center space-x-7 text-sm font-medium text-slate-600 md:flex">
-            <Link href="/lomba" className="transition-colors hover:text-indigo-600">Lomba</Link>
-            <Link href="/tim" className="transition-colors hover:text-indigo-600">Cari Tim</Link>
-            <Link href="/proyek" className="transition-colors hover:text-indigo-600">Proyek</Link>
-            {user && (
-              <Link href="/dashboard" className="transition-colors hover:text-indigo-600">Dashboard</Link>
-            )}
-            {(userRole === 'admin' || userRole === 'moderator') && (
-              <Link href="/moderasi" className="font-semibold text-amber-600 transition-colors hover:text-amber-700">Moderasi</Link>
-            )}
-          </nav>
+          <NavLinks isAdmin={isStaff} />
         </div>
       }
       right={
@@ -85,7 +78,7 @@ export async function Navbar() {
               </Link>
               <Link
                 href="/profil"
-                className="hidden text-sm font-medium text-slate-700 transition-colors hover:text-indigo-600 sm:inline-block"
+                className="hidden min-h-[40px] items-center text-sm font-medium text-slate-700 transition-colors hover:text-indigo-600 dark:text-slate-300 sm:inline-block"
               >
                 {userName || 'Profil'}
               </Link>

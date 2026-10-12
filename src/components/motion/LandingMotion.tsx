@@ -84,13 +84,12 @@ export function HeroParallax({ children }: { children: ReactNode }) {
   )
 }
 
-/* ---------- NAVBAR: mengecil + blur saat scroll, digerakkan useScroll ---------- */
+/* ---------- NAVBAR: blur + border muncul saat scroll, tinggi tetap --nav-h ---------- */
 
 export function NavbarShell({ left, right }: { left: ReactNode; right: ReactNode }) {
   const reduce = useReducedMotion()
   const { scrollY } = useScroll()
   const scrolled = useTransform(scrollY, [0, 80], [0, 1])
-  const height = useTransform(scrolled, [0, 1], [80, 56])
   const bg = useTransform(scrolled, [0, 1], ['rgba(255,255,255,0.7)', 'rgba(255,255,255,0.9)'])
   const blur = useTransform(scrolled, [0, 1], ['backdrop-blur-none', 'backdrop-blur-md'])
   const borderColor = useTransform(scrolled, [0, 1], ['rgba(241,245,249,0)', 'rgba(226,232,240,0.8)'])
@@ -98,9 +97,11 @@ export function NavbarShell({ left, right }: { left: ReactNode; right: ReactNode
   return (
     <motion.header
       className="sticky top-0 z-50 border-b"
-      style={reduce ? { backgroundColor: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(8px)', borderColor: 'rgba(226,232,240,0.8)' } : { height, backgroundColor: bg, backdropFilter: blur, borderColor }}
+      style={reduce
+        ? { height: 'var(--nav-h)', backgroundColor: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(8px)', borderColor: 'rgba(226,232,240,0.8)' }
+        : { height: 'var(--nav-h)', backgroundColor: bg, backdropFilter: blur, borderColor }}
     >
-      <div className={reduce ? 'mx-auto flex h-14 max-w-7xl items-center justify-between px-6' : 'mx-auto flex max-w-7xl items-center justify-between px-6'} style={reduce ? undefined : { height: 'inherit', minHeight: 56 }}>
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-6" style={{ height: 'var(--nav-h)' }}>
         {left}
         {right}
       </div>

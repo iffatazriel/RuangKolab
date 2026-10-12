@@ -4,35 +4,42 @@
       {/* Skeleton header */}
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <div className="h-8 w-56 skeleton animate-pulse rounded-lg bg-slate-200" />
-          <div className="mt-2 h-4 w-80 max-w-full skeleton animate-pulse rounded bg-slate-100" />
+          <div className="skeleton h-8 w-56 rounded-lg bg-slate-200 dark:bg-slate-800" />
+          <div className="skeleton mt-2 h-4 w-80 max-w-full rounded bg-slate-100 dark:bg-slate-900" />
         </div>
-        <div className="h-10 w-32 skeleton animate-pulse rounded-lg bg-slate-100" />
+        <div className="skeleton h-10 w-32 rounded-[10px] bg-slate-100 dark:bg-slate-900" />
       </div>
 
-      {/* Skeleton filter bar */}
-      <div className="mt-6 flex flex-wrap gap-2.5">
-        <div className="h-11 min-w-[240px] flex-1 skeleton animate-pulse rounded-lg bg-slate-100" />
-        {[0, 1, 2, 3].map((i) => (
-          <div key={i} className="h-11 w-36 skeleton animate-pulse rounded-lg bg-slate-100" />
-        ))}
+      {/* Skeleton filter sticky */}
+      <div className="sticky mt-6 border-b border-slate-100 pb-3 dark:border-slate-800" style={{ top: 'var(--nav-h)' }}>
+        <div className="flex flex-wrap gap-2.5">
+          <div className="skeleton h-11 min-w-[220px] flex-1 rounded-[10px] bg-slate-100 dark:bg-slate-900" />
+          {[0, 1, 2, 3, 4, 5].map((i) => (
+            <div key={i} className="skeleton h-11 w-36 rounded-[10px] bg-slate-100 dark:bg-slate-900" />
+          ))}
+        </div>
+        <div className="mt-3 flex gap-2">
+          <div className="skeleton h-4 w-24 rounded bg-slate-100 dark:bg-slate-900" />
+          <div className="skeleton h-7 w-20 rounded-full bg-slate-100 dark:bg-slate-900" />
+          <div className="skeleton h-7 w-16 rounded-full bg-slate-100 dark:bg-slate-900" />
+        </div>
       </div>
 
-      {/* Skeleton grid kartu lomba: bentuk sama dengan kartu berfoto */}
-      <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      {/* Skeleton grid kartu: poster 4:3, baris tag, dua baris judul, footer */}
+      <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {[0, 1, 2, 3, 4, 5].map((i) => (
-          <div key={i} className="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm">
-            <div className="aspect-[2/1] skeleton animate-pulse bg-slate-200" />
+          <div key={i} className="overflow-hidden rounded-2xl border border-slate-200 bg-[var(--card-bg)] shadow-sm dark:border-slate-800">
+            <div className="skeleton aspect-[4/3] bg-slate-200 dark:bg-slate-800" />
             <div className="p-5">
               <div className="flex items-center justify-between">
-                <div className="h-6 w-20 skeleton animate-pulse rounded-full bg-slate-100" />
-                <div className="h-3 w-16 skeleton animate-pulse rounded bg-slate-100" />
+                <div className="skeleton h-6 w-20 rounded-lg bg-slate-100 dark:bg-slate-900" />
+                <div className="skeleton h-4 w-16 rounded bg-slate-100 dark:bg-slate-900" />
               </div>
-              <div className="mt-3 h-5 w-full skeleton animate-pulse rounded bg-slate-200" />
-              <div className="mt-2 h-5 w-3/4 skeleton animate-pulse rounded bg-slate-200" />
-              <div className="mt-2 h-3 w-1/2 skeleton animate-pulse rounded bg-slate-100" />
-              <div className="mt-5 border-t border-slate-100 pt-3">
-                <div className="h-3 w-40 skeleton animate-pulse rounded bg-slate-100" />
+              <div className="skeleton mt-3 h-5 w-full rounded bg-slate-200 dark:bg-slate-800" />
+              <div className="skeleton mt-2 h-5 w-3/4 rounded bg-slate-200 dark:bg-slate-800" />
+              <div className="skeleton mt-2 h-4 w-1/2 rounded bg-slate-100 dark:bg-slate-900" />
+              <div className="mt-5 border-t border-slate-100 pt-3 dark:border-slate-800">
+                <div className="skeleton h-4 w-40 rounded bg-slate-100 dark:bg-slate-900" />
               </div>
             </div>
           </div>

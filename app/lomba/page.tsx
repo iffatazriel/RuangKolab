@@ -1,20 +1,18 @@
-import { createClient } from '@/lib/supabase/server'
-import { Suspense } from 'react'
+﻿import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
-import { CalendarDots, Tag, Wallet } from '@phosphor-icons/react/dist/ssr'
+import { Suspense } from 'react'
 import { LombaFilter } from './LombaFilter'
-import { PageContainer, PageHeader, PrimaryLink, EmptyState } from '@/components/ui/Page'
-import { AnimateGrid, GridItem } from '@/components/motion/AppMotion'
+import { CompetitionCard, type CompetitionCardData } from '@/components/ui/CompetitionCard'
+import { CardGridMotion, CardGridItem } from '@/components/motion/AppMotion'
+import { PageContainer, PageHeader, PrimaryLink } from '@/components/ui/Page'
 
-interface SearchParams { q?: string; kategori?: string; tingkat?: string; biaya?: string; deadline?: string }
-
-function deadlineLabel(iso: string) {
-  const diffMs = new Date(iso).getTime() - Date.now()
-  const days = Math.ceil(diffMs / (1000 * 60 * 60 * 24))
-  if (days <= 0) return 'Hari ini'
-  if (days === 1) return '1 hari lagi'
-  if (days <= 14) return `${days} hari lagi`
-  return new Date(iso).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })
+interface SearchParams {
+  q?: string
+  kategori?: string
+  tingkat?: string
+  biaya?: string
+  deadline?: string
+  urut?: string
 }
 
 export default async function LombaPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
@@ -27,7 +25,6 @@ export default async function LombaPage({ searchParams }: { searchParams: Promis
     .select('id, judul, penyelenggara, kategori, tingkat, deadline, biaya, poster_url')
     .eq('publish_status', 'published')
     .gte('deadline', now)
-    .order('deadline', { ascending: true })
 
   if (sp.q) query = query.ilike('judul', `%${sp.q}%`)
   if (sp.kategori) query = query.eq('kategori', sp.kategori)
@@ -36,11 +33,14 @@ export default async function LombaPage({ searchParams }: { searchParams: Promis
   if (sp.biaya === 'berbayar') query = query.gt('biaya', 0)
   const days = sp.deadline ? parseInt(sp.deadline, 10) : NaN
   if (!Number.isNaN(days) && days > 0) {
-    const until = new Date(new Date(now).getTime() + days * 24 * 60 * 60 * 1000).toISOString()
-    query = query.lte('deadline', until)
+    const until = new Date(now).getTime() + days * 24 * 60 * 60 * 1000
+    query = query.lte('deadline', new Date(until).toISOString())
   }
 
-  const { data: competitions } = await query.limit(50)
+  // Urutan: deadline terdekat (default) atau terbaru
+  query = sp.urut === 'terbaru' ? query.order('created_at', { ascending: false }) : query.order('deadline', { ascending: true })
+
+  const { data: competitions, error } = await query.limit(50)
 
   const { data: { user } } = await supabase.auth.getUser()
   let isAdmin = false
@@ -49,13 +49,29 @@ export default async function LombaPage({ searchParams }: { searchParams: Promis
     isAdmin = profile?.role === 'admin' || profile?.role === 'moderator'
   }
 
+  // Sinyal tim: jumlah team_posts berstatus open per lomba, dikumpulkan sekali
+  const ids = (competitions ?? []).map((c) => c.id)
+  const timMap: Record<string, number> = {}
+  if (ids.length > 0) {
+    const { data: openPosts } = await supabase
+      .from('team_posts')
+      .select('id, competition_id')
+      .eq('tipe', 'competition')
+      .eq('status', 'open')
+      .in('competition_id', ids)
+    for (const p of openPosts ?? []) {
+      if (p.competition_id) timMap[p.competition_id] = (timMap[p.competition_id] ?? 0) + 1
+    }
+  }
+
+  const hasFilter = !!(sp.q || sp.kategori || sp.tingkat || sp.biaya || sp.deadline)
+  const list = competitions ?? []
+
   const action = isAdmin ? (
     <PrimaryLink href="/lomba/baru">+ Tambah Lomba</PrimaryLink>
   ) : user ? (
     <PrimaryLink href="/lomba/usul" variant="outline">+ Usulkan Lomba</PrimaryLink>
   ) : null
-
-  const hasFilter = !!(sp.q || sp.kategori || sp.tingkat || sp.biaya || sp.deadline)
 
   return (
     <PageContainer>
@@ -66,70 +82,57 @@ export default async function LombaPage({ searchParams }: { searchParams: Promis
       />
 
       <Suspense>
-        <LombaFilter />
+        <LombaFilter resultCount={list.length} />
       </Suspense>
 
-      {!competitions || competitions.length === 0 ? (
-        <div className="mt-8">
-          <EmptyState
-            title={hasFilter ? 'Tidak ada lomba yang cocok' : 'Belum ada lomba aktif'}
-            description={
-              hasFilter
-                ? 'Coba ubah filter atau kata kunci pencarian.'
-                : 'Ketahui lomba yang belum terdaftar di sini? Usulkan agar temanmu ikut serta.'
-            }
-            action={
-              hasFilter ? undefined : (
-                <PrimaryLink href="/lomba/usul" variant="outline">+ Usulkan Lomba</PrimaryLink>
-              )
-            }
-          />
+      {/* STATE ERROR: inline dengan coba lagi */}
+      {error && (
+        <div role="alert" className="mt-6 rounded-2xl border border-rose-200 bg-rose-50 p-6 text-center dark:border-rose-900 dark:bg-rose-950/40">
+          <p className="font-semibold text-rose-800 dark:text-rose-300">Gagal memuat daftar lomba</p>
+          <p className="mt-1 text-sm text-rose-700 dark:text-rose-400">Periksa koneksimu lalu coba lagi.</p>
+          <Link href="/lomba" className="mt-4 inline-flex min-h-[44px] items-center rounded-lg bg-rose-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-rose-700 active:scale-[0.98]">
+            Coba lagi
+          </Link>
         </div>
-      ) : (
-        <div className="mt-6">
-          <AnimateGrid className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {competitions.map((c) => (
-              <GridItem key={c.id}>
-                <Link
-                  href={`/lomba/${c.id}`}
-                  className="surface-card group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm"
-                >
-                  <div className="aspect-[2/1] overflow-hidden bg-slate-100">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={c.poster_url ?? `https://picsum.photos/seed/${encodeURIComponent(c.judul)}/800/500`}
-                      alt={c.judul}
-                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                    />
-                  </div>
-                  <div className="flex flex-1 flex-col p-5">
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-semibold text-indigo-700">
-                        <Tag size={12} weight="bold" />
-                        {c.kategori ?? 'Umum'}
-                      </span>
-                      <span className="text-xs font-semibold text-rose-600">{deadlineLabel(c.deadline)}</span>
-                    </div>
-                    <h2 className="mt-3 line-clamp-2 text-base font-bold leading-snug text-slate-900 transition-colors group-hover:text-indigo-600">
-                      {c.judul}
-                    </h2>
-                    {c.penyelenggara && <p className="mt-1 line-clamp-1 text-xs text-slate-500">{c.penyelenggara}</p>}
-                    <div className="mt-auto flex items-center justify-between border-t border-slate-100 pt-3 text-xs text-slate-500">
-                      <span className="inline-flex items-center gap-1.5">
-                        <CalendarDots size={14} />
-                        {new Date(c.deadline).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
-                      </span>
-                      <span className={`inline-flex items-center gap-1 font-semibold ${c.biaya === 0 ? 'text-emerald-600' : 'text-slate-700'}`}>
-                        <Wallet size={14} />
-                        {c.biaya === 0 ? 'Gratis' : `Rp ${c.biaya.toLocaleString('id-ID')}`}
-                      </span>
-                    </div>
-                  </div>
-                </Link>
-              </GridItem>
-            ))}
-          </AnimateGrid>
+      )}
+
+      {/* STATE KOSONG */}
+      {!error && list.length === 0 && (
+        <div className="mt-6 rounded-2xl border border-dashed border-slate-300 bg-[var(--card-bg)] px-6 py-12 text-center dark:border-slate-700">
+          <p className="font-semibold text-slate-800 dark:text-slate-200">
+            {hasFilter ? 'Belum ada lomba yang cocok dengan filter ini.' : 'Belum ada lomba aktif.'}
+          </p>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+            {hasFilter ? 'Coba longgarkan kata kunci atau rentang waktunya.' : 'Ketahui lomba yang belum terdaftar? Usulkan agar temanmu ikut serta.'}
+          </p>
+          <div className="mt-5 flex flex-wrap justify-center gap-2">
+            {hasFilter ? (
+              <Link href="/lomba" className="inline-flex min-h-[44px] items-center rounded-[10px] border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 active:scale-[0.98] dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800">
+                Hapus filter
+              </Link>
+            ) : null}
+            {!user ? null : hasFilter ? null : (
+              <Link href="/lomba/usul" className="inline-flex min-h-[44px] items-center rounded-[10px] border border-indigo-600 px-4 py-2.5 text-sm font-semibold text-indigo-600 transition hover:bg-indigo-50 active:scale-[0.98] dark:hover:bg-indigo-950">
+                Usulkan Lomba
+              </Link>
+            )}
+          </div>
         </div>
+      )}
+
+      {/* DAFTAR */}
+      {!error && list.length > 0 && (
+        <CardGridMotion className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {list.map((c, i) => (
+            <CardGridItem key={c.id}>
+              <CompetitionCard
+                comp={c as CompetitionCardData}
+                timMencari={timMap[c.id] ?? 0}
+                priority={i < 3}
+              />
+            </CardGridItem>
+          ))}
+        </CardGridMotion>
       )}
     </PageContainer>
   )

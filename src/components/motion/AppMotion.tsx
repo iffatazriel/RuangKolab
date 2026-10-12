@@ -2,7 +2,47 @@
 
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import type { ReactNode } from 'react'
-import { EASE_OUT, D_COMPONENT, SPRING, VIEWPORT_ONCE } from '@/lib/motion'
+import { EASE_OUT, D_COMPONENT, SPRING, VIEWPORT_ONCE, staggerContainer, fadeUp } from '@/lib/motion'
+
+/**
+ * Grid daftar untuk kartu (dial 4):
+ * - Muat pertama: fadeUp stagger 60ms, maks 6 kartu, sekali saja.
+ * - Filter berubah: layout animation pada daftar.
+ */
+export function CardGridMotion({ children, className = '' }: { children: ReactNode; className?: string }) {
+  const reduce = useReducedMotion()
+  return (
+    <motion.div
+      layout
+      className={className}
+      initial={reduce ? false : 'hidden'}
+      animate="show"
+      variants={staggerContainer(6)}
+    >
+      <AnimatePresence initial={false} mode="popLayout">
+        {children}
+      </AnimatePresence>
+    </motion.div>
+  )
+}
+
+/** Item kartu dalam CardGridMotion. */
+export function CardGridItem({ children, className = '' }: { children: ReactNode; className?: string }) {
+  const reduce = useReducedMotion()
+  return (
+    <motion.div
+      layout
+      variants={fadeUp}
+      initial={reduce ? false : 'hidden'}
+      animate="show"
+      exit={reduce ? undefined : { opacity: 0, scale: 0.97 }}
+      transition={{ duration: D_COMPONENT, ease: EASE_OUT }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  )
+}
 
 /** Grid daftar yang menganimasikan item masuk/keluar saat filter berubah. */
 export function AnimateGrid({ children, className = '' }: { children: ReactNode; className?: string }) {

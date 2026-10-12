@@ -15,11 +15,11 @@ const variantClass: Record<Variant, string> = {
   danger: 'bg-rose-600 text-white shadow-sm hover:bg-rose-700 active:scale-[0.98]',
   ghost: 'text-slate-600 hover:bg-slate-100 hover:text-slate-900',
 }
-// Target sentuh minimal 44px di semua ukuran; satu skala radius (lg) untuk kontrol
+// Target sentuh minimal 40px (navbar) / 44px (konten); satu radius kontrol 10px
 const sizeClass: Record<Size, string> = {
-  sm: 'min-h-[44px] px-3.5 py-2 text-xs rounded-lg',
-  md: 'min-h-[44px] px-4 py-2 text-sm rounded-lg',
-  lg: 'min-h-[48px] px-5 py-2.5 text-sm font-semibold rounded-lg',
+  sm: 'min-h-[40px] px-3.5 py-2 text-xs rounded-[10px]',
+  md: 'min-h-[44px] px-4 py-2 text-sm rounded-[10px]',
+  lg: 'min-h-[48px] px-5 py-2.5 text-sm font-semibold rounded-[10px]',
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(

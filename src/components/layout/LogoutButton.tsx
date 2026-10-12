@@ -18,7 +18,7 @@ export function LogoutButton() {
   }
 
   return (
-    <Button variant="secondary" size="sm" loading={loading} onClick={handleLogout}>
+    <Button variant="ghost" size="sm" loading={loading} onClick={handleLogout}>
       Keluar
     </Button>
   )
