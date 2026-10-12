@@ -1,7 +1,7 @@
 ﻿import Link from 'next/link'
 import { ThemeToggle } from '@/components/ui/ThemeToggle'
 
-const nav = [
+const jelajahi = [
   { href: '/lomba', label: 'Lomba' },
   { href: '/tim', label: 'Cari Tim' },
   { href: '/proyek', label: 'Proyek' },
@@ -17,10 +17,32 @@ const komunitas = [
   { href: '/daftar', label: 'Gabung Sekarang' },
 ]
 
+function FooterNav({ title, items }: { title: string; items: { href: string; label: string }[] }) {
+  return (
+    <nav aria-label={title}>
+      <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-stone-400 dark:text-stone-500">
+        {title}
+      </p>
+      <ul className="mt-3 space-y-1">
+        {items.map((item) => (
+          <li key={item.href}>
+            <Link
+              href={item.href}
+              className="inline-flex min-h-[32px] items-center text-xs font-medium text-stone-600 transition-colors hover:text-brand-600 dark:text-stone-400 dark:hover:text-brand-400"
+            >
+              {item.label}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  )
+}
+
 export function Footer() {
   return (
     <footer className="border-t border-stone-200/80 bg-white py-12 text-stone-600 dark:border-stone-800 dark:bg-stone-950 dark:text-stone-400">
-      <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-8 px-6 md:flex-row">
+      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-6 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr]">
         <div className="max-w-md">
           <Link href="/" className="mb-3 flex items-center space-x-2 font-bold tracking-tight text-stone-900 dark:text-stone-100">
             <span className="flex h-6 w-6 items-center justify-center rounded-md bg-brand-600 text-white dark:bg-brand-500">
@@ -43,40 +65,20 @@ export function Footer() {
           <p className="mt-3 text-xs leading-relaxed text-stone-500 dark:text-stone-400">
             Menemukan konten yang melanggar? Laporkan lewat tombol Laporkan di setiap halaman.
           </p>
-          <div className="mt-4">
+          <div className="mt-4 flex items-center gap-2">
+            <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-stone-400 dark:text-stone-500">
+              Tema
+            </span>
             <ThemeToggle />
           </div>
         </div>
-        <div className="flex flex-col gap-8 sm:flex-row sm:gap-12">
-          <nav aria-label="Navigasi footer" className="grid grid-cols-2 gap-x-12 gap-y-2 text-xs font-medium">
-            {nav.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="inline-flex min-h-[32px] items-center text-stone-600 transition-colors hover:text-brand-600 dark:hover:text-stone-400 dark:hover:text-brand-400"
-              >
-                {item.label}
-              </Link>
-            ))}
-          </nav>
-          <nav aria-label="Komunitas" className="grid grid-cols-2 gap-x-12 gap-y-2 text-xs font-medium sm:grid-cols-1">
-            <p className="col-span-2 text-[11px] font-bold uppercase tracking-[0.14em] text-stone-400 sm:col-span-1">
-              Komunitas
-            </p>
-            {komunitas.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="inline-flex min-h-[32px] items-center text-stone-600 transition-colors hover:text-brand-600 dark:hover:text-stone-400 dark:hover:text-brand-400"
-              >
-                {item.label}
-              </Link>
-            ))}
-          </nav>
-        </div>
+        <FooterNav title="Jelajahi" items={jelajahi} />
+        <FooterNav title="Komunitas" items={komunitas} />
       </div>
-      <div className="mx-auto mt-8 max-w-7xl border-t-2 border-stone-200 px-6 pt-6 text-xs text-stone-400 dark:border-stone-700 dark:text-stone-500">
-        © {new Date().getFullYear()} RuangKolab. Dibangun untuk ekosistem kolaborasi mahasiswa.
+      <div className="mx-auto mt-10 max-w-7xl px-6">
+        <div className="border-t border-stone-100 pt-6 text-xs text-stone-400 dark:border-stone-800 dark:text-stone-500">
+          © {new Date().getFullYear()} RuangKolab. Dibangun untuk ekosistem kolaborasi mahasiswa.
+        </div>
       </div>
     </footer>
   )
