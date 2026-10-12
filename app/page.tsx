@@ -161,22 +161,33 @@ export default async function Home() {
             </div>
           </dl>
 
-          <div className="mt-10 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 [scrollbar-width:none] md:grid md:grid-cols-3 md:overflow-visible [&::-webkit-scrollbar]:hidden">
-            {[
-              { kutip: 'Akhirnya ikut lomba pertama karena ketemu tim yang butuh desainer di sini.', nama: 'Rangga Pratama', meta: 'Desain Komunikasi Visual, UMP' },
-              { kutip: 'Posting kebutuhan backend, dua hari kemudian tim kami lengkap berlima.', nama: 'Nadia Setyawan', meta: 'Informatika, Unsoed' },
-              { kutip: 'Deadline semua lomba terpantau, tidak ada lagi info yang lewat di grup chat.', nama: 'Bagas Wicaksono', meta: 'Teknik Elektro, UMP' },
-            ].map((t) => (
-              <figure key={t.nama} className="flex w-[85%] shrink-0 snap-start flex-col justify-between rounded-2xl border border-stone-200 dark:border-stone-800 bg-[var(--card-bg)] p-5 md:w-auto">
-                <blockquote className="line-clamp-2 text-sm leading-relaxed text-stone-700 dark:text-stone-300">
-                  &ldquo;{t.kutip}&rdquo;
-                </blockquote>
-                <figcaption className="mt-4">
-                  <p className="text-sm font-bold text-stone-900 dark:text-stone-100">{t.nama}</p>
-                  <p className="text-xs text-stone-500 dark:text-stone-400">{t.meta}</p>
-                </figcaption>
-              </figure>
-            ))}
+          {/* Testimoni berjalan otomatis menyamping seperti marquee skill.
+              Berhenti saat hover; statis saat reduced-motion (aturan global). */}
+          <div className="group relative mt-10 overflow-hidden py-1 [mask-image:linear-gradient(90deg,transparent,black_8%,black_92%,transparent)]">
+            <div className="flex w-max gap-4 group-hover:[animation-play-state:paused] motion-safe:animate-[rk-marquee_40s_linear_infinite]">
+              {[
+                { kutip: 'Akhirnya ikut lomba pertama karena ketemu tim yang butuh desainer di sini.', nama: 'Rangga Pratama', meta: 'Desain Komunikasi Visual, UMP' },
+                { kutip: 'Posting kebutuhan backend, dua hari kemudian tim kami lengkap berlima.', nama: 'Nadia Setyawan', meta: 'Informatika, Unsoed' },
+                { kutip: 'Deadline semua lomba terpantau, tidak ada lagi info yang lewat di grup chat.', nama: 'Bagas Wicaksono', meta: 'Teknik Elektro, UMP' },
+                { kutip: 'Akhirnya ikut lomba pertama karena ketemu tim yang butuh desainer di sini.', nama: 'Rangga Pratama', meta: 'Desain Komunikasi Visual, UMP' },
+                { kutip: 'Posting kebutuhan backend, dua hari kemudian tim kami lengkap berlima.', nama: 'Nadia Setyawan', meta: 'Informatika, Unsoed' },
+                { kutip: 'Deadline semua lomba terpantau, tidak ada lagi info yang lewat di grup chat.', nama: 'Bagas Wicaksono', meta: 'Teknik Elektro, UMP' },
+              ].map((t, i) => (
+                <figure
+                  key={`${t.nama}-${i}`}
+                  aria-hidden={i >= 3}
+                  className="flex w-[85vw] max-w-[380px] shrink-0 flex-col justify-between rounded-2xl border border-stone-200 dark:border-stone-800 bg-[var(--card-bg)] p-5 sm:w-[380px]"
+                >
+                  <blockquote className="line-clamp-2 text-sm leading-relaxed text-stone-700 dark:text-stone-300">
+                    &ldquo;{t.kutip}&rdquo;
+                  </blockquote>
+                  <figcaption className="mt-4">
+                    <p className="text-sm font-bold text-stone-900 dark:text-stone-100">{t.nama}</p>
+                    <p className="text-xs text-stone-500 dark:text-stone-400">{t.meta}</p>
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
           </div>
         </div>
       </section>
