@@ -8,12 +8,13 @@ export default async function ProfilPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/masuk')
 
-  const [{ data: profile }, { data: skills }, { data: userSkills }, { data: contact }] =
+  const [{ data: profile }, { data: skills }, { data: userSkills }, { data: contact }, { data: campuses }] =
     await Promise.all([
       supabase.from('users').select('*').eq('id', user.id).single(),
       supabase.from('skills').select('id, nama').order('nama'),
       supabase.from('user_skills').select('skill_id').eq('user_id', user.id),
       supabase.from('user_contacts').select('whatsapp').eq('user_id', user.id).maybeSingle(),
+      supabase.from('campuses').select('id, nama, kota').order('nama'),
     ])
 
   return (
@@ -29,6 +30,7 @@ export default async function ProfilPage() {
           allSkills={skills ?? []}
           userSkillIds={(userSkills ?? []).map((s) => s.skill_id)}
           whatsapp={contact?.whatsapp ?? ''}
+          campuses={campuses ?? []}
         />
       </div>
     </PageContainer>

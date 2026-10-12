@@ -17,13 +17,15 @@ interface Props {
   allSkills: Skill[]
   userSkillIds: string[]
   whatsapp: string
+  campuses: { id: string; nama: string; kota: string }[]
 }
 
-export function ProfilForm({ profile, email, allSkills, userSkillIds, whatsapp: initWa }: Props) {
+export function ProfilForm({ profile, email, allSkills, userSkillIds, whatsapp: initWa, campuses }: Props) {
   const router = useRouter()
   const toast = useToast()
   const [form, setForm] = useState({
     nama: profile?.nama ?? '',
+    campus_id: profile?.campus_id ?? '',
     jurusan: profile?.jurusan ?? '',
     angkatan: profile?.angkatan ? String(profile.angkatan) : '',
     bio: profile?.bio ?? '',
@@ -34,7 +36,7 @@ export function ProfilForm({ profile, email, allSkills, userSkillIds, whatsapp: 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
-  function change(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+  function change(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
     setForm((f) => ({ ...f, [e.target.name]: e.target.value }))
   }
 
@@ -54,6 +56,7 @@ export function ProfilForm({ profile, email, allSkills, userSkillIds, whatsapp: 
       .from('users')
       .update({
         nama: form.nama,
+        campus_id: form.campus_id || undefined,
         jurusan: form.jurusan || null,
         angkatan: form.angkatan ? parseInt(form.angkatan, 10) : null,
         bio: form.bio || null,
@@ -108,6 +111,27 @@ export function ProfilForm({ profile, email, allSkills, userSkillIds, whatsapp: 
       </div>
 
       <Input id="nama" name="nama" label="Nama Lengkap" required value={form.nama} onChange={change} />
+
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor="campus_id" className="text-xs font-semibold text-slate-700">Kampus</label>
+        <select
+          id="campus_id"
+          name="campus_id"
+          value={form.campus_id}
+          onChange={change}
+          className="custom-input min-h-[44px] w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:outline-none"
+        >
+          {campuses.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.nama} ({c.kota})
+            </option>
+          ))}
+        </select>
+        <p className="text-xs text-slate-500">
+          Cakupan pilot masih satu kampus. Daftar kampus akan bertambah saat ekspansi.
+        </p>
+      </div>
+
       <Input id="jurusan" name="jurusan" label="Jurusan / Program Studi" value={form.jurusan} onChange={change} />
       <Input
         id="angkatan"
