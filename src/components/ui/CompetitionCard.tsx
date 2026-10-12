@@ -33,7 +33,9 @@ const KATEGORI_POLA: Record<string, string> = {
   'Seni & Budaya': 'bg-[radial-gradient(circle_at_50%_120%,rgba(79,70,229,0.16),transparent_60%)] bg-slate-50',
 }
 
-function PosterFallback({ kategori }: { kategori: string | null }) {
+/** Fallback poster: pola CSS dari token brand, dibedakan per kategori.
+ *  Diekspor untuk kartu unggulan di landing. Tanpa SVG buatan tangan, tanpa foto stok. */
+export function PosterFallback({ kategori }: { kategori: string | null }) {
   const pola = KATEGORI_POLA[kategori ?? ''] ?? KATEGORI_POLA.Ilmiah
   return (
     <div className={`absolute inset-0 flex items-end p-4 ${pola}`} aria-hidden="true">

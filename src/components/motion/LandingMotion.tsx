@@ -134,24 +134,42 @@ export function RevealItem({ children, className = '' }: { children: ReactNode; 
   )
 }
 
-/* ---------- CAROUSEL DEADLINE: scroll-snap horizontal ---------- */
+/* ---------- CAROUSEL DEADLINE: scroll-snap horizontal, full-bleed dengan gutter ---------- */
 
+/**
+ * Baris scroll-snap horizontal.
+ * - Full-bleed: kartu keluar dari tepi kontainer tapi selalu berhenti
+ *   sejajar dengan garis konten (padding-inline sama dengan container).
+ * - Mask tepi: kartu yang terpotong memudar, memberi hint "masih ada isi".
+ * - Keyboard: region fokusabel, geser dengan panah saat fokus.
+ */
 export function SnapRow({ children, label }: { children: ReactNode; label: string }) {
   return (
     <div
       role="region"
       aria-label={label}
       tabIndex={0}
-      className="-mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:mx-0 sm:px-0 [&::-webkit-scrollbar]:hidden"
+      className="relative"
     >
-      {children}
+      <div
+        className="flex snap-x snap-mandatory gap-5 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        style={{
+          // Gutter agar kartu pertama/terakhir sejajar konten, sisanya full-bleed
+          scrollPaddingInline: '1rem',
+          maskImage: 'linear-gradient(90deg, transparent, black 2rem, black calc(100% - 2rem), transparent)',
+          WebkitMaskImage: 'linear-gradient(90deg, transparent, black 2rem, black calc(100% - 2rem), transparent)',
+        }}
+      >
+        {children}
+      </div>
     </div>
   )
 }
 
 export function SnapCard({ children, className = '' }: { children: ReactNode; className?: string }) {
   return (
-    <div className={`w-[85%] shrink-0 snap-start sm:w-[340px] ${className}`}>
+    // Lebar mengikuti grid lomba: ~1 kolom penuh di HP, 360px di desktop
+    <div className={`w-[78%] max-w-[340px] shrink-0 snap-start pl-4 first:pl-0 sm:pl-5 sm:first:pl-0 lg:w-[360px] ${className}`}>
       {children}
     </div>
   )

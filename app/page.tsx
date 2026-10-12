@@ -1,6 +1,8 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
-import { Trophy, UsersThree, Rocket, ArrowRight, CalendarDots, Tag, Wallet, Users } from '@phosphor-icons/react/dist/ssr'
+import { Trophy, UsersThree, Rocket, ArrowRight, CalendarDots, Users } from '@phosphor-icons/react/dist/ssr'
+import { CompetitionCard, PosterFallback, type CompetitionCardData } from '@/components/ui/CompetitionCard'
+import { getDeadlineTone } from '@/lib/deadline'
 import {
   HeroLines,
   HeroSequence,
@@ -17,16 +19,9 @@ import {
 } from '@/components/motion/LandingMotion'
 
 function deadlineLabel(iso: string) {
-  const diffMs = new Date(iso).getTime() - Date.now()
-  const days = Math.ceil(diffMs / (1000 * 60 * 60 * 24))
-  if (days <= 0) return 'Hari ini'
-  if (days === 1) return '1 hari lagi'
-  if (days <= 14) return `${days} hari lagi`
-  return new Date(iso).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })
-}
-
-function formatFee(biaya: number) {
-  return biaya === 0 ? 'Gratis' : `Rp ${biaya.toLocaleString('id-ID')}`
+  // Versi ringkas untuk kartu unggulan hero; daftar memakai getDeadlineTone
+  const { pendek } = getDeadlineTone(iso)
+  return pendek
 }
 
 export default async function Home() {
@@ -68,6 +63,21 @@ export default async function Home() {
   const teamList = (teamPosts ?? []).filter((p) => p.tipe === 'competition').slice(0, 4)
   const proyekList = (teamPosts ?? []).filter((p) => p.tipe === 'project').slice(0, 3)
   const featured = lombaList[0] ?? null
+
+  // Sinyal tim: jumlah rekrutmen terbuka per lomba untuk kartu carousel
+  const lombaIds = lombaList.map((c) => c.id)
+  const timMap: Record<string, number> = {}
+  if (lombaIds.length > 0) {
+    const { data: openPosts } = await supabase
+      .from('team_posts')
+      .select('id, competition_id')
+      .eq('tipe', 'competition')
+      .eq('status', 'open')
+      .in('competition_id', lombaIds)
+    for (const p of openPosts ?? []) {
+      if (p.competition_id) timMap[p.competition_id] = (timMap[p.competition_id] ?? 0) + 1
+    }
+  }
   const skillNames = (skillsData ?? []).map((s) => s.nama)
 
   return (
@@ -103,13 +113,17 @@ export default async function Home() {
             <HeroParallax>
               <Link href={featured ? `/lomba/${featured.id}` : '/lomba'} className="block surface-card overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm">
                 <div className="relative mb-4 aspect-[16/10] overflow-hidden rounded-xl bg-slate-100">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={featured?.poster_url ?? `https://picsum.photos/seed/${encodeURIComponent(featured?.judul ?? 'kompetisi-kampus')}/800/500`}
-                    alt={featured?.judul ?? 'Kompetisi unggulan'}
-                    fetchPriority="high"
-                    className="h-full w-full object-cover"
-                  />
+                  {featured?.poster_url ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={featured.poster_url}
+                      alt={`Poster ${featured.judul}`}
+                      fetchPriority="high"
+                      className="absolute inset-0 h-full w-full object-cover object-top"
+                    />
+                  ) : (
+                    <PosterFallback kategori={featured?.kategori ?? 'Teknologi'} />
+                  )}
                 </div>
                 <div className="px-2 pb-2">
                   <div className="flex items-center justify-between text-xs">
@@ -175,39 +189,13 @@ export default async function Home() {
         </div>
         {lombaList.length > 0 ? (
           <SnapRow label="Lomba mendekati deadline">
-            {lombaList.map((c) => (
+            {lombaList.map((c, i) => (
               <SnapCard key={c.id}>
-                <Link
-                  href={`/lomba/${c.id}`}
-                  className="surface-card group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm"
-                >
-                  <div className="aspect-[2/1] overflow-hidden bg-slate-100">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={c.poster_url ?? `https://picsum.photos/seed/${encodeURIComponent(c.judul)}/800/500`}
-                      alt={c.judul}
-                      loading="lazy"
-                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                    />
-                  </div>
-                  <div className="flex flex-1 flex-col p-5">
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-semibold text-indigo-700">
-                        <Tag size={12} weight="bold" />
-                        {c.kategori ?? 'Umum'}
-                      </span>
-                      <span className="font-mono text-xs font-semibold text-rose-600">{deadlineLabel(c.deadline)}</span>
-                    </div>
-                    <h3 className="mt-3 line-clamp-2 text-base font-bold text-slate-900 transition-colors group-hover:text-indigo-600">{c.judul}</h3>
-                    {c.penyelenggara && <p className="mt-1 line-clamp-1 text-xs text-slate-500">{c.penyelenggara}</p>}
-                    <div className="mt-auto flex items-center justify-between border-t border-slate-100 pt-3 text-xs">
-                      <span className={`inline-flex items-center gap-1 font-semibold ${c.biaya === 0 ? 'text-emerald-600' : 'text-slate-700'}`}>
-                        <Wallet size={14} />
-                        {formatFee(c.biaya)}
-                      </span>
-                    </div>
-                  </div>
-                </Link>
+                <CompetitionCard
+                  comp={c as CompetitionCardData}
+                  timMencari={timMap[c.id] ?? 0}
+                  priority={i < 3}
+                />
               </SnapCard>
             ))}
           </SnapRow>
