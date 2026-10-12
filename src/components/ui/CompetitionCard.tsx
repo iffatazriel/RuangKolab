@@ -92,9 +92,23 @@ export function CompetitionCard({ comp, timMencari = 0, priority = false, overla
         </div>
 
         {/* Judul: elemen terbesar setelah poster */}
-        <h3 className="line-clamp-2 text-[15px] font-semibold leading-snug text-stone-900 dark:text-stone-100">
+        <h3 className="line-clamp-2 text-[15px] font-semibold leading-snug text-slate-900 dark:text-slate-100">
           {comp.judul}
         </h3>
+
+        {/* Badge urgensi penuh: hanya saat deadline 7 hari atau kurang */}
+        {dl.tone !== 'netral' && (
+          <p
+            className={`inline-flex w-fit items-center gap-1.5 rounded-full px-2.5 py-1 font-mono text-[11px] font-bold tabular-nums ${
+              dl.tone === 'kuat'
+                ? 'bg-rose-50 text-rose-700 dark:bg-rose-950 dark:text-rose-300'
+                : 'bg-amber-50 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
+            }`}
+          >
+            <span aria-hidden="true" className={`h-1.5 w-1.5 rounded-full ${dl.tone === 'kuat' ? 'bg-rose-500' : 'bg-amber-500'}`} />
+            Pendaftaran tutup {dl.pendek.toLowerCase()}
+          </p>
+        )}
 
         {/* Penyelenggara: 13px kontras AA */}
         {comp.penyelenggara && (

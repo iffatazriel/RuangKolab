@@ -21,6 +21,17 @@ export default async function ProfilPage() {
 
   const campusName = campuses?.find((c) => c.id === profile?.campus_id)
 
+  // Kelengkapan profil: bio, jurusan, portofolio, whatsapp, min. 1 keahlian
+  const checklist = [
+    !!profile?.bio?.trim(),
+    !!profile?.jurusan?.trim(),
+    !!profile?.portofolio_url?.trim(),
+    !!contact?.whatsapp?.trim(),
+    (userSkills ?? []).length > 0,
+  ]
+  const lengkap = checklist.filter(Boolean).length
+  const persen = Math.round((lengkap / checklist.length) * 100)
+
   return (
     <PageContainer width="narrow">
       <PageHeader
@@ -42,6 +53,27 @@ export default async function ProfilPage() {
                 {(userSkills ?? []).length} keahlian terdaftar
               </p>
             )}
+            <div className="mt-3">
+              <div className="flex items-center justify-between text-[11px] font-medium">
+                <span className="text-stone-500 dark:text-stone-400">Kelengkapan profil</span>
+                <span className="font-mono tabular-nums text-stone-700 dark:text-stone-300">{persen}%</span>
+              </div>
+              <div
+                role="progressbar"
+                aria-valuenow={persen}
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-label={`Kelengkapan profil ${persen} persen`}
+                className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-stone-100 dark:bg-stone-800"
+              >
+                <div className="h-full rounded-full bg-brand-600 transition-[width] duration-500" style={{ width: `${persen}%` }} />
+              </div>
+              {persen < 100 && (
+                <p className="mt-1.5 text-[11px] text-stone-500 dark:text-stone-400">
+                  Lengkapi bio, jurusan, portofolio, WhatsApp, dan keahlian agar mudah ditemukan tim.
+                </p>
+              )}
+            </div>
           </div>
         </div>
       </TiltCard>

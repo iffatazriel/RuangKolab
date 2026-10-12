@@ -160,6 +160,26 @@ export function DashboardView({
 
       {/* MAIN CONTENT AREA */}
       <main className="lg:col-span-9 space-y-8">
+        {/* RINGKASAN: 4 angka penting, ketuk untuk loncat ke tab terkait */}
+        <section aria-label="Ringkasan aktivitas" className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {[
+            { label: 'Pengajuan masuk', value: incoming.length, tab: 'pengajuan_masuk' as TabKey, tone: 'text-amber-700 dark:text-amber-400' },
+            { label: 'Lamaran menunggu', value: myRequests.filter((r) => r.status === 'pending').length, tab: 'lamaran' as TabKey, tone: 'text-brand-700 dark:text-brand-300' },
+            { label: 'Minat tersimpan', value: favorites.length, tab: 'minat' as TabKey, tone: 'text-emerald-700 dark:text-emerald-400' },
+            { label: 'Belum dibaca', value: unreadCount, tab: 'notifikasi' as TabKey, tone: 'text-rose-700 dark:text-rose-400' },
+          ].map((s) => (
+            <button
+              key={s.label}
+              type="button"
+              onClick={() => setActiveTab(s.tab)}
+              className="rounded-2xl border border-stone-200 dark:border-stone-800/80 bg-white dark:bg-stone-900 p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md active:scale-[0.98]"
+            >
+              <p className={`font-mono text-2xl font-bold tabular-nums ${s.tone}`}>{s.value}</p>
+              <p className="mt-1 text-xs font-medium text-stone-500 dark:text-stone-400">{s.label}</p>
+            </button>
+          ))}
+        </section>
+
         {/* SECTION: NOTIFIKASI */}
         {(activeTab === 'semua' || activeTab === 'notifikasi') && (
           <section>

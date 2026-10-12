@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { Suspense } from 'react'
 import { UsersThree } from '@phosphor-icons/react/dist/ssr'
 import { TimFilter } from './TimFilter'
+import { waktuRelatif } from '@/lib/waktu'
 import { PageContainer, PageHeader, PrimaryLink, EmptyState, StatusPill } from '@/components/ui/Page'
 import { AnimateGrid, GridItem } from '@/components/motion/AppMotion'
 import { TiltCard } from '@/components/motion/TiltCard'
@@ -44,6 +45,21 @@ export default async function TimPage({ searchParams }: { searchParams: Promise<
   const { data: skills } = await supabase.from('skills').select('id, nama').order('nama')
   const { data: { user } } = await supabase.auth.getUser()
 
+  // Tag keahlian per postingan, dikumpulkan sekali agar kartu menjelaskan isi
+  const postIds = (posts ?? []).map((p) => p.id)
+  const skillMap: Record<string, string[]> = {}
+  if (postIds.length > 0) {
+    const { data: ps } = await supabase
+      .from('post_skills')
+      .select('post_id, skills(nama)')
+      .in('post_id', postIds)
+    for (const row of ps ?? []) {
+      const s = Array.isArray(row.skills) ? row.skills[0] : row.skills
+      const nama = (s as { nama?: string } | null)?.nama
+      if (nama) skillMap[row.post_id] = [...(skillMap[row.post_id] ?? []), nama]
+    }
+  }
+
   return (
     <PageContainer>
       <PageHeader
@@ -79,8 +95,17 @@ export default async function TimPage({ searchParams }: { searchParams: Promise<
                       {p.judul}
                     </h3>
                     <p className="mt-1 line-clamp-2 text-sm text-stone-500 dark:text-stone-400">{p.deskripsi}</p>
+                    {(skillMap[p.id] ?? []).length > 0 && (
+                      <div className="mt-2 flex flex-wrap gap-1.5">
+                        {(skillMap[p.id] ?? []).slice(0, 3).map((s) => (
+                          <span key={s} className="rounded-full bg-stone-100 px-2.5 py-0.5 text-[11px] font-medium text-stone-600 dark:bg-stone-800 dark:text-stone-400">
+                            {s}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                     <div className="mt-auto flex items-center justify-between border-t border-stone-100 dark:border-stone-800 pt-3 text-xs text-stone-500 dark:text-stone-400">
-                      <span>oleh <span className="font-medium text-stone-700 dark:text-stone-300">{(owner as { nama?: string })?.nama ?? 'Anonim'}</span></span>
+                      <span>oleh <span className="font-medium text-stone-700 dark:text-stone-300">{(owner as { nama?: string })?.nama ?? 'Anonim'}</span> · {waktuRelatif(p.created_at)}</span>
                       <span className="flex items-center gap-2">
                         Slot {p.slot_terisi}/{p.slot_total}
                         {p.status === 'full' && <StatusPill tone="red">Penuh</StatusPill>}

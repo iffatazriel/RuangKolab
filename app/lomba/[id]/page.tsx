@@ -6,6 +6,8 @@ import { ReportButton } from '@/components/ui/ReportButton'
 import { FavoriteButton } from './FavoriteButton'
 import { DeleteCompetitionButton } from './DeleteCompetitionButton'
 import { SlotBar } from '@/components/ui/SlotBar'
+import { ShareButton } from '@/components/ui/ShareButton'
+import { StickyCta } from '@/components/ui/StickyCta'
 import { PageContainer, StatusPill } from '@/components/ui/Page'
 import { PosterFallback } from '@/components/ui/CompetitionCard'
 import { getDeadlineTone } from '@/lib/deadline'
@@ -144,7 +146,7 @@ export default async function LombaDetailPage({ params }: { params: Promise<{ id
             )}
 
             {/* CTA utama */}
-            <div className="mt-8 flex flex-wrap items-center gap-3">
+            <div id="aksi" className="mt-8 flex scroll-mt-24 flex-wrap items-center gap-3">
               <a
                 href={comp.url}
                 target="_blank"
@@ -154,6 +156,7 @@ export default async function LombaDetailPage({ params }: { params: Promise<{ id
                 Buka Halaman Resmi
                 <ArrowSquareOut size={18} weight="bold" />
               </a>
+              <ShareButton />
               {user && comp.publish_status === 'published' && (
                 <FavoriteButton competitionId={comp.id} initiallySaved={isSaved} judul={comp.judul} />
               )}
@@ -226,6 +229,9 @@ export default async function LombaDetailPage({ params }: { params: Promise<{ id
           </section>
         </div>
       </div>
+      {!isExpired && comp.publish_status === 'published' && (
+        <StickyCta label="Buka Halaman Resmi" href={comp.url} external secondary={<ShareButton label="Bagikan" />} />
+      )}
     </PageContainer>
   )
 }

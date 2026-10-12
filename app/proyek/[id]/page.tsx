@@ -8,6 +8,9 @@ import { ManageRequests } from '@/app/tim/[id]/ManageRequests'
 import { PageContainer, StatusPill } from '@/components/ui/Page'
 import { ContactCard } from '@/components/ui/ContactCard'
 import { SlotBar } from '@/components/ui/SlotBar'
+import { Avatar } from '@/components/ui/Avatar'
+import { StickyCta } from '@/components/ui/StickyCta'
+import { ShareButton } from '@/components/ui/ShareButton'
 import { ArrowSquareOut } from '@phosphor-icons/react/dist/ssr'
 
 export default async function ProyekDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -164,13 +167,18 @@ export default async function ProyekDetailPage({ params }: { params: Promise<{ i
             <dl className="mt-6 grid grid-cols-2 gap-4 border-t border-stone-100 dark:border-stone-800 pt-5 text-sm">
               <div>
                 <dt className="text-xs font-medium text-stone-500 dark:text-stone-400">Inisiator</dt>
-                <dd className="mt-1 font-semibold text-stone-900 dark:text-stone-100">
-                  {ownerTyped?.nama}
-                  {ownerTyped?.jurusan && (
-                    <span className="block text-xs font-normal text-stone-500 dark:text-stone-400">
-                      {ownerTyped.jurusan}{ownerTyped.angkatan ? `, angkatan ${ownerTyped.angkatan}` : ''}
-                    </span>
-                  )}
+                <dd className="mt-1.5 flex items-center gap-2.5">
+                  <Avatar nama={ownerTyped?.nama ?? 'Anonim'} size="sm" />
+                  <div className="min-w-0">
+                    <p className="truncate font-semibold text-stone-900 dark:text-stone-100">
+                      {ownerTyped?.nama}
+                    </p>
+                    {ownerTyped?.jurusan && (
+                      <p className="truncate text-xs font-normal text-stone-500 dark:text-stone-400">
+                        {ownerTyped.jurusan}{ownerTyped.angkatan ? `, angkatan ${ownerTyped.angkatan}` : ''}
+                      </p>
+                    )}
+                  </div>
                 </dd>
               </div>
               <div>
@@ -196,7 +204,7 @@ export default async function ProyekDetailPage({ params }: { params: Promise<{ i
           )}
 
           {!isOwner && user && post.status === 'open' && (
-            <div className="rounded-2xl border border-stone-200 dark:border-stone-800/80 bg-white dark:bg-stone-900 p-5 shadow-sm">
+            <div id="gabung" className="scroll-mt-24 rounded-2xl border border-stone-200 dark:border-stone-800/80 bg-white dark:bg-stone-900 p-5 shadow-sm">
               <AjukanGabungForm postId={post.id} existingStatus={userRequest?.status ?? null} requestId={userRequest?.id ?? null} />
             </div>
           )}
@@ -231,6 +239,13 @@ export default async function ProyekDetailPage({ params }: { params: Promise<{ i
           )}
         </aside>
       </div>
+      {!isOwner && post.status === 'open' && !userRequest && (
+        <StickyCta
+          label={user ? 'Ajukan gabung' : 'Masuk untuk mengajukan'}
+          href={user ? '#gabung' : `/masuk?redirect=/proyek/${post.id}`}
+          secondary={<ShareButton />}
+        />
+      )}
     </PageContainer>
   )
 }

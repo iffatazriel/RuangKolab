@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Briefcase, Check, CheckCircle, WarningCircle } from '@phosphor-icons/react/dist/ssr'
+import { PasswordInput } from '@/components/ui/PasswordInput'
 
 const inputClass =
   'custom-input w-full rounded-[10px] border border-stone-200 dark:border-stone-800 px-3 py-2 text-xs text-stone-800 dark:text-stone-200 placeholder:text-stone-400 focus:outline-none'
@@ -175,24 +176,20 @@ function MasukForm() {
                   />
                 </div>
                 <div>
-                  <div className="mb-1 flex items-center justify-between">
-                    <label htmlFor="password" className="text-xs font-medium text-stone-700 dark:text-stone-300">
-                      Kata Sandi
-                    </label>
-                    <Link href="/lupa-sandi" className="text-xs text-brand-600 dark:text-brand-400 hover:underline">
-                      Lupa kata sandi?
-                    </Link>
-                  </div>
-                  <input
+                  <PasswordInput
                     id="password"
                     name="password"
-                    type="password"
+                    label="Kata Sandi"
+                    labelExtra={
+                      <Link href="/lupa-sandi" className="text-xs text-brand-600 dark:text-brand-400 hover:underline">
+                        Lupa kata sandi?
+                      </Link>
+                    }
                     required
                     autoComplete="current-password"
                     placeholder="Masukkan kata sandi Anda"
                     value={form.password}
                     onChange={change}
-                    className={inputClass}
                   />
                 </div>
 

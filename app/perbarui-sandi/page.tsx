@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
+import { PasswordInput } from '@/components/ui/PasswordInput'
 
 export default function PerbaruiSandiPage() {
   const router = useRouter()
@@ -49,38 +50,26 @@ export default function PerbaruiSandiPage() {
         </p>
 
         <form className="mt-4 space-y-3.5" onSubmit={submit}>
-          <div>
-            <label htmlFor="password" className="mb-1 block text-xs font-medium text-stone-700 dark:text-stone-300">
-              Kata Sandi Baru
-            </label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              required
-              autoComplete="new-password"
-              placeholder="Minimal 8 karakter"
-              value={form.password}
-              onChange={change}
-              className="custom-input w-full rounded-[10px] border border-stone-200 dark:border-stone-800 px-3 py-2 text-xs text-stone-800 dark:text-stone-200 placeholder:text-stone-400 focus:outline-none"
-            />
-          </div>
-          <div>
-            <label htmlFor="konfirmasi" className="mb-1 block text-xs font-medium text-stone-700 dark:text-stone-300">
-              Konfirmasi Kata Sandi
-            </label>
-            <input
-              id="konfirmasi"
-              name="konfirmasi"
-              type="password"
-              required
-              autoComplete="new-password"
-              placeholder="Ketik ulang kata sandi"
-              value={form.konfirmasi}
-              onChange={change}
-              className="custom-input w-full rounded-[10px] border border-stone-200 dark:border-stone-800 px-3 py-2 text-xs text-stone-800 dark:text-stone-200 placeholder:text-stone-400 focus:outline-none"
-            />
-          </div>
+          <PasswordInput
+            id="password"
+            name="password"
+            label="Kata Sandi Baru"
+            required
+            autoComplete="new-password"
+            placeholder="Minimal 8 karakter"
+            value={form.password}
+            onChange={change}
+          />
+          <PasswordInput
+            id="konfirmasi"
+            name="konfirmasi"
+            label="Konfirmasi Kata Sandi"
+            required
+            autoComplete="new-password"
+            placeholder="Ketik ulang kata sandi"
+            value={form.konfirmasi}
+            onChange={change}
+          />
           {error && (
             <div role="alert" className="rounded-[10px] border border-rose-200 dark:border-rose-800 bg-rose-50 dark:bg-rose-950 px-3.5 py-2.5 text-xs text-rose-700 dark:text-rose-400">
               {error}

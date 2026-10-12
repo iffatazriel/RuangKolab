@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { UsersThree, WarningCircle, ArrowRight } from '@phosphor-icons/react/dist/ssr'
+import { PasswordInput } from '@/components/ui/PasswordInput'
 
 const inputBase =
   'w-full rounded-[10px] border px-3.5 py-2.5 text-sm outline-none transition placeholder:text-stone-400 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-600'
@@ -193,39 +194,28 @@ export default function DaftarPage() {
               />
             </div>
             <div>
-              <label htmlFor="password" className="mb-1.5 block text-xs font-bold tracking-wide text-stone-700 dark:text-stone-300">
-                Kata Sandi
-              </label>
-              <input
+              <PasswordInput
                 id="password"
                 name="password"
-                type="password"
+                label="Kata Sandi"
                 autoComplete="new-password"
                 placeholder="Minimal 8 karakter"
                 value={form.password}
                 onChange={change}
                 onBlur={blur}
-                className={`${inputBase} border-stone-300 dark:border-stone-700`}
               />
               <FieldError message={passwordShort ? 'Kata sandi minimal 8 karakter' : undefined} />
             </div>
             <div>
-              <label
-                htmlFor="konfirmasi"
-                className="mb-1.5 block text-xs font-bold tracking-wide text-stone-700 dark:text-stone-300"
-              >
-                Konfirmasi Kata Sandi
-              </label>
-              <input
+              <PasswordInput
                 id="konfirmasi"
                 name="konfirmasi"
-                type="password"
+                label="Konfirmasi Kata Sandi"
                 autoComplete="new-password"
                 placeholder="Ketik ulang kata sandi"
                 value={form.konfirmasi}
                 onChange={change}
                 onBlur={blur}
-                className={`${inputBase} border-stone-300 dark:border-stone-700`}
               />
               <FieldError message={konfirmasiMismatch ? 'Konfirmasi tidak cocok' : undefined} />
             </div>
