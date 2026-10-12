@@ -10,6 +10,16 @@ export default async function TimPage({ searchParams }: { searchParams: Promise<
   const sp = await searchParams
   const supabase = await createClient()
 
+  // Filter keahlian (F-21): ambil post_id yang punya skill terpilih lebih dulu
+  let postIdFilter: string[] | null = null
+  if (sp.keahlian) {
+    const { data: matched } = await supabase
+      .from('post_skills')
+      .select('post_id')
+      .eq('skill_id', sp.keahlian)
+    postIdFilter = (matched ?? []).map((m) => m.post_id)
+  }
+
   let query = supabase
     .from('team_posts')
     .select(`
@@ -22,6 +32,9 @@ export default async function TimPage({ searchParams }: { searchParams: Promise<
     .order('created_at', { ascending: false })
 
   if (sp.q) query = query.ilike('judul', `%${sp.q}%`)
+  if (postIdFilter) {
+    query = query.in('id', postIdFilter.length > 0 ? postIdFilter : ['00000000-0000-0000-0000-000000000000'])
+  }
 
   const { data: posts } = await query.limit(50)
 

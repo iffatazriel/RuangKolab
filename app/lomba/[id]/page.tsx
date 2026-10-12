@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { ReportButton } from '@/components/ui/ReportButton'
 import { FavoriteButton } from './FavoriteButton'
+import { DeleteCompetitionButton } from './DeleteCompetitionButton'
 import { PageContainer, StatusPill } from '@/components/ui/Page'
 
 export default async function LombaDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -18,14 +19,13 @@ export default async function LombaDetailPage({ params }: { params: Promise<{ id
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!comp) return notFound()
-  if (comp.publish_status !== 'published') {
-    const isProposer = !!user && comp.created_by === user.id
-    let isMod = false
-    if (user && !isProposer) {
-      const { data: p } = await supabase.from('users').select('role').eq('id', user.id).single()
-      isMod = p?.role === 'admin' || p?.role === 'moderator'
-    }
-    if (!isProposer && !isMod) return notFound()
+  let isModerator = false
+  if (user) {
+    const { data: p } = await supabase.from('users').select('role').eq('id', user.id).single()
+    isModerator = p?.role === 'admin' || p?.role === 'moderator'
+  }
+  if (comp.publish_status !== 'published' && !isModerator && comp.created_by !== user?.id) {
+    return notFound()
   }
 
   const { data: posts } = await supabase
@@ -104,7 +104,7 @@ export default async function LombaDetailPage({ params }: { params: Promise<{ id
           </div>
         )}
 
-        <div className="mt-8 flex flex-wrap gap-3 border-t border-slate-100 pt-6">
+        <div className="mt-8 flex flex-wrap items-center gap-3 border-t border-slate-100 pt-6">
           <a
             href={comp.url}
             target="_blank"
@@ -123,6 +123,17 @@ export default async function LombaDetailPage({ params }: { params: Promise<{ id
             >
               + Buka Tim Lomba
             </Link>
+          )}
+          {isModerator && (
+            <Link
+              href={`/lomba/${comp.id}/edit`}
+              className="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 active:scale-[0.98]"
+            >
+              Edit
+            </Link>
+          )}
+          {isModerator && (
+            <DeleteCompetitionButton competitionId={comp.id} judul={comp.judul} />
           )}
         </div>
       </div>

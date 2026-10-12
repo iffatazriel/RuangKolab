@@ -5,30 +5,45 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/Button'
 import { Input, Textarea, Select } from '@/components/ui/FormFields'
+import { friendlyError } from '@/lib/errors'
 
 const KATEGORI = ['Ilmiah', 'Teknologi', 'Bisnis', 'Desain', 'Seni & Budaya', 'Olahraga', 'Lainnya']
 const TINGKAT = ['Nasional', 'Regional', 'Internasional', 'Internal Kampus']
 const DEFAULT_CAMPUS = 'a0000000-0000-0000-0000-000000000001'
+
+interface LombaFormValues {
+  judul: string
+  penyelenggara: string
+  kategori: string
+  tingkat: string
+  deadline: string
+  biaya: string
+  url: string
+  deskripsi: string
+  publish_status: 'draft' | 'published' | 'pending'
+}
 
 interface Props {
   id?: string
   /** 'admin' = langsung terbit; 'usul' = pengguna biasa, masuk antrean moderasi */
   mode?: 'admin' | 'usul'
   redirectTo?: string
+  /** Nilai awal untuk mode edit */
+  initial?: Partial<LombaFormValues>
 }
 
-export function LombaForm({ id, mode = 'admin', redirectTo = '/lomba' }: Props) {
+export function LombaForm({ id, mode = 'admin', redirectTo = '/lomba', initial }: Props) {
   const router = useRouter()
   const [form, setForm] = useState({
-    judul: '',
-    penyelenggara: '',
-    kategori: '',
-    tingkat: '',
-    deadline: '',
-    biaya: '0',
-    url: '',
-    deskripsi: '',
-    publish_status: (mode === 'usul' ? 'pending' : 'published') as 'draft' | 'published' | 'pending',
+    judul: initial?.judul ?? '',
+    penyelenggara: initial?.penyelenggara ?? '',
+    kategori: initial?.kategori ?? '',
+    tingkat: initial?.tingkat ?? '',
+    deadline: initial?.deadline ?? '',
+    biaya: initial?.biaya ?? '0',
+    url: initial?.url ?? '',
+    deskripsi: initial?.deskripsi ?? '',
+    publish_status: (initial?.publish_status ?? (mode === 'usul' ? 'pending' : 'published')) as LombaFormValues['publish_status'],
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -55,8 +70,8 @@ export function LombaForm({ id, mode = 'admin', redirectTo = '/lomba' }: Props) 
       url: form.url,
       deskripsi: form.deskripsi || null,
       publish_status: mode === 'usul' ? 'pending' : form.publish_status,
-      campus_id: DEFAULT_CAMPUS,
-      created_by: user.id,
+      // Saat edit, campus_id dan created_by tidak diubah
+      ...(id ? {} : { campus_id: DEFAULT_CAMPUS, created_by: user.id }),
     }
 
     const { error: dbError } = id
@@ -64,7 +79,7 @@ export function LombaForm({ id, mode = 'admin', redirectTo = '/lomba' }: Props) 
       : await supabase.from('competitions').insert(payload)
 
     setLoading(false)
-    if (dbError) { setError(dbError.message); return }
+    if (dbError) { setError(friendlyError(dbError)); return }
     router.push(redirectTo)
     router.refresh()
   }
