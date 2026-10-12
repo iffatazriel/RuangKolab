@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { UsersThree, WarningCircle } from '@phosphor-icons/react/dist/ssr'
+import { UsersThree, WarningCircle, ArrowRight } from '@phosphor-icons/react/dist/ssr'
 
 const inputBase =
   'w-full rounded-[10px] border px-3.5 py-2.5 text-sm outline-none transition placeholder:text-stone-400 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-600'
@@ -285,7 +285,7 @@ export default function DaftarPage() {
                 href="/lomba"
                 className="flex items-center justify-center rounded-full border border-stone-300 dark:border-stone-700 px-3 py-2 text-center text-xs font-semibold text-brand-600 dark:text-brand-400 transition hover:bg-stone-50 dark:hover:bg-stone-900"
               >
-                Daftar sebagai Mahasiswa
+                Lihat sebagai tamu
               </Link>
             </div>
 
@@ -299,8 +299,16 @@ export default function DaftarPage() {
 
         {/* BEGIN: InfoPreviewCard (Right Column) */}
         <aside className="rounded-2xl border border-stone-200 dark:border-stone-800/70 bg-white dark:bg-stone-900 p-5 shadow-sm md:p-6 lg:col-span-5">
-          <div className="mb-5 flex aspect-[16/9] items-center justify-center overflow-hidden rounded-xl border border-brand-100 bg-brand-50 px-6 text-center dark:border-brand-900 dark:bg-brand-950">
-            <p className="max-w-xs text-sm font-bold leading-relaxed text-brand-800 dark:text-brand-200">
+          <div className="relative mb-5 aspect-[16/9] overflow-hidden rounded-xl">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="https://picsum.photos/seed/mahasiswa-presentasi-kelas/800/450"
+              alt="Mahasiswa mempresentasikan proyek di kelas"
+              loading="lazy"
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-stone-950/70 via-stone-950/10 to-transparent" aria-hidden="true" />
+            <p className="absolute inset-x-0 bottom-0 px-5 pb-4 text-left text-sm font-bold leading-relaxed text-white">
               Suasana Kolaborasi Mahasiswa
             </p>
           </div>
@@ -351,8 +359,9 @@ export default function DaftarPage() {
           </div>
           <div className="mt-4 flex items-center justify-between border-t border-stone-100 dark:border-stone-800 pt-3 text-[11px] text-stone-400">
             <span>Kompetisi terverifikasi BEM &amp; Prodi</span>
-            <Link href="/lomba" className="font-medium text-brand-600 dark:text-brand-400 hover:underline">
-              Lihat Semua â†’
+            <Link href="/lomba" className="inline-flex min-h-[44px] items-center gap-1 font-medium text-brand-600 dark:text-brand-400 hover:underline">
+              Lihat Semua
+              <ArrowRight size={14} weight="bold" aria-hidden="true" />
             </Link>
           </div>
         </aside>

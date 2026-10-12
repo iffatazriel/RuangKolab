@@ -1,6 +1,6 @@
 ﻿import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
-import { Trophy, UsersThree, Rocket, ArrowRight } from '@phosphor-icons/react/dist/ssr'
+import { Trophy, Rocket, ArrowRight } from '@phosphor-icons/react/dist/ssr'
 import { CompetitionCard, type CompetitionCardData } from '@/components/ui/CompetitionCard'
 import { Avatar } from '@/components/ui/Avatar'
 import {
@@ -86,8 +86,8 @@ export default async function Home() {
   return (
     <div>
       {/* HERO: split asimetris, teks kiri + tumpukan kartu 3D kanan, muat viewport */}
-      <section className="mx-auto max-w-7xl px-4 pt-10 pb-14 sm:px-6 lg:pt-16 lg:pb-20">
-        <div className="grid min-h-[calc(100dvh-var(--nav-h)-7rem)] grid-cols-1 items-center gap-10 lg:grid-cols-12">
+      <section className="hero-bg mx-auto w-full px-4 pt-10 pb-14 sm:px-6 lg:pt-16 lg:pb-20">
+        <div className="mx-auto grid min-h-[calc(100dvh-var(--nav-h)-7rem)] max-w-7xl grid-cols-1 items-center gap-10 lg:grid-cols-12">
           <div className="lg:col-span-7">
             <HeroLines />
             <HeroSequence>
@@ -130,11 +130,26 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* KATEGORI POPULER: chips menuju daftar terfilter */}
+      <section aria-label="Jelajahi berdasarkan kategori" className="mx-auto max-w-7xl px-4 pt-2 pb-10 sm:px-6">
+        <div className="flex flex-wrap items-center gap-2">
+          {['Teknologi', 'Desain', 'Bisnis', 'Ilmiah', 'Olahraga'].map((k) => (
+            <Link
+              key={k}
+              href={`/lomba?kategori=${encodeURIComponent(k)}`}
+              className="inline-flex min-h-[40px] items-center rounded-full border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 px-4 text-[13px] font-semibold text-stone-700 dark:text-stone-300 transition hover:border-brand-300 dark:hover:border-brand-700 hover:text-brand-700 dark:hover:text-brand-300 active:scale-[0.98]"
+            >
+              {k}
+            </Link>
+          ))}
+        </div>
+      </section>
+
       {/* SOCIAL PROOF: section sendiri di bawah hero, bukan di dalam hero.
           Angka lomba/mahasiswa/tim dari database nyata; testimoni contoh. */}
       <section aria-label="Bukti komunitas" className="border-b border-stone-100 dark:border-stone-800 bg-white dark:bg-stone-900">
         <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
-          <dl className="grid grid-cols-1 gap-6 text-center sm:grid-cols-2 lg:grid-cols-4">
+          <dl className="grid grid-cols-2 gap-6 text-center sm:grid-cols-3 lg:grid-cols-6">
             <div className="flex flex-col items-center">
               <dd className="font-mono text-3xl font-bold tabular-nums tracking-tight text-stone-900 dark:text-stone-100">
                 <CountUp value={totalComps ?? 0} />
@@ -159,6 +174,18 @@ export default async function Home() {
               </dd>
               <dt className="mt-1 text-xs font-medium text-stone-500 dark:text-stone-400">kampus di Purwokerto</dt>
             </div>
+            <div className="flex flex-col items-center">
+              <dd className="font-mono text-3xl font-bold tabular-nums tracking-tight text-stone-900 dark:text-stone-100">
+                <CountUp value={(totalPosts ?? 0) - (totalProjects ?? 0)} />
+              </dd>
+              <dt className="mt-1 text-xs font-medium text-stone-500 dark:text-stone-400">rekrutmen tim</dt>
+            </div>
+            <div className="flex flex-col items-center">
+              <dd className="font-mono text-3xl font-bold tabular-nums tracking-tight text-stone-900 dark:text-stone-100">
+                <CountUp value={totalProjects ?? 0} />
+              </dd>
+              <dt className="mt-1 text-xs font-medium text-stone-500 dark:text-stone-400">proyek terbuka</dt>
+            </div>
           </dl>
 
           {/* Testimoni berjalan otomatis menyamping seperti marquee skill.
@@ -181,9 +208,12 @@ export default async function Home() {
                   <blockquote className="line-clamp-2 text-sm leading-relaxed text-stone-700 dark:text-stone-300">
                     &ldquo;{t.kutip}&rdquo;
                   </blockquote>
-                  <figcaption className="mt-4">
-                    <p className="text-sm font-bold text-stone-900 dark:text-stone-100">{t.nama}</p>
-                    <p className="text-xs text-stone-500 dark:text-stone-400">{t.meta}</p>
+                  <figcaption className="mt-4 flex items-center gap-3">
+                    <Avatar nama={t.nama} size="md" />
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-bold text-stone-900 dark:text-stone-100">{t.nama}</p>
+                      <p className="truncate text-xs text-stone-500 dark:text-stone-400">{t.meta}</p>
+                    </div>
                   </figcaption>
                 </figure>
               ))}
@@ -192,39 +222,13 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* STRIP STATISTIK: angka riil dari database */}
-      <section className="border-y border-stone-100 dark:border-stone-800 bg-white dark:bg-stone-900">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-6 sm:px-6">
-          <div className="flex items-center gap-3">
-            <Trophy size={24} weight="duotone" className="text-brand-600 dark:text-brand-400" />
-            <div>
-              <p className="font-mono text-xl font-bold tracking-tight text-stone-900 dark:text-stone-100">{totalComps ?? 0}</p>
-              <p className="text-xs font-medium text-stone-500 dark:text-stone-400">Lomba aktif</p>
-            </div>
-          </div>
-          <div className="h-8 w-px bg-stone-200" />
-          <div className="flex items-center gap-3">
-            <UsersThree size={24} weight="duotone" className="text-brand-600 dark:text-brand-400" />
-            <div>
-              <p className="font-mono text-xl font-bold tracking-tight text-stone-900 dark:text-stone-100">{(totalPosts ?? 0) - (totalProjects ?? 0)}</p>
-              <p className="text-xs font-medium text-stone-500 dark:text-stone-400">Rekrutmen tim</p>
-            </div>
-          </div>
-          <div className="hidden h-8 w-px bg-stone-200 sm:block" />
-          <div className="hidden items-center gap-3 sm:flex">
-            <Rocket size={24} weight="duotone" className="text-brand-600 dark:text-brand-400" />
-            <div>
-              <p className="font-mono text-xl font-bold tracking-tight text-stone-900 dark:text-stone-100">{totalProjects ?? 0}</p>
-              <p className="text-xs font-medium text-stone-500 dark:text-stone-400">Proyek terbuka</p>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* STRIP STATISTIK digabung ke social proof di atas agar tidak duplikat */}
 
       {/* SEGERA BERAKHIR: carousel scroll-snap, kartu masuk stagger */}
       <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:py-16">
         <div className="mb-6 flex items-end justify-between">
           <div>
+            <p className="mb-1 text-[11px] font-bold uppercase tracking-[0.18em] text-brand-600 dark:text-brand-400">Kompetisi</p>
             <h2 className="text-2xl font-bold tracking-tight text-stone-900 dark:text-stone-100">Segera berakhir</h2>
             <p className="mt-1 text-xs text-stone-500 dark:text-stone-400">Pendaftaran menutup paling cepat pada lomba-lomba ini.</p>
           </div>
@@ -296,8 +300,8 @@ export default async function Home() {
                 <div className="relative min-h-[160px] flex-1 overflow-hidden sm:min-h-[200px]">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src="https://picsum.photos/seed/ruangkolab-kolaborasi/900/600"
-                    alt="Mahasiswa berkolaborasi"
+                    src="https://picsum.photos/seed/mahasiswa-diskusi-kelompok/900/600"
+                    alt="Mahasiswa berdiskusi dalam kelompok"
                     loading="lazy"
                     className="absolute inset-0 h-full w-full object-cover"
                   />
@@ -325,7 +329,7 @@ export default async function Home() {
               <div className="flex min-w-0 items-center gap-4">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="https://picsum.photos/seed/ruangkolab-tim-belajar/200/200"
+                  src="https://picsum.photos/seed/mahasiswa-belajar-bersama/200/200"
                   alt="Kelompok mahasiswa belajar bersama"
                   loading="lazy"
                   className="hidden h-16 w-16 shrink-0 rounded-xl object-cover sm:block"
@@ -383,10 +387,10 @@ export default async function Home() {
         </section>
       )}
 
-      {/* PROYEK: baris tunggal, ikon kiri */}
+      {/* PROYEK: header tengah, variasi dari section lain */}
       {proyekList.length > 0 && (
         <section className="mx-auto max-w-7xl px-4 pb-12 sm:px-6 lg:pb-16">
-          <div className="mb-6 flex items-end justify-between">
+          <div className="mb-6 flex flex-col items-center gap-3 text-center">
             <h2 className="text-2xl font-bold tracking-tight text-stone-900 dark:text-stone-100">Proyek kolaborasi</h2>
             <Link href="/proyek" className="flex min-h-[44px] items-center gap-1 text-sm font-semibold text-brand-600 dark:text-brand-400 transition-colors hover:text-brand-700 dark:hover:text-brand-300">
               Semua proyek

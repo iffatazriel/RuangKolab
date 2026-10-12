@@ -83,21 +83,29 @@ function MasukForm() {
                 </div>
               </div>
 
-              <div className="mb-5 flex h-48 items-center justify-center overflow-hidden rounded-xl border border-brand-100 bg-brand-50 px-6 text-center sm:h-56 dark:border-brand-900 dark:bg-brand-950">
-                <p className="max-w-xs text-sm font-bold leading-relaxed text-brand-800 dark:text-brand-200">
+              <div className="relative mb-5 h-48 overflow-hidden rounded-xl sm:h-56">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="https://picsum.photos/seed/mahasiswa-kolaborasi-kampus/800/500"
+                  alt="Mahasiswa berkolaborasi dalam tim"
+                  loading="lazy"
+                  className="absolute inset-0 h-full w-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-stone-950/70 via-stone-950/10 to-transparent" aria-hidden="true" />
+                <p className="absolute inset-x-0 bottom-0 px-6 pb-4 text-left text-sm font-bold leading-relaxed text-white">
                   Kolaborasi Mahasiswa RuangKolab
                 </p>
               </div>
 
-              <div className="mb-4 flex items-center gap-1.5">
+              <div className="mb-4 flex items-center gap-1.5" aria-label="Status postingan: terbuka, menunggu, penuh">
                 <span className="rounded-full bg-emerald-500 px-2.5 py-0.5 text-[11px] font-semibold text-white">
-                  Open
+                  Terbuka
                 </span>
                 <span className="rounded-full bg-amber-500 px-2.5 py-0.5 text-[11px] font-semibold text-white">
-                  Pending
+                  Menunggu
                 </span>
                 <span className="rounded-full bg-red-500 px-2.5 py-0.5 text-[11px] font-semibold text-white">
-                  Full
+                  Penuh
                 </span>
               </div>
 
@@ -121,7 +129,7 @@ function MasukForm() {
                 href="/lomba"
                 className="rounded-full border border-brand-200 dark:border-brand-800 px-3 py-1.5 text-xs font-medium text-brand-600 dark:text-brand-400 transition-colors hover:bg-brand-50 dark:hover:bg-brand-950"
               >
-                Jelajahi Acara
+                Cari Lomba
               </Link>
             </div>
           </div>
@@ -232,7 +240,7 @@ function MasukForm() {
                   href="/lomba"
                   className="flex items-center justify-center rounded-full border border-stone-200 dark:border-stone-800 px-3 py-2 text-xs font-medium text-stone-700 dark:text-stone-300 transition-colors hover:bg-stone-50 dark:hover:bg-stone-900"
                 >
-                  Masuk sebagai Tamu
+                  Lihat sebagai tamu
                 </Link>
               </div>
             </div>

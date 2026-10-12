@@ -10,6 +10,13 @@ const nav = [
   { href: '/masuk', label: 'Masuk' },
 ]
 
+const komunitas = [
+  { href: '/lomba/usul', label: 'Usulkan Lomba' },
+  { href: '/tim/baru', label: 'Buat Postingan Tim' },
+  { href: '/proyek/baru', label: 'Mulai Proyek' },
+  { href: '/daftar', label: 'Gabung Sekarang' },
+]
+
 export function Footer() {
   return (
     <footer className="border-t border-stone-200/80 bg-white py-12 text-stone-600 dark:border-stone-800 dark:bg-stone-950 dark:text-stone-400">
@@ -40,19 +47,35 @@ export function Footer() {
             <ThemeToggle />
           </div>
         </div>
-        <nav aria-label="Navigasi footer" className="grid grid-cols-2 gap-x-12 gap-y-2 text-xs font-medium">
-          {nav.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="inline-flex min-h-[32px] items-center text-stone-600 transition-colors hover:text-brand-600 dark:hover:text-stone-400 dark:hover:text-brand-400"
-            >
-              {item.label}
-            </Link>
-          ))}
-        </nav>
+        <div className="flex flex-col gap-8 sm:flex-row sm:gap-12">
+          <nav aria-label="Navigasi footer" className="grid grid-cols-2 gap-x-12 gap-y-2 text-xs font-medium">
+            {nav.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="inline-flex min-h-[32px] items-center text-stone-600 transition-colors hover:text-brand-600 dark:hover:text-stone-400 dark:hover:text-brand-400"
+              >
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+          <nav aria-label="Komunitas" className="grid grid-cols-2 gap-x-12 gap-y-2 text-xs font-medium sm:grid-cols-1">
+            <p className="col-span-2 text-[11px] font-bold uppercase tracking-[0.14em] text-stone-400 sm:col-span-1">
+              Komunitas
+            </p>
+            {komunitas.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="inline-flex min-h-[32px] items-center text-stone-600 transition-colors hover:text-brand-600 dark:hover:text-stone-400 dark:hover:text-brand-400"
+              >
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+        </div>
       </div>
-      <div className="mx-auto mt-8 max-w-7xl border-t border-stone-100 px-6 pt-6 text-xs text-stone-400 dark:border-stone-800 dark:text-stone-500">
+      <div className="mx-auto mt-8 max-w-7xl border-t-2 border-stone-200 px-6 pt-6 text-xs text-stone-400 dark:border-stone-700 dark:text-stone-500">
         © {new Date().getFullYear()} RuangKolab. Dibangun untuk ekosistem kolaborasi mahasiswa.
       </div>
     </footer>
