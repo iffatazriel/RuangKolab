@@ -1,22 +1,8 @@
-'use client'
-
-import { motion, useReducedMotion } from 'motion/react'
-import { EASE_OUT } from '@/lib/motion'
-
 /**
- * Transisi antar halaman: fade + geser 8px, 200ms.
- * Alasan: menandai perpindahan konteks tanpa memperlambat navigasi.
+ * Transisi antar halaman: fade 200ms murni CSS.
+ * Sengaja TANPA Motion/JS: konten harus terlihat walau JS gagal dimuat,
+ * dan versi HP tidak memakai animasi entrance sama sekali.
  */
 export default function Template({ children }: { children: React.ReactNode }) {
-  const reduce = useReducedMotion()
-  return (
-    <motion.div
-      className="rk-ensure-visible"
-      initial={reduce ? false : { opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.2, ease: EASE_OUT }}
-    >
-      {children}
-    </motion.div>
-  )
+  return <div className="rk-page-enter">{children}</div>
 }

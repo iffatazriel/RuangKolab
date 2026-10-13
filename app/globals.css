@@ -182,9 +182,31 @@ body::after {
   }
 }
 
-/* Jaring pengaman anti-blank: jika animasi entrance macet (JS terhambat di
-   perangkat lama), paksa elemen tampil setelah 2.2 detik. Tidak mengganggu
-   animasi normal karena nilai akhirnya identik dengan keadaan selesai. */
+/* Transisi halaman berbasis CSS murni (tanpa JS).
+   Desktop: fade 200ms. HP: tanpa animasi, langsung tampil. */
+@keyframes rk-page-enter {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Jaring pengaman anti-blank.
+   Konten halaman TIDAK BOLEH bergantung pada JS untuk terlihat.
+   Di HP/tablet (<=1023px) dan saat reduced-motion: paksa tampil penuh,
+   tanpa animasi entrance (versi mobile memang sengaja tanpa efek berat).
+   `!important` di sini menang atas inline style maupun animasi Motion. */
+@media (max-width: 1023px), (prefers-reduced-motion: reduce) {
+  .rk-ensure-visible {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+  }
+  .rk-page-enter {
+    animation: none !important;
+  }
+}
+
+/* Desktop tanpa reduced-motion: entrance normal; bila JS macet,
+   tampilkan setelah 2.2 detik. Transisi halaman via CSS. */
 @keyframes rk-force-show {
   to {
     opacity: 1;
@@ -192,12 +214,11 @@ body::after {
   }
 }
 
-.rk-ensure-visible {
-  animation: rk-force-show 0.4s ease 2.2s both;
-}
-
-@media (prefers-reduced-motion: reduce) {
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
   .rk-ensure-visible {
-    animation: none;
+    animation: rk-force-show 0.4s ease 2.2s forwards;
+  }
+  .rk-page-enter {
+    animation: rk-page-enter 0.2s ease both;
   }
 }

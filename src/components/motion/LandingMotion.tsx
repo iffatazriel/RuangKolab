@@ -26,10 +26,10 @@ export function HeroLines() {
       variants={staggerContainer(2)}
       aria-label="Temukan lomba, bentuk tim impianmu."
     >
-      <motion.span className="block" variants={fadeUp}>
+      <motion.span className="rk-ensure-visible block" variants={fadeUp}>
         Temukan Lomba,
       </motion.span>
-      <motion.span className="block" variants={fadeUp}>
+      <motion.span className="rk-ensure-visible block" variants={fadeUp}>
         <em>Bentuk Tim</em> Impianmu.
       </motion.span>
     </motion.h1>
@@ -40,7 +40,7 @@ export function HeroFollow({ delay = 0, className = '' }: { delay?: number; clas
   const reduce = useReducedMotion()
   return (
     <motion.div
-      className={className}
+      className={`rk-ensure-visible ${className}`}
       initial={reduce ? false : { opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: EASE_OUT, delay }}
