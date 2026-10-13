@@ -351,7 +351,7 @@ export function DashboardView({
                       <p className="line-clamp-2 text-sm font-bold text-stone-900 dark:text-stone-100">{c.judul}</p>
                       <p className="mt-2 text-xs text-stone-500 dark:text-stone-400">
                         Batas: {new Date(c.deadline).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
-                        {' Â· '}
+                        {' · '}
                         {c.biaya === 0 ? 'Gratis' : `Rp ${c.biaya.toLocaleString('id-ID')}`}
                       </p>
                     </Link>
