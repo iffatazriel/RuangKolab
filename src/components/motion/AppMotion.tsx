@@ -81,7 +81,7 @@ export function FadeIn({ children, className = '' }: { children: ReactNode; clas
       whileInView={{ opacity: 1 }}
       viewport={VIEWPORT_ONCE}
       transition={{ duration: 0.15 }}
-      className={className}
+      className={`rk-ensure-visible ${className}`}
     >
       {children}
     </motion.div>

@@ -1,8 +1,9 @@
 'use client'
 
 import { useRef, useState } from 'react'
-import { motion, useMotionTemplate, useMotionValue, useReducedMotion, useSpring } from 'motion/react'
+import { motion, useMotionTemplate, useMotionValue, useSpring } from 'motion/react'
 import { SPRING } from '@/lib/motion'
+import { useDesktop3D } from './useDesktop3D'
 
 interface Props {
   children: React.ReactNode
@@ -14,11 +15,12 @@ interface Props {
 }
 
 /**
- * Tilt 3D halus + sorotan tipis mengikuti kursor (maks 6 derajat).
- * Nonaktif di layar sentuh dan saat reduced-motion.
+ * Kartu dengan tilt 3D halus + sorotan mengikuti kursor, HANYA di desktop
+ * (>=1024px, pointer halus, tanpa reduced-motion). Di HP dirender sebagai
+ * kartu biasa tanpa lapisan 3D sama sekali, menghindari bug render Safari.
  */
 export function TiltCard({ children, className = '', max = 6, perspective = 900 }: Props) {
-  const reduce = useReducedMotion()
+  const isDesktop = useDesktop3D()
   const ref = useRef<HTMLDivElement>(null)
   const [hovering, setHovering] = useState(false)
   const rx = useMotionValue(0)
@@ -29,9 +31,9 @@ export function TiltCard({ children, className = '', max = 6, perspective = 900 
   const sry = useSpring(ry, SPRING)
   const glow = useMotionTemplate`radial-gradient(300px circle at ${gx}% ${gy}%, rgba(255,255,255,0.12), transparent 70%)`
 
-  // Tilt hanya untuk pointer presisi; layar sentuh selalu statis
-  function coarsePointer(): boolean {
-    return typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches
+  // Versi HP/mobile: kartu statis polos
+  if (!isDesktop) {
+    return <div className={className}>{children}</div>
   }
 
   return (
@@ -40,7 +42,7 @@ export function TiltCard({ children, className = '', max = 6, perspective = 900 
       className={`group ${className}`}
       style={{ perspective }}
       onPointerMove={(e) => {
-        if (reduce || e.pointerType !== 'mouse' || coarsePointer()) return
+        if (e.pointerType !== 'mouse') return
         const r = e.currentTarget.getBoundingClientRect()
         const px = (e.clientX - r.left) / r.width
         const py = (e.clientY - r.top) / r.height
@@ -59,12 +61,12 @@ export function TiltCard({ children, className = '', max = 6, perspective = 900 
       <motion.div
         className="relative h-full [transform-style:preserve-3d]"
         // will-change hanya aktif saat hover, dihapus saat mouse leave
-        style={reduce ? undefined : { rotateX: srx, rotateY: sry, willChange: hovering ? 'transform' : 'auto' }}
+        style={{ rotateX: srx, rotateY: sry, willChange: hovering ? 'transform' : 'auto' }}
       >
         {children}
         <motion.div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 z-10 rounded-[inherit] opacity-0 transition-opacity duration-300 [@media(hover:hover)_and_(pointer:fine)]:group-hover:opacity-100"
+          className="pointer-events-none absolute inset-0 z-10 rounded-[inherit] opacity-0 transition-opacity duration-300 group-hover:opacity-100"
           style={{ background: glow }}
         />
       </motion.div>

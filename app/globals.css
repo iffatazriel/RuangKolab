@@ -62,6 +62,14 @@ body {
   overflow-x: clip;
 }
 
+/* Fallback untuk browser tanpa dukungan dvh (iOS < 15.4):
+   min-height dihitung dari 100vh sebelum dvh didukung. */
+@supports not (height: 100dvh) {
+  .rk-dvh-fallback {
+    min-height: calc(100vh - var(--nav-h) - 7rem);
+  }
+}
+
 /* Custom interactive input transition & focus ring (aksen brand) */
 .custom-input {
   transition: border-color 0.15s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.15s cubic-bezier(0.16, 1, 0.3, 1);

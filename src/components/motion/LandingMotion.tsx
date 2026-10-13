@@ -3,6 +3,7 @@
 import { useRef, useState, useEffect } from 'react'
 import { motion, useInView, animate, useMotionValue, useMotionValueEvent, useReducedMotion, useScroll, useSpring, useTransform } from 'motion/react'
 import type { ReactNode } from 'react'
+import { useDesktop3D } from './useDesktop3D'
 import {
   fadeUp,
   fadeIn,
@@ -66,10 +67,14 @@ export function HeroSequence({ children }: { children: ReactNode }) {
 
 /** Parallax halus kartu hero, maks 40px. Gambar tetap tanpa fade demi LCP. */
 export function HeroParallax({ children }: { children: ReactNode }) {
+  const isDesktop = useDesktop3D()
   const reduce = useReducedMotion()
   const ref = useRef<HTMLDivElement>(null)
   const { scrollY } = useScroll()
-  const y = useTransform(scrollY, [0, 600], [0, reduce ? 0 : -40])
+  const y = useTransform(scrollY, [0, 600], [0, reduce || !isDesktop ? 0 : -40])
+
+  // HP: tanpa parallax sama sekali, konten langsung tampil
+  if (!isDesktop) return <div ref={ref}>{children}</div>
   return (
     <motion.div ref={ref} style={{ y }}>
       {children}
@@ -113,9 +118,9 @@ export function HeroStack({ cards }: { cards: ReactNode[] }) {
         my.set(0)
       }}
     >
-      {/* HP: satu kartu statis */}
+      {/* HP (<lg): satu kartu statis, tanpa tumpukan 3D */}
       <div className="lg:hidden">{shown[0]}</div>
-      {/* Desktop: tumpukan berlapis dengan kedalaman translateZ */}
+      {/* Desktop (>=lg): tumpukan berlapis dengan kedalaman translateZ */}
       <motion.div
         className="relative hidden h-[440px] [transform-style:preserve-3d] lg:block"
         style={reduce ? undefined : { rotateX: rx, rotateY: ry }}
@@ -151,7 +156,7 @@ function StackCard({ index, total, children }: { index: number; total: number; c
 
   return (
     <motion.div
-      className="absolute inset-x-8 top-0"
+      className="rk-ensure-visible absolute inset-x-8 top-0"
       style={{ zIndex: total - index }}
       initial={reduce ? false : { opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -167,6 +172,7 @@ function StackCard({ index, total, children }: { index: number; total: number; c
 
 export function NavbarShell({ left, right }: { left: ReactNode; right: ReactNode }) {
   const reduce = useReducedMotion()
+  const isDesktop = useDesktop3D()
   const { scrollY } = useScroll()
   const h = useTransform(scrollY, [0, 120], [72, 56])
   const hPx = useTransform(h, (v) => `${v}px`)
@@ -175,7 +181,7 @@ export function NavbarShell({ left, right }: { left: ReactNode; right: ReactNode
     setScrolled((prev) => (v > 80 ? true : v <= 40 ? false : prev))
   })
 
-  if (reduce) {
+  if (reduce || !isDesktop) {
     return (
       <header
         className="sticky top-0 z-50 border-b border-stone-200/80 bg-white/90 backdrop-blur-md dark:border-stone-800 dark:bg-stone-950/90"
@@ -245,6 +251,7 @@ export function RevealStagger({ items }: { items: string[] }) {
       {items.map((item, i) => (
         <motion.li
           key={item}
+          className="rk-ensure-visible"
           initial={reduce ? false : { opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.3 }}
@@ -265,7 +272,7 @@ export function RevealGroup({ children, className = '' }: { children: ReactNode[
   const reduce = useReducedMotion()
   return (
     <motion.div
-      className={className}
+      className={`rk-ensure-visible ${className}`}
       initial={reduce ? false : 'hidden'}
       whileInView="show"
       viewport={VIEWPORT_ONCE}
@@ -278,7 +285,7 @@ export function RevealGroup({ children, className = '' }: { children: ReactNode[
 
 export function RevealItem({ children, className = '' }: { children: ReactNode; className?: string }) {
   return (
-    <motion.div variants={fadeUp} className={className}>
+    <motion.div variants={fadeUp} className={`rk-ensure-visible ${className}`}>
       {children}
     </motion.div>
   )
@@ -337,21 +344,25 @@ export function SpotlightCard({ children, className = '', lift = false }: { chil
       `radial-gradient(240px circle at ${x}px ${y}px, rgba(43, 92, 180,0.10), transparent 70%)`
   )
 
-  // Lift translateZ 8-12px saat hover: terasa naik tanpa berlebihan
-  const inner = (
+  const isDesktop = useDesktop3D()
+  const enable3D = isDesktop && lift
+
+  const inner = enable3D ? (
     <motion.div
       className="h-full"
-      whileHover={reduce || !lift ? undefined : { z: 10 }}
-      transition={reduce || !lift ? undefined : { type: 'spring', stiffness: 150, damping: 18 }}
+      whileHover={{ z: 10 }}
+      transition={{ type: 'spring', stiffness: 150, damping: 18 }}
       style={{ transformStyle: 'preserve-3d' }}
     >
       {children}
     </motion.div>
+  ) : (
+    <div className="h-full">{children}</div>
   )
 
   return (
     <div
-      className={`group relative overflow-hidden rounded-2xl border border-stone-200 dark:border-stone-800/80 bg-white dark:bg-stone-900 shadow-sm transition-shadow hover:shadow-md ${lift ? '[perspective:800px]' : ''} ${className}`}
+      className={`group relative overflow-hidden rounded-2xl border border-stone-200 dark:border-stone-800/80 bg-white dark:bg-stone-900 shadow-sm transition-shadow hover:shadow-md ${className}`}
       onPointerMove={(e) => {
         if (reduce || e.pointerType !== 'mouse') return
         const r = e.currentTarget.getBoundingClientRect()
@@ -360,11 +371,13 @@ export function SpotlightCard({ children, className = '', lift = false }: { chil
       }}
       onPointerLeave={() => { mx.set(0); my.set(0) }}
     >
-      <motion.div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100 [@media(hover:hover)_and_(pointer:fine)]:block hidden"
-        style={{ background: bg }}
-      />
+      {isDesktop && (
+        <motion.div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+          style={{ background: bg }}
+        />
+      )}
       {inner}
     </div>
   )
@@ -436,6 +449,8 @@ export function Marquee({ items }: { items: string[] }) {
 
 export function DriftBackdrop({ children, className = '' }: { children: ReactNode; className?: string }) {
   const reduce = useReducedMotion()
+  const isDesktop = useDesktop3D()
+  const drift = isDesktop && !reduce
   return (
     <div className={`relative overflow-hidden ${className}`}>
       <motion.div
@@ -445,8 +460,8 @@ export function DriftBackdrop({ children, className = '' }: { children: ReactNod
           background:
             'radial-gradient(600px circle at 30% 30%, rgba(43, 92, 180,0.08), transparent 60%), radial-gradient(600px circle at 70% 70%, rgba(43, 92, 180,0.06), transparent 60%)',
         }}
-        animate={reduce ? undefined : { rotate: [0, 8, 0], scale: [1, 1.05, 1] }}
-        transition={reduce ? undefined : { duration: 40, repeat: Infinity, ease: 'easeInOut' }}
+        animate={drift ? { rotate: [0, 8, 0], scale: [1, 1.05, 1] } : undefined}
+        transition={drift ? { duration: 40, repeat: Infinity, ease: 'easeInOut' } : undefined}
       />
       <div className="relative">{children}</div>
     </div>

@@ -87,7 +87,7 @@ export default async function Home() {
     <div>
       {/* HERO: split asimetris, teks kiri + tumpukan kartu 3D kanan, muat viewport */}
       <section className="hero-bg mx-auto w-full px-4 pt-10 pb-14 sm:px-6 lg:pt-16 lg:pb-20">
-        <div className="mx-auto grid min-h-[calc(100dvh-var(--nav-h)-7rem)] max-w-7xl grid-cols-1 items-center gap-10 lg:grid-cols-12">
+        <div className="rk-dvh-fallback mx-auto grid min-h-[calc(100dvh-var(--nav-h)-7rem)] max-w-7xl grid-cols-1 items-center gap-10 lg:grid-cols-12">
           <div className="lg:col-span-7">
             <HeroLines />
             <HeroSequence>

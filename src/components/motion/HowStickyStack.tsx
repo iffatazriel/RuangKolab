@@ -101,7 +101,7 @@ export function HowStickyStack({ steps }: { steps: HowStep[] }) {
               style={{ zIndex: i + 1 }}
               className={`${cardClass} relative flex min-h-[60dvh] items-center justify-center`}
             >
-              <div className={`${innerClass} w-full max-w-xl will-change-transform`}>
+              <div className={`${innerClass} w-full max-w-xl lg:will-change-transform`}>
                 <div className="rounded-2xl border border-stone-200 dark:border-stone-800 bg-[var(--card-bg)] p-8 shadow-sm sm:p-10">
                   <div aria-hidden="true" className="flex h-16 w-16 items-center justify-center rounded-2xl bg-brand-50 text-brand-600 dark:bg-brand-950 dark:text-brand-400">
                     <Icon size={48} weight="duotone" aria-hidden="true" />
