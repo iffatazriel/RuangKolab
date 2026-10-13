@@ -65,7 +65,7 @@ export function LombaFilter({ resultCount }: Props) {
       <div className="sticky z-[45] -mx-4 border-b border-stone-100 dark:border-stone-800 bg-[var(--background)]/95 px-4 pb-3 pt-3 backdrop-blur-md sm:-mx-6 sm:px-6" style={{ top: 'var(--nav-h)' }}>
         <div className="hidden flex-wrap items-center gap-2.5 md:flex">
           <div className="relative min-w-[220px] flex-1">
-            <MagnifyingGlass size={18} className="pointer-events-none absolute left-3.5 top-1/2 -transtone-y-1/2 text-stone-400" />
+                  <MagnifyingGlass size={18} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400" />
             <input
               type="search"
               aria-label="Cari lomba"
@@ -190,7 +190,7 @@ export function LombaFilter({ resultCount }: Props) {
               </div>
               <div className="flex flex-col gap-3" onClick={() => setOpen(false)}>
                 <div className="relative">
-                  <MagnifyingGlass size={18} className="pointer-events-none absolute left-3.5 top-1/2 -transtone-y-1/2 text-stone-400" />
+            <MagnifyingGlass size={18} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400" />
                   <input
                     type="search"
                     aria-label="Cari lomba"
